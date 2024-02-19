@@ -1,0 +1,1 @@
+<div id="loading-indicator" style="display: block;"></div>
