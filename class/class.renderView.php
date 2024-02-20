@@ -239,9 +239,9 @@ class questionview
             case '3':
                 return ' <input type="date" class="form-control" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="" aria-label="คำตอบ" aria-describedby="คำตอบ">';
             case '4':
-                return ' <input type="radio" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ"><lable for="'.$id.'">'." ".$order.".".$text;
+                return ' <label  for="inputId'.$dt.'">'.'<input type="radio" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ">'." ".$order.".".$text."</label>";
             case '5':
-                return ' <input type="checkbox" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'[]" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ"><lable for="'.$id.'">'." ".$order.".".$text;
+                return ' <label  for="inputId'.$dt.'">'.'<input type="checkbox" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'[]" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ">'." ".$order.".".$text."</label>";
             default:
                 break;
         }

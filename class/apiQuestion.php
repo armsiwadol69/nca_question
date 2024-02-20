@@ -33,6 +33,8 @@ switch ($ar_prm["method"]) {
     case "getQuestionData":
         echo $question->getDataQuestion();
         break;
+    case "saveAnswer":
+        echp $question->saveAnswer();
 }
 
 class ncaQuestion{
@@ -103,6 +105,10 @@ class ncaQuestion{
         $dataOption = $go_ncadb->ncaretrieve($sqlChoice, "question");
         $data       = $this->ncaArrayConverter($dataOption);
         return  $data;
+    }
+
+    function saveAnswer(){
+        
     }
 
     public function ncaArrayConverter($par_array)

@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 if (is_array($_GET)) {
     foreach ($_GET as $k => $v) {
         $ar_prm[$k] = $v;
@@ -15,6 +16,8 @@ require_once ("../class/class.renderView.php");
 
 $go_ncadb = new ncadb();
 
+$_GET['id'] = "109";
+
 $ncaquestion = new questionview($_GET['id']);
 
 if($_GET['id']){
@@ -22,6 +25,8 @@ if($_GET['id']){
     $questioninfo = $ncaquestion->getDataQuestion();
     $arr_parent = array();
     $htmlQuestion = "";
+    $formName = $questioninfo[0]["question_name"];
+    $formDes = $questioninfo[0]["question_detail"];
     foreach($questioninfo AS $key => $val){
 
         if(!$val['questiondt_parent']){
@@ -31,6 +36,25 @@ if($_GET['id']){
     }
 }
 
+function arrayToHiddenInputs($array) {
+    $hiddenInputs = '';
+    foreach ($array as $key => $value) {
+        $escapedKey = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
+        $escapedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+        $hiddenInputs .= "<input type='hidden' name='$escapedKey' value='$escapedValue'>";
+    }
+    return $hiddenInputs;
+}
+
+function arrayToInputsBootstrap($array) {
+    $hiddenInputs = '';
+    foreach ($array as $key => $value) {
+        $escapedKey = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
+        $escapedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+        $hiddenInputs .= "<div class='col-xl-3 col-lg-3 col-md-3 col-sm-12'><lable for'$escapedKey'>$escapedKey<lable><input type='text' name='$escapedKey' value='$escapedValue' class='form-control form-control-sm' readonly></div>";
+    }
+    return $hiddenInputs;
+}
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +64,7 @@ if($_GET['id']){
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>NCA QA</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/sidebarComponents/sidebar.css">
     <link rel="stylesheet" href="../assets/css/main.css">
@@ -61,6 +85,7 @@ if($_GET['id']){
     .list-group-item {
         background-color: transparent !important;
         border : none !important;
+        padding: .125rem 0rem;
     }
 
     .main-panel-bg-blur {
@@ -73,14 +98,16 @@ if($_GET['id']){
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <pre>
+                <!-- <pre>
                 <?
                     print_r($ar_prm);
                 ?>
-                </pre>
+                </pre> -->
             </div>
             <div class="col-12 text-center">
-                <!-- <h1>agaite ikou ze saigo made</h1> -->
+                <h1 class="fw-bold mt-3"><?echo $formName?></h1>
+                <h3><?echo $formDes?></h3>
+                <br>
             </div>
             <div class="col-12" id="questionnaire">
                 
@@ -88,18 +115,30 @@ if($_GET['id']){
         </div>
         <div class="row">
             <div class="col-12">
-                <form action="" method="get" id="mForm">
+                <form action="" method="POST" id="mForm">
+    
+                    <div class="row mb-5">
+                    <div class="col-12">
+                        <div class="collapse" id="showGet">
+                            <div class="card card-body">
+                            <?php echo arrayToInputsBootstrap($_GET);?>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm w-100 btn-info my-2" type="button" data-bs-toggle="collapse" data-bs-target="#showGet" aria-expanded="false" aria-controls="showGet">แสดงข้อมูลรถ</button>
+                    </div>
+                        
+                    </div>
                     <? echo $htmlQuestion; ?>
                     <input type="hidden" name="id" id="id" value="<?echo $ar_prm["id"]?>"/>
-                    <button type="submit" class="btn btn-secondary">Submit</button>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">บันทึกข้อมูล</button>
                 </form>
             </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-12">
                 <button class="btn btn-primary w-100" onclick="logFormData('mForm');">logFormData</button>
             </div>
-        </div>
+        </div> -->
     </div>
     <?php include_once 'v_footer.php';?>
     <script>
@@ -212,7 +251,6 @@ if($_GET['id']){
         });
 
         $(document).ready(function() {
-        // Select all input elements that are direct children of elements with the class "answerBox" and add the "required" attribute
-        $('#mForm > div > div > div > input').prop('required', true);
+            $('#mForm > div > div > div > input').prop('required', true);
         });
     </script>
