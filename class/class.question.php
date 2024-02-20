@@ -453,6 +453,7 @@ class question
 
     }
 
+
     function getDataOption($question,$pid,$dataParent,$questionArray)
     {
         global $go_ncadb;

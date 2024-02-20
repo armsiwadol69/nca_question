@@ -246,7 +246,7 @@ if($methodRequest == "addQuestion") {
     echo "<pre>";
     print_r($_POST);
     print_r($questiondata);
-    die();
+    // die();
     $ncaquestion->addNewQuestion($array_info,$questionmaindata,$questiondata);
 
 } else if($methodRequest == "del") {

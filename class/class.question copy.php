@@ -400,6 +400,8 @@ class question
 
     }
 
+    
+
     function getDataOption($question,$pid,$dataParent)
     {
         global $go_ncadb;
