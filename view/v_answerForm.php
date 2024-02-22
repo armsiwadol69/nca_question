@@ -16,7 +16,7 @@ require_once ("../class/class.renderView.php");
 
 $go_ncadb = new ncadb();
 
-$_GET['id'] = "112";
+$_GET['id'] = "114";
 
 $ncaquestion = new questionview($_GET['id']);
 
@@ -194,9 +194,9 @@ function arrayToInputsBootstrap($array) {
             console.log(groupOfHeading4.length);
             console.log(groupOfAnswerBox.length);
 
-            const imageUploader  = $(this).closest('[type="file"]');
+            const imageUploadInput = $(this).next('.file-upload-option');
 
-            console.log(imageUploader);
+            console.log(imageUploadInput);
 
             if(groupOfAnswerBox.length == "2" && groupOfAnswerBox.length == "2"){
                 groupOfHeading4 = parentElement.find('h4').first();
@@ -212,8 +212,11 @@ function arrayToInputsBootstrap($array) {
                     $(this).removeAttr('hidden');
                 })
                 groupOfAnswerBox.each(function(){
-                    $(this).removeAttr('hidden');
+                    $(this).removeAttr('required');
                 })
+
+                imageUploadInput.removeAttr('hidden');
+                imageUploadInput.prop('required','true');
                 
                 parentElement.find('.answer input').not('[type="checkbox"]').first().prop('required', true);
             } else {
@@ -223,6 +226,7 @@ function arrayToInputsBootstrap($array) {
                 
                 // Remove 'required' attribute from inputs in class 'answer'
                 parentElement.find('.answer input').prop('required', false);
+                imageUploadInput.attr('hidden', 'hidden');
             }
 
             console.log(isCheckedOrNotEmpty);
@@ -236,11 +240,16 @@ function arrayToInputsBootstrap($array) {
                     const parentElement = $(this).closest('.list-group-item');
                     const correspondingH4 = parentElement.find('h4'); // Select only the first h4
                     const correspondingList = parentElement.find('.answerBox'); // Select only the first .list-group-item
+                    const fileUploadList = parentElement.find('.file-upload-option'); 
                     correspondingH4.each(function() {
                         $(this).attr('hidden', 'hidden');
                     });
                     correspondingList.each(function() {
                         $(this).attr('hidden', 'hidden');
+                    });
+                    fileUploadList.each(function(){
+                        $(this).attr('hidden', 'hidden');
+                        $(this).removeAttr('required')
                     });
                     const allOptions = correspondingList.find('input[name^="optionid"]');
                     allOptions.each(function() {

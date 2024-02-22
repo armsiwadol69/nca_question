@@ -240,9 +240,9 @@ class questionview
             case '3':
                 return ' <input type="date" class="form-control" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="" aria-label="คำตอบ" aria-describedby="คำตอบ">';
             case '4':
-                return ' <label  for="inputId'.$dt.'">'.'<input type="radio" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ" required    >'." ".$order.".".$text."</label>";
+                return ' <label  for="inputId'.$dt.'"></label>'.'<input type="radio" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ" required    >'." ".$order.".".$text;
             case '5':
-                return ' <label  for="inputId'.$dt.'">'.'<input type="checkbox" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'[]" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ">'." ".$order.".".$text."</label>";
+                return ' <label  for="inputId'.$dt.'"></label>'.'<input type="checkbox" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'[]" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ">'." ".$order.".".$text;
             default:
                 break;
         }
@@ -251,7 +251,7 @@ class questionview
     function createFileUploader($isRequire ,$dt ,$name ,$type, $order, $text, $id){
         if($isRequire == "1"){
             // <label fname="fileUploadOptionId'.$name.'" class="form-label" hidden>แนบไฟล์</label>
-            return '<input class="form-control form-control-sm my-2" type="file" id="fileUploadOptionId'.$id.'" name="fileUploadOption[]['.$id.']" multiple>';
+            return '<input class="form-control form-control-sm my-2 file-upload-option" type="file" accept="image/png, image/gif, image/jpeg" id="fileUploadOptionId'.$id.'" name="fileUploadOption[]['.$id.']" multiple hidden>';
         }
     }
     

@@ -266,7 +266,7 @@ class ncaQuestion{
                 #GET OPTION's Array Data
                 $answerValue = $this->findValueFromOptionArray($answerOptionsId,$arr_options);
                 if(!empty($answerValue)){
-                        #PREPAR SQL INSERT TO tb_answerdt :: Answer Type RADIO
+                    #PREPAR SQL INSERT TO tb_answerdt :: Answer Type RADIO
                     $InsertSqlBuilder = new SqlBuilder();
                     $InsertSqlBuilder->setTableName("tb_answerdt");
                     $i = 0;
@@ -344,11 +344,11 @@ class ncaQuestion{
 
     public function insertImageToAttachments($go_ncadb,$answerId,$answerDt,$questionId,$questionDt,$optionId,$attachmentData,$answer_userId)
     {   
-        echo "<pre>insertImageToAttachments"."<br>";
-        echo $optionId;
-        echo "</pre>";
+        // echo "<pre>insertImageToAttachments"."<br>";
+        // echo $optionId;
+        // echo "</pre>";
         // print_r($attachmentData);
-
+        
         foreach ($attachmentData as $attachmentDataKey => $attachmentDataValue) {
             print_r($attachmentDataValue);
             if($attachmentDataValue["optionid"] == $optionId){
@@ -367,7 +367,6 @@ class ncaQuestion{
                 $InsertSqlBuilder->setField($sqlBuild);
                 $query = $InsertSqlBuilder->InsertSql();
                 $result = $go_ncadb->ncaexec($query, "question");
-                $result = false;
                 if(!$result){
                     $go_ncadb->ncarollback("question");
                     echo "ERROR while executing image uploading";
