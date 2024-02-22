@@ -16,7 +16,7 @@ require_once ("../class/class.renderView.php");
 
 $go_ncadb = new ncadb();
 
-$_GET['id'] = "114";
+$_GET['id'] = "109";
 
 $ncaquestion = new questionview($_GET['id']);
 
@@ -122,9 +122,27 @@ function arrayToInputsBootstrap($array) {
                             <?php echo arrayToInputsBootstrap($_GET);?>
                             </div>
                         </div>
-                        <button class="btn btn-sm w-100 btn-info my-2" type="button" data-bs-toggle="collapse" data-bs-target="#showGet" aria-expanded="false" aria-controls="showGet">แสดงข้อมูลรถ</button>
+                        <button class="btn btn-sm w-100 btn-info my-2" type="button" hidden data-bs-toggle="collapse" data-bs-target="#showGet" aria-expanded="false" aria-controls="showGet">แสดงข้อมูลรถ</button>
                     </div>
-                        
+                    <div class="col-12 text-center">
+                            <?
+                                if(isset($_GET["busnumber"])){
+                                    echo "เบอร์รถ : ".$_GET["busnumber"];
+                                }
+                                echo "<br>";
+                                if(isset($_GET["busline"])){
+                                    echo "สายรถ : ".$_GET["busline"]."-".$_GET["buslinetype"];
+                                }
+                                echo "<br>";
+                                if(isset($_GET["queueRouteName"])){
+                                    echo "เส้นทาง : ".$_GET["queueRouteName"];
+                                }
+                                echo "<br>";
+                                if(isset($_GET["queuedtdate"])){
+                                    echo "เที่ยวเวลา : ".$_GET["queuedtime"]." ".$_GET["queuedtdate"];
+                                }
+                            ?>
+                    </div>
                     </div>
                     <? echo $htmlQuestion; ?>
                     <input type="hidden" name="id" id="id" value="<?echo $formId?>"/>
@@ -200,7 +218,7 @@ function arrayToInputsBootstrap($array) {
 
             if(groupOfAnswerBox.length == "2" && groupOfAnswerBox.length == "2"){
                 groupOfHeading4 = parentElement.find('h4').first();
-                groupOfAnswerBox = parentElement.find('.answerBox').first();;
+                groupOfAnswerBox = parentElement.find('.answerBox').first();
             }
 
             if (isCheckedOrNotEmpty) {
@@ -212,7 +230,9 @@ function arrayToInputsBootstrap($array) {
                     $(this).removeAttr('hidden');
                 })
                 groupOfAnswerBox.each(function(){
+                    $(this).removeAttr('hidden');
                     $(this).removeAttr('required');
+                    $(this).find('input[type^="text"], input[type^="number"], input[type^="date"]').prop('required','true');
                 })
 
                 imageUploadInput.removeAttr('hidden');
