@@ -165,7 +165,8 @@ class questionview
             // <input type="hidden" name="'.$value['questionoption_questiondt'].$key.'" value="'.$inputTypeName['questiontype_type'].'" />
 
             $html .= ' <div class="list-group-item answer border-none ms-5" data-id="question'.$value['questionoption_questiondt'].'"'.' style >'.' 
-                            '.$this->createAnswerByType('optionid'.$value['questionoption_questiondt'],'optionid'.$value['questionoption_questiondt'].'',$dataParent['questiondt_questiontype'],$value['questionoption_order'],$value["questionoption_name"],$value["questionoption"]).'
+                            '.$this->createAnswerByType('optionid'.$value['questionoption_questiondt'],'optionid'.$value['questionoption_questiondt'].'',$dataParent['questiondt_questiontype'],$value['questionoption_order'],$value["questionoption_name"],$value["questionoption"]).
+                            $this->createFileUploader($value['questionoption_images'],'optionid'.$value['questionoption_questiondt'],$value['questionoption_questiondt'].'',$dataParent['questiondt_questiontype'],$value['questionoption_order'],$value["questionoption_name"],$value["questionoption"]).'
                             <div class="list-group-item '.(count($dataP) > 0 ? "" : "hide" ).' questionquestion'.$value['questionoption_questiondt'].$key.' ms-3 mt-3 mb-3" data-id="'.$pid.'" >
                                 '.$this->genareteViewFormData("questiondt_parent",$dataParent['questiondt'],$order,$value,$questionArray).'
                             </div>';
@@ -239,12 +240,20 @@ class questionview
             case '3':
                 return ' <input type="date" class="form-control" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="" aria-label="คำตอบ" aria-describedby="คำตอบ">';
             case '4':
-                return ' <label  for="inputId'.$dt.'">'.'<input type="radio" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ">'." ".$order.".".$text."</label>";
+                return ' <label  for="inputId'.$dt.'">'.'<input type="radio" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ" required    >'." ".$order.".".$text."</label>";
             case '5':
                 return ' <label  for="inputId'.$dt.'">'.'<input type="checkbox" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'[]" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ">'." ".$order.".".$text."</label>";
             default:
                 break;
         }
     }
+
+    function createFileUploader($isRequire ,$dt ,$name ,$type, $order, $text, $id){
+        if($isRequire == "1"){
+            // <label fname="fileUploadOptionId'.$name.'" class="form-label" hidden>แนบไฟล์</label>
+            return '<input class="form-control form-control-sm my-2" type="file" id="fileUploadOptionId'.$id.'" name="fileUploadOption[]['.$id.']" multiple>';
+        }
+    }
+    
 
 }

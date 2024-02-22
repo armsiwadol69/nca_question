@@ -16,7 +16,7 @@ require_once ("../class/class.renderView.php");
 
 $go_ncadb = new ncadb();
 
-$_GET['id'] = "109";
+$_GET['id'] = "112";
 
 $ncaquestion = new questionview($_GET['id']);
 
@@ -25,6 +25,7 @@ if($_GET['id']){
     $questioninfo = $ncaquestion->getDataQuestion();
     $arr_parent = array();
     $htmlQuestion = "";
+    $formId = $questioninfo[0]["question"];
     $formName = $questioninfo[0]["question_name"];
     $formDes = $questioninfo[0]["question_detail"];
     foreach($questioninfo AS $key => $val){
@@ -41,7 +42,7 @@ function arrayToHiddenInputs($array) {
     foreach ($array as $key => $value) {
         $escapedKey = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
         $escapedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-        $hiddenInputs .= "<input type='hidden' name='$escapedKey' value='$escapedValue'>";
+        $hiddenInputs .= "<input type='hidden' name='userData[$escapedKey]' value='$escapedValue'>";
     }
     return $hiddenInputs;
 }
@@ -51,7 +52,7 @@ function arrayToInputsBootstrap($array) {
     foreach ($array as $key => $value) {
         $escapedKey = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
         $escapedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-        $hiddenInputs .= "<div class='col-xl-3 col-lg-3 col-md-3 col-sm-12'><lable for'$escapedKey'>$escapedKey<lable><input type='text' name='$escapedKey' value='$escapedValue' class='form-control form-control-sm' readonly></div>";
+        $hiddenInputs .= "<div class='col-xl-3 col-lg-3 col-md-3 col-sm-12'><lable for'$escapedKey'>$escapedKey<lable><input type='text' name='formApp_$escapedKey' value='$escapedValue' class='form-control form-control-sm' readonly></div>";
     }
     return $hiddenInputs;
 }
@@ -98,11 +99,9 @@ function arrayToInputsBootstrap($array) {
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <!-- <pre>
-                <?
-                    print_r($ar_prm);
-                ?>
-                </pre> -->
+                <pre id="jsonviewer">
+
+                </pre>
             </div>
             <div class="col-12 text-center">
                 <h1 class="fw-bold mt-3"><?echo $formName?></h1>
@@ -115,8 +114,7 @@ function arrayToInputsBootstrap($array) {
         </div>
         <div class="row">
             <div class="col-12">
-                <form action="" method="POST" id="mForm">
-    
+                <form action="../class/apiQuestion.php?method=saveAnswer" method="POST" id="mForm" enctype="multipart/form-data">
                     <div class="row mb-5">
                     <div class="col-12">
                         <div class="collapse" id="showGet">
@@ -129,14 +127,15 @@ function arrayToInputsBootstrap($array) {
                         
                     </div>
                     <? echo $htmlQuestion; ?>
-                    <input type="hidden" name="id" id="id" value="<?echo $ar_prm["id"]?>"/>
+                    <input type="hidden" name="id" id="id" value="<?echo $formId?>"/>
                     <button type="submit" class="btn btn-primary w-100 mb-3">บันทึกข้อมูล</button>
+                    <button type="button" class="btn btn-primary w-100" onclick="logFormData('mForm');submitForm();">logFormData</button>
                 </form>
             </div>
         </div>
         <!-- <div class="row">
             <div class="col-12">
-                <button class="btn btn-primary w-100" onclick="logFormData('mForm');">logFormData</button>
+                
             </div>
         </div> -->
     </div>
@@ -151,6 +150,9 @@ function arrayToInputsBootstrap($array) {
             }
 
             const formData = new FormData(form);
+
+            console.log(JSON.stringify(Object.fromEntries(formData)));
+
             const data = {};
 
             formData.forEach((value, key) => {
@@ -158,6 +160,7 @@ function arrayToInputsBootstrap($array) {
             });
 
             console.log('Form Data:', data);
+            document.getElementById('jsonviewer').innerHTML = JSON.stringify(data);
         }
 
     // Event listener for all radio buttons and text inputs
@@ -166,6 +169,10 @@ function arrayToInputsBootstrap($array) {
             var inputId = $(this).attr('id');
 
             console.log(inputId);
+
+            const filePicker = $(this).parent().find('input[type="file"]');
+
+            console.log(filePicker);
             
             // Check if the current input is checked or not empty
             var isCheckedOrNotEmpty = $(this).is(':checked');
@@ -187,6 +194,10 @@ function arrayToInputsBootstrap($array) {
             console.log(groupOfHeading4.length);
             console.log(groupOfAnswerBox.length);
 
+            const imageUploader  = $(this).closest('[type="file"]');
+
+            console.log(imageUploader);
+
             if(groupOfAnswerBox.length == "2" && groupOfAnswerBox.length == "2"){
                 groupOfHeading4 = parentElement.find('h4').first();
                 groupOfAnswerBox = parentElement.find('.answerBox').first();;
@@ -196,8 +207,7 @@ function arrayToInputsBootstrap($array) {
                 // console.log("checked");
                 correspondingH4.removeAttr('hidden');
                 correspondingList.removeAttr('hidden');
-                
-                // Add 'required' attribute to inputs in class 'answer'
+      
                 groupOfHeading4.each(function(){
                     $(this).removeAttr('hidden');
                 })
@@ -251,6 +261,53 @@ function arrayToInputsBootstrap($array) {
         });
 
         $(document).ready(function() {
-            $('#mForm > div > div > div > input').prop('required', true);
+            const setReq = $('#mForm > .answerBox > div');
+            // .prop('required', true);
+            // console.log($('#mForm > div .answerBox > div > div > input'));
         });
+
+        function submitFormData(formId, successCallback, errorCallback) {
+            let form = document.getElementById(formId);
+            if (!form) {
+                console.error("Form with id '" + formId + "' not found.");
+                return;
+            }
+
+            let formData = new FormData(form);
+
+            fetch(form.action, {
+                method: form.method,
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    if (successCallback && typeof successCallback === 'function') {
+                        successCallback(response);
+                    }
+                } else {
+                    throw new Error('Failed to submit form');
+                }
+            })
+            .catch(error => {
+                if (errorCallback && typeof errorCallback === 'function') {
+                    errorCallback(error);
+                } else {
+                    console.error('Error submitting form:', error);
+                }
+            });
+        }
+
+        function submitForm() {
+            submitFormData('mForm', 
+                function(response) {
+                    console.log('Form submitted successfully');
+                    // Handle success response
+                },
+                function(error) {
+                    console.error('Form submission error:', error);
+                    // Handle error
+                }
+            );
+        }
+
     </script>
