@@ -415,6 +415,8 @@ include_once 'v_footer.php';
                 formctr = `form-control-50 col-lg-6`;
             }
 
+            let optionname = makeid(3);
+
             let inp = `<input type="hidden" name="`+name+index+`" value="`+inptype+`" >`;
             inp += inptypename+` `+$order+` : <input class="form-control-40 col-lg-4" type="text" name="option`+name+`[]" id="option`+name+index+`" `+(parseInt(inputType) < 3 ? `readonly="readonly" ` : ` required `)+`>`;
             if(parseInt(inputType) > 2){
@@ -424,9 +426,11 @@ include_once 'v_footer.php';
             inp += `<label class="form-check-label" for="questionoption_images_`+name+`">`;
             inp += `&nbsp;ต้องการให้เเนบรูปหรือไม่ :&nbsp;`;
             inp += `</label>`;
-            inp += `<input class="form-check-input" type="checkbox" style="vertical-align: middle;" value="1" id="questionoption_images_`+name+`" name="questionoption_images[`+name+`][`+index+`]">`;
+            inp += `<input class="form-check-input" type="checkbox" style="vertical-align: middle;" value="1" id="questionoption_images_`+optionname+`" name="questionoption_images[`+name+`][`+optionname+`]">`;
 
             inp += `<input type="hidden" name="optionid`+name+index+`[]" id="optionid`+name+index+`" value="`+index+`" >`;
+
+            inp += `<input type="hidden" name="questionoption[`+name+`][]" id="questionoption`+name+index+`" value="`+optionname+`" >`;
 
             inp += `<div class="list-group-item nested-3 hide question`+name+index+` `+(opques ? 'ms-3 mt-3 mb-3 ' : '')+`" data-id="li8La">`;
             inp += `</div>`;
