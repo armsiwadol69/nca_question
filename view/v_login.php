@@ -1,7 +1,7 @@
 <?php
     session_start();
     if(isset($_SESSION["userData"])){
-        header('location: v_dashboard.php');
+        header('location: list_question.php');
     }
     header('Content-Type: text/html; charset=utf-8');
 ?>

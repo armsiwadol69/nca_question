@@ -1,4 +1,5 @@
 <?php
+// header('Content-Type: text/html; charset=utf-8');
 
 class question
 {
@@ -452,6 +453,7 @@ class question
         }
 
     }
+
 
     function getDataOption($question,$pid,$dataParent,$questionArray)
     {
