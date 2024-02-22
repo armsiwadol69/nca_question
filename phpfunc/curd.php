@@ -206,11 +206,25 @@ if($methodRequest == "addQuestion") {
         $data['optionnm']                 = "option".$_POST['questionnameinputafter'][$value];
         $optionval                        = "optionvalue".$value;
         $data['dataoptiontype']           = $_POST['questionnameinput'][$value];
-        $optionid                         = "optionid".$value;
-        $data['questionoption']           = $_POST[$optionid];
+
+        // ////// ISSUE /////////
+        // $optionid                         = "optionid".$value;
+        // $data['questionoption']           = $_POST[$optionid];
+        // ////// ISSUE /////////
+
+        if(!$_POST['questiondt'][$value] ){
+            $data['questionoption']           = $_POST['questionoption'][$value];
+        }else{
+            $optionid                         = "optionid".$value;
+            $data['questionoption']           = $_POST[$optionid];
+
+        }
+
         $data['dataoption']               = $_POST[$option];
         $data['dataoptionvalue']          = $_POST[$optionval];
         $data['dataafteroption']          = $_POST['questionnameinputafteroptoion'][$value];
+        
+        
         $optionkey                        = $_POST[$optionid][$key];
         $data['optionimages']             = $_POST["questionoption_images"][$value];
         $questiontype                     = $ncaquestion->getInpustType("questiontype_type",$_POST['questionnameinput'][$value]);
@@ -243,10 +257,8 @@ if($methodRequest == "addQuestion") {
         }
         
     } */
-    echo "<pre>";
-    print_r($_POST);
-    print_r($questiondata);
-    // die();
+
+
     $ncaquestion->addNewQuestion($array_info,$questionmaindata,$questiondata);
 
 } else if($methodRequest == "del") {

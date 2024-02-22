@@ -212,7 +212,7 @@ class question
                 $sqlObjoption[$ii++] = new TField("questionoption_order", $order, "string");
                 $sqlObjoption[$ii++] = new TField("questionoption_active", 1, "string");
 
-                if($value['questionoption'][$key2]){
+                if($value['questionoption'][$key2] > 0){
 
                     $sqlObjoption[$ii++] = new TField("questionoption_modispid", $info['par_userid'], "string");
                     $sqlObjoption[$ii++] = new TField("questionoption_modidatetime", $datetime, "string");
