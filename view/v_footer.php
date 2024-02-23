@@ -29,5 +29,8 @@
 <script src="../assets/aos/aos.js?v=<?php echo $version; ?>"></script>
 <script src="../assets/swiper/swiper-bundle.min.js?v=<?php echo $version; ?>"></script>
 <script src="../assets/js/main.js?v=<?php echo $version; ?>"></script>
+<!-- bootstrap-multiselect -->
+<script src="../assets/bootstrap-multiselect/select2.full.min.js"></script>
+<!-- bootstrap-multiselect -->
 </body>
 </html>

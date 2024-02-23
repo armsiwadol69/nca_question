@@ -101,7 +101,6 @@ function deleteFilesOnDelete($fileNames, $par_id)
         
         if (file_exists($filePath)) {
             unlink($filePath);
-            //echo "Deleted file: $filePath<br>";
         }
     }
     rmdir('../storage/' . $par_id);
@@ -128,13 +127,10 @@ function changePermissions($path, $action) {
     $original_permissions = fileperms($path);
     if ($action == "upload") {
         chmod($path, 0777);
-        // echo "777<br>";
     } elseif ($action == "done") {
         chmod($path, 0755);
-        // echo "755<br>";
     } else {
         echo "Invalid action specified<br>";
-        // return;
     }
 }
 
@@ -143,13 +139,10 @@ function changeSubFolderPermissions($id, $action) {
     $original_permissions = fileperms($path);
     if ($action == "upload") {
         chmod($path, 0777);
-        // echo "777<br>";
     } elseif ($action == "done") {
         chmod($path, 0755);
-        // echo "755<br>";
     } else {
         echo "Invalid action specified<br>";
-        // return;
     }
 }
 
@@ -158,20 +151,37 @@ $ncaquestion = new question();
 
 if($methodRequest == "addQuestion") {
 
-    /* echo "<pre>";
-    print_r($_POST);
-    die(); */
+    // echo "<pre>"; 
+    // print_r($_POST);
+    // print_r($array_info);
+    // die();
+    
     $data = array();
     $questiondata = array();
     $questionmaindata = array();
+
+
+
+    $sqlbusrecord = "SELECT busrecord_number FROM busrecord WHERE busrecord IN( ".implode(",", $_POST['bus_ref'])." )";
+    $qbusrecord= $go_ncadb->ncaretrieve($sqlbusrecord, "icms");
+    $fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
+    $bus_number = array();
+    foreach ($fbusrecord as $key => $value) {
+        $bus_numbe[] = $value['busrecord_number'];
+    }
+
     $array_info = array(
         "par_questioninfoid" => $_POST['questioninfoid'],
-        "par_qname" => $_POST['par_qname'],
-        "par_qdatail" => $_POST['par_qdatail'],
-        "par_userid" => $_POST['par_userId'],
-        "oldquestion" => $_POST['oldquestion'],
-        "questionid" => $_POST['questionid'],
+        "par_qname"          => $_POST['par_qname'],
+        "par_qdatail"        => $_POST['par_qdatail'],
+        "par_userid"         => $_POST['par_userId'],
+        "oldquestion"        => $_POST['oldquestion'],
+        "questionid"         => $_POST['questionid'],
+        "bus_ref"            => implode(",", $_POST['bus_ref']),
+        "bus_number"         => implode(",", $bus_numbe),
     );
+
+    
 
     foreach ($_POST['questionismainname'] as $key => $value) {
 
@@ -224,7 +234,6 @@ if($methodRequest == "addQuestion") {
         $data['dataoptionvalue']          = $_POST[$optionval];
         $data['dataafteroption']          = $_POST['questionnameinputafteroptoion'][$value];
         
-        
         $optionkey                        = $_POST[$optionid][$key];
         $data['optionimages']             = $_POST["questionoption_images"][$value];
         $questiontype                     = $ncaquestion->getInpustType("questiontype_type",$_POST['questionnameinput'][$value]);
@@ -233,33 +242,8 @@ if($methodRequest == "addQuestion") {
 
     }
 
-    /* $questionmaindatafilter = array();
-
-    foreach ($questiondata as $key => $value) {
-
-        if($value['datamain'] > 0){
-
-            $dataM['mainkey']         = $key;
-            $dataM['maintext']        = $_POST['questiontext'][$key];
-            $dataM['mainparent']      = $_POST['questionnameinputparent'][$key];
-            $dataM['main']            = $_POST['questionismain'][$key];
-            $option                   = "option".$key;
-            $optionval                = "optionvalue".$key;
-            $dataM['mainoptiontype']  = $_POST['questionnameinput'][$key];
-            $dataM['mainoption']      = $_POST[$option];
-            $dataM['mainoptionvalue'] = $_POST[$optionval];
-            $dataM['mainafteroption'] = $_POST['questionnameinputafteroptoion'][$key];
-            $questiontype             = $ncaquestion->getInpustType("questiontype_type",$_POST['questionnameinput'][$key]);
-            $dataM['maininputtype']   = $questiontype['questiontype'];
-            $dataM['allquestion']     = $value['oldquestion'];
-            array_push($questionmaindatafilter,$dataM);
-            
-        }
-        
-    } */
-
-
-    $ncaquestion->addNewQuestion($array_info,$questionmaindata,$questiondata);
+    $data = $ncaquestion->addNewQuestion($array_info,$questionmaindata,$questiondata);
+    echo json_encode(array("data"=>$data));
 
 } else if($methodRequest == "del") {
 
