@@ -213,7 +213,7 @@ function arrayToInputsBootstrap($array) {
             console.log(groupOfHeading4.length);
             console.log(groupOfAnswerBox.length);
 
-            const imageUploadInput = $(this).next('.file-upload-option');
+            const imageUploadInput = $(this).next().next('.file-upload-option');
 
             console.log(imageUploadInput);
 
