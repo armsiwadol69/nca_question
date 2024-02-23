@@ -40,7 +40,7 @@
         $busnumber = $ar_prm["busnumber"];
         $sql = "SELECT * 
         FROM tb_question 
-        -- WHERE busref = '$busnumber'
+        WHERE question_busrecordnumber LIKE '%$busnumber%'
         ORDER BY question DESC
         ";
 
