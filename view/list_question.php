@@ -24,12 +24,12 @@ include_once 'v_sidebar_start.php';
                 <table id="rewardListTable" class="table table-bordered table-striped shadow-sm w-100">
                     <thead class="text-bg-primary">
                         <tr>
-                            <td>ลำดับ</td>
+                            <td width="50px;">ลำดับ</td>
                             <td>ชุดคำถาม</td>
                             <td>รายละเอียด</td>
-                            <td>ผู้บันทึก</td>
-                            <td>วันที่บันทึก</td>
-                            <td></td>
+                            <td width="200px;">ผู้บันทึก</td>
+                            <td width="150px;">วันที่บันทึก</td>
+                            <td width="150px;"></td>
                         </tr>
                     </thead>
                     <tbody class="align-middle text-start">
