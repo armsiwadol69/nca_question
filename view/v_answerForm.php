@@ -16,11 +16,12 @@ require_once ("../class/class.renderView.php");
 
 $go_ncadb = new ncadb();
 
-$_GET['id'] = "109";
+#there is no form ref for bus now so use fix id instead;
+// $_GET['formId'] = "109";
 
-$ncaquestion = new questionview($_GET['id']);
+$ncaquestion = new questionview($_GET['formId']);
 
-if($_GET['id']){
+if($_GET['formId']){
     $questioninfo = array();
     $questioninfo = $ncaquestion->getDataQuestion();
     $arr_parent = array();
@@ -80,7 +81,7 @@ function arrayToInputsBootstrap($array) {
     <style>
     body {
         /* overflow: hidden; */
-        background-color: whitesmoke;
+        background: white !important;
     }
 
     .list-group-item {
@@ -114,7 +115,7 @@ function arrayToInputsBootstrap($array) {
         </div>
         <div class="row">
             <div class="col-12">
-                <form action="../class/apiQuestion.php?method=saveAnswer" method="POST" id="mForm" enctype="multipart/form-data">
+                <form class="needs-validation" action="../class/apiQuestion.php?method=saveAnswer" method="POST" id="mForm" enctype="multipart/form-data">
                     <div class="row mb-5">
                     <div class="col-12">
                         <div class="collapse" id="showGet">
@@ -147,7 +148,7 @@ function arrayToInputsBootstrap($array) {
                     <? echo $htmlQuestion; ?>
                     <input type="hidden" name="id" id="id" value="<?echo $formId?>"/>
                     <button type="submit" class="btn btn-primary w-100 mb-3">บันทึกข้อมูล</button>
-                    <button type="button" class="btn btn-primary w-100" onclick="logFormData('mForm');submitForm();">logFormData</button>
+                    <!-- <button type="button" class="btn btn-primary w-100" onclick="logFormData('mForm');submitForm();">logFormData</button> -->
                 </form>
             </div>
         </div>

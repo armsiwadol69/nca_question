@@ -29,6 +29,8 @@ function ncaArrayConverter($par_array)
     return $ar;
 }
 
+
+
 function checkGiftImage($id, $img)
 {
     if (!empty($img)) {

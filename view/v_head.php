@@ -38,7 +38,7 @@ header('Content-Type: text/html; charset=utf-8');
     <script src="../assets/sweetalert2/sweetalert2.all.min.js?v=<?php echo $version; ?>"></script>
     <!-- <script src="../assets/livejs/live.js"></script> -->
     <script src="../assets/axios/axios.min.js?v=<?php echo $version; ?>"></script>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
 </head>
 <body>
 

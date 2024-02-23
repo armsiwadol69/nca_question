@@ -5,8 +5,8 @@ date_default_timezone_set("Asia/Bangkok");
 $gb_notlogin = true;
 require "../include.inc.php";
 
-$debugMode = true;
-if(false){
+$debugMode = false;
+if($debugMode){
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
@@ -33,8 +33,6 @@ $apiKey = "";
 $go_ncadb = new ncadb();
 
 $question = new ncaQuestion();
-
-echo $ar_prm["id"];
 
 $question->setQuestionId($ar_prm["id"]);
 
@@ -119,12 +117,14 @@ class ncaQuestion{
         global $question;
         global $debugMode;
        
-        echo "<pre>";
+        if($debugMode){
+            echo "<pre>";
             print_r($ar_prm);
-        echo "</pre>";
-        echo "<pre>";
-            print_r($this->groupFilesArrayById($_FILES));
-        echo "</pre>";
+            echo "</pre>";
+            echo "<pre>";
+                print_r($this->groupFilesArrayById($_FILES));
+            echo "</pre>";
+        }
 
         // echo "HIHI";
         $questionId =  $question->id;
@@ -157,7 +157,9 @@ class ncaQuestion{
                 $result = $go_ncadb->ncaexec($query, "question");
                 if($result){
                     $insert_id = $go_ncadb->ncaGetInsId("question"); 
-                    echo "<br>INSERT ID :: $insert_id<br>";
+                   if($debugMode){
+                        echo "<br>INSERT ID :: $insert_id<br>";
+                   }
                 }else{
                    return $rtn_array = array("resCode" => "0");
                 }
@@ -187,6 +189,7 @@ class ncaQuestion{
                 $attachmentArray = $uploadResult["files"];
             }else{
                 echo "Failed In Image uploading! ";
+                $go_ncadb->ncarollback();
                 exit();
             }
         }
@@ -200,15 +203,19 @@ class ncaQuestion{
         $branchSqlInsert = array();
 
         foreach ($arr_question as $key => $value) {
-            $bgColor = $this->randomBackgroundColor();
-            echo "<div style='background-color:$bgColor '>";
+          
             $g_qusetionId = $value["question"];
             $questionDt = $value["questiondt"];
             $questionType = $value["questiondt_questiontype"];
             $questionOrder = $value["questiondt_order"];
-            echo "<pre>";
-            print_r($value);
-            echo "</pre>";
+
+            if($debugMode){
+                $bgColor = $this->randomBackgroundColor();
+                echo "<div style='background-color:$bgColor '>";
+                echo "<pre>";
+                print_r($value);
+                echo "</pre>";  
+            }
 
             $haveOptions = array();
 
@@ -224,9 +231,11 @@ class ncaQuestion{
                 } 
             }
 
-            echo "<pre>";
+            if($debugMode){
+                echo "<pre>";
                 print_r($haveOptions);
-            echo "</pre>"; 
+                echo "</pre>"; 
+            }
             
             $answerOptionsId = null;
 
@@ -322,8 +331,12 @@ class ncaQuestion{
 
                 }
             }
-            echo "<br>---------------------------------------------------------------------------------<br>";
-            echo '</div>';
+
+            if($debugMode){
+                echo "<br>---------------------------------------------------------------------------------<br>";
+                echo '</div>';
+            }
+         
 
             #handle image upload
             
@@ -340,6 +353,11 @@ class ncaQuestion{
         // }else{
         //     echo '<script charset="" language="javascript">alert("บันทึกไม่สำเร็จ"); window.close()";</script>';
         // }
+        echo '
+                <script charset="utf-8" language="javascript">
+                     window.location.href = "../view/v_submitted.php?result=1";
+                </script>
+             ';
 }
 
     public function insertImageToAttachments($go_ncadb,$answerId,$answerDt,$questionId,$questionDt,$optionId,$attachmentData,$answer_userId)
@@ -369,7 +387,7 @@ class ncaQuestion{
                 $result = $go_ncadb->ncaexec($query, "question");
                 if(!$result){
                     $go_ncadb->ncarollback("question");
-                    echo "ERROR while executing image uploading";
+                    // echo "ERROR while executing image uploading";
                     exit();
                 }
             }
@@ -536,6 +554,4 @@ class ncaQuestion{
             "files" => $successfulUploads
         );
     }
-    
-    
 }
