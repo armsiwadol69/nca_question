@@ -16,11 +16,12 @@ require_once ("../class/class.renderView.php");
 
 $go_ncadb = new ncadb();
 
-$_GET['id'] = "114";
+#there is no form ref for bus now so use fix id instead;
+// $_GET['formId'] = "109";
 
-$ncaquestion = new questionview($_GET['id']);
+$ncaquestion = new questionview($_GET['formId']);
 
-if($_GET['id']){
+if($_GET['formId']){
     $questioninfo = array();
     $questioninfo = $ncaquestion->getDataQuestion();
     $arr_parent = array();
@@ -80,7 +81,7 @@ function arrayToInputsBootstrap($array) {
     <style>
     body {
         /* overflow: hidden; */
-        background-color: whitesmoke;
+        background: white !important;
     }
 
     .list-group-item {
@@ -114,7 +115,7 @@ function arrayToInputsBootstrap($array) {
         </div>
         <div class="row">
             <div class="col-12">
-                <form action="../class/apiQuestion.php?method=saveAnswer" method="POST" id="mForm" enctype="multipart/form-data">
+                <form class="needs-validation" action="../class/apiQuestion.php?method=saveAnswer" method="POST" id="mForm" enctype="multipart/form-data">
                     <div class="row mb-5">
                     <div class="col-12">
                         <div class="collapse" id="showGet">
@@ -122,14 +123,32 @@ function arrayToInputsBootstrap($array) {
                             <?php echo arrayToInputsBootstrap($_GET);?>
                             </div>
                         </div>
-                        <button class="btn btn-sm w-100 btn-info my-2" type="button" data-bs-toggle="collapse" data-bs-target="#showGet" aria-expanded="false" aria-controls="showGet">แสดงข้อมูลรถ</button>
+                        <button class="btn btn-sm w-100 btn-info my-2" type="button" hidden data-bs-toggle="collapse" data-bs-target="#showGet" aria-expanded="false" aria-controls="showGet">แสดงข้อมูลรถ</button>
                     </div>
-                        
+                    <div class="col-12 text-center">
+                            <?
+                                if(isset($_GET["busnumber"])){
+                                    echo "เบอร์รถ : ".$_GET["busnumber"];
+                                }
+                                echo "<br>";
+                                if(isset($_GET["busline"])){
+                                    echo "สายรถ : ".$_GET["busline"]."-".$_GET["buslinetype"];
+                                }
+                                echo "<br>";
+                                if(isset($_GET["queueRouteName"])){
+                                    echo "เส้นทาง : ".$_GET["queueRouteName"];
+                                }
+                                echo "<br>";
+                                if(isset($_GET["queuedtdate"])){
+                                    echo "เที่ยวเวลา : ".$_GET["queuedtime"]." ".$_GET["queuedtdate"];
+                                }
+                            ?>
+                    </div>
                     </div>
                     <? echo $htmlQuestion; ?>
                     <input type="hidden" name="id" id="id" value="<?echo $formId?>"/>
                     <button type="submit" class="btn btn-primary w-100 mb-3">บันทึกข้อมูล</button>
-                    <button type="button" class="btn btn-primary w-100" onclick="logFormData('mForm');submitForm();">logFormData</button>
+                    <!-- <button type="button" class="btn btn-primary w-100" onclick="logFormData('mForm');submitForm();">logFormData</button> -->
                 </form>
             </div>
         </div>
@@ -200,7 +219,7 @@ function arrayToInputsBootstrap($array) {
 
             if(groupOfAnswerBox.length == "2" && groupOfAnswerBox.length == "2"){
                 groupOfHeading4 = parentElement.find('h4').first();
-                groupOfAnswerBox = parentElement.find('.answerBox').first();;
+                groupOfAnswerBox = parentElement.find('.answerBox').first();
             }
 
             if (isCheckedOrNotEmpty) {
@@ -212,7 +231,9 @@ function arrayToInputsBootstrap($array) {
                     $(this).removeAttr('hidden');
                 })
                 groupOfAnswerBox.each(function(){
+                    $(this).removeAttr('hidden');
                     $(this).removeAttr('required');
+                    $(this).find('input[type^="text"], input[type^="number"], input[type^="date"]').prop('required','true');
                 })
 
                 imageUploadInput.removeAttr('hidden');
