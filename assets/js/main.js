@@ -28,15 +28,19 @@ function fireSwalOnSubmit() {
 	});
 }
 
-$(function () {
-    // handleScriptLoad();
- 	// checkCURD();
-});
-
 async function fireSwalOnError(msg, error) {
 	Swal.fire({
 		icon: "error",
 		title: "บันทึกข้อมูลไม่สำเร็จ",
+		html: msg,
+		footer: error,
+		showConfirmButton: true,
+	});
+}
+async function fireSwalOnErrorCustom(title,msg, error) {
+	Swal.fire({
+		icon: "error",
+		title: title,
 		html: msg,
 		footer: error,
 		showConfirmButton: true,
