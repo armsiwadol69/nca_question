@@ -2,11 +2,10 @@
 include_once 'v_head.php';
 include_once 'v_sidebar_start.php';
 require_once ("../class/class.question.php");
+ini_set('memory_limit', '2048M');
 
 $go_ncadb = new ncadb();
-
 $ncaquestion = new question($_GET['id']);
-
 
 if($_GET['id']){
     $questioninfo = array();
@@ -23,21 +22,18 @@ if($_GET['id']){
 
 }
 
-$arrInput = array (
-    "radio"    => "generateRadio",
-    "text"     => "generatetext",
-    "number"   => "generatenumber",
-    "date"     => "generatedate",
-    "checkbox" => "generatecheckbox",
-);
-
-$sqlOptionType = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
+/* $sqlOptionType = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
 $arr_OptionType = $go_ncadb->ncaretrieve($sqlOptionType, "question");
-$arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType);
+$arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType); */
+
+$sqlbusrecord = "SELECT busrecord, busrecord_number FROM busrecord WHERE busrecord_active = 1 ORDER BY busrecord_number";
+$qbusrecord= $go_ncadb->ncaretrieve($sqlbusrecord, "icms");
+$fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
 
 ?>
 
-<form class="needs-validation" action="../phpfunc/curd.php?mode=addQuestion" enctype="multipart/form-data" method="POST" id="frm" novalidate>
+<!-- <form class="needs-validation" action="../phpfunc/curd.php?mode=addQuestion" enctype="multipart/form-data" method="POST" id="frm_submiะ" novalidate> -->
+<form class="needs-validation" action="" enctype="multipart/form-data" method="POST" id="frm_submit" novalidate>
 
     <div class="row">
 
@@ -60,7 +56,7 @@ $arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType);
 
                         </div>
 
-                        <div class="col-lg-12 col-md-12">
+                        <div class="col-lg-12 col-md-12 mt-2">
 
                             <div class="col-lg-12 col-md-12">
 
@@ -68,8 +64,26 @@ $arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType);
                                 <input type="text" id="par_qname" name="par_qname" class="form-control" required value="<?php echo $questioninfo[0]['question_name']; ?>">
 
                             </div>
+                            <div class="col-lg-12 col-md-12 mt-2">
 
-                            <div class="col-lg-12">
+                                <label for="par_qname" class="form-label">รถ<span class="text-danger">*</span></label>
+                                <select class="form-select" name="bus_ref[]" id="multiple-select-field" data-placeholder="เลือกรถ" multiple required>
+
+                                    <?php 
+                                        $arr_busrecord = explode(",",$questioninfo[0]['question_busrecord']);
+                                        foreach ($fbusrecord as $key => $value) {
+                                            $selected = "";
+                                            if(in_array($value['busrecord'],$arr_busrecord)){
+                                                $selected = "selected";
+                                            }
+                                            echo '<option value="'.$value['busrecord'].'" data-att-ref="'.$value['busrecord_number'].'" '.$selected.'> '.$value['busrecord_number'].' </option>';
+                                        }
+                                    ?>
+                                </select>
+
+                            </div>
+
+                            <div class="col-lg-12 mt-2">
 
                                 <label for="par_qdatail" class="form-label">รายละเอียด<span class="text-danger">*</span></label>
                                 <textarea class="form-control" id="par_qdatail" name="par_qdatail" rows="5" required><?php echo $questioninfo[0]['question_detail']; ?></textarea>
@@ -136,9 +150,10 @@ $arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType);
 
         <div class="col-lg-6 col-md-12">
             <input type="hidden"  class="form-control" name="questioninfoid" id="questioninfoid" value="<?php echo $_GET['id']; ?>">
+            <input type="hidden"  class="form-control" name="mode" id="addQuestion" value="addQuestion">
             <input type="hidden"  class="form-control" name="par_userId" id="par_userId" value="<?php echo $_SESSION['userData']['stf']; ?>">
             <input type="hidden"  class="form-control" name="par_usernm" id="par_usernm" value="<?php echo $_SESSION['userData']['userdspms']; ?>">
-            <button type="submit" class="btn btn-primary w-100 mt-5"><i class="bi bi-save"></i> บันทึกข้อมูล </button>
+            <button type="button" class="btn btn-primary w-100 mt-5" onclick="submitFrom()"><i class="bi bi-save"></i> บันทึกข้อมูล </button>
         </div>
 
         <div class="col-lg-6 col-md-12">
@@ -166,6 +181,50 @@ $arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType);
                             <div class="col-12">
                                 <label class="form-label" for="option">คำถาม<span class="text-danger">*</span></label>
                                 <input class="form-control" type="text" name="optiontquestion" id="optiontquestion" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="option">เลือกรถ<span class="text-danger">*</span></label>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                    data-mdb-toggle="dropdown" aria-expanded="false">
+                                    Checkbox dropdown
+                                    </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="Checkme1" />
+                                                <label class="form-check-label" for="Checkme1">Check me</label>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="Checkme2" checked />
+                                                <label class="form-check-label" for="Checkme2">Check me</label>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="Checkme3" />
+                                                <label class="form-check-label" for="Checkme3">Check me</label>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="Checkme4" checked />
+                                                <label class="form-check-label" for="Checkme4">Check me</label>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                             </div>
 
                             <div class="col-12">
@@ -318,7 +377,7 @@ include_once 'v_footer.php';
     
     });
 
-    (function() {
+    /* (function() {
         'use strict'
         // Fetch all the forms we want to apply custom Bootstrap validation styles to
         var forms = document.querySelectorAll('.needs-validation')
@@ -338,7 +397,7 @@ include_once 'v_footer.php';
                     form.classList.add('was-validated')
                 }, false)
             })
-    })()
+    })() */
 
     function createGroupquestion(data){
 
@@ -505,12 +564,76 @@ include_once 'v_footer.php';
         $('.question').each(function () {
             var hue = 'rgb(' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ')';
             $(this).css("background-color", hue);
+        });
+
+        $( '#multiple-select-field' ).select2( {
+            theme: "bootstrap-5",
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+        } );
+
+        
+    });
+
+    function submitFrom(){
+
+        let validate = validateForm();
+        console.log(validate);
+
+        if(validate == true){
+            var form = $("#frm_submit");
+            var actionUrl = "../phpfunc/curd.php";
+            
+            $.ajax({
+                type: "POST",
+                url: actionUrl,
+                data: form.serialize(), // serializes the form's elements.
+                dataType: "JSON",
+                beforeSend: function(){
+                    fireSwalOnSubmit();
+                },
+                success: function(obj)
+                {
+                    
+                    var res = obj.data;
+                    console.log(res);
+                    if(res.success > 0){
+                        alertSwalSuccess();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                        // swal.close()
+                        // alertSwalSuccess();
+                    }else{
+                        fireSwalOnError("บันทึกข้อมูลไม่สำเร็จ <br>"+res.sql);
+                    }
+                }
+            });
+
+        }else{
+            fireSwalOnError("กรุณาใส่ข้อมูลให้ครบ ด้วยค่ะ");
+        }  
+
+    }
+
+    function validateForm(){
+        var forms = document.querySelectorAll('.needs-validation');
+        var validate = ""
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            console.log("form",form);
+            console.log("form checkValidity",form.checkValidity());
+            validate = form.checkValidity();
             
         });
-    });
+
+        return validate;
+        
+    }
 
 </script>
 <style>
+
     .list-group-item {
         background-color: unset;
     }
@@ -521,4 +644,9 @@ include_once 'v_footer.php';
         /* background-color: #D5D6EE; */
         background-color: #FFFFFF;
     }
+
+    .select2-container--bootstrap-5 .select2-dropdown .select2-results__options:not(.select2-results__options--nested) {
+        max-height: 23rem !important;
+    }
+
 </style>

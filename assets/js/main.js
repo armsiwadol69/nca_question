@@ -1123,12 +1123,28 @@ function setMaxDate() {
 	document.getElementById("par_startdate").min = maxDate;
 }
 
-function alertSwal(){
-	Swal.fire({
+function alertSwalSuccess(text=""){
+	/* Swal.fire({
 		icon: "success",
 		text: "บันทึกสำเร็จ",
 		timer: 200,
 		showConfirmButton: false,
 		showCloseButton: false,
-	})
+	}) */
+	if(text != ""){
+		swtext = text;
+		
+	}else{
+		swtext = "บันทึกข้อมูลสำเร็จ";
+	}
+	Swal.fire({
+		icon: "success",
+		text: swtext,
+		showConfirmButton: false,
+		showCloseButton: false,
+	}).then(() => {
+		/* setTimeout(() => {
+
+		}, 500); */
+	});
 }

@@ -1,6 +1,4 @@
 <?php
-// header('Content-Type: text/html; charset=utf-8');
-
 class question
 {
     public $id;
@@ -70,26 +68,13 @@ class question
 
         }
     
-    }
+    } 
 
     function addNewQuestion($info,$maindata,$alldata)
     {
         global $go_ncadb;
         $datetime = date('Y-m-d H:i:s');
-
-        /* 
-            echo "<pre>";
-            echo "addNewQuestion---------Start Prepare data--------<br>";
-            echo "---------info--------<br>";
-            print_r($info);
-            echo "---------maindata--------<br>";
-            print_r($maindata);
-            
-            echo "<pre>";
-            echo "---------alldata--------<br>";
-            print_r($alldata);
-            die("//////////////////"); 
-        */
+        $data = array();
 
         $sqlInsertQuestion = new SqlBuilder();
         $sqlInsertQuestion->SetTableName("tb_question");
@@ -99,6 +84,8 @@ class question
         $sqlObj = null;
         $sqlObj[$ii++] = new TField("question_name", iconv('utf-8', 'tis-620', $info['par_qname']), "string");
         $sqlObj[$ii++] = new TField("question_detail", iconv('utf-8', 'tis-620', $info['par_qdatail']), "string");
+        $sqlObj[$ii++] = new TField("question_busrecord", iconv('utf-8', 'tis-620', $info['bus_ref']), "string");
+        $sqlObj[$ii++] = new TField("question_busrecordnumber", iconv('utf-8', 'tis-620', $info['bus_number']), "string");
         $sqlObj[$ii++] = new TField("question_active", '1', "string");
         
         
@@ -121,7 +108,6 @@ class question
 
         }
 
-        // die("query => ".$queryQuestion);
         if ($go_ncadb->ncaexec($queryQuestion, "question")) {
             if($info['par_questioninfoid']){
                 $questionId = $info['par_questioninfoid'];
@@ -129,19 +115,17 @@ class question
                 $questionId = $go_ncadb->ncaGetInsId("question");
             }
 
-            // die("questionId".$questionId);
-            // $firstStep = true;
         } else {
             $go_ncadb->ncarollback("question");
-            echo '<script>sessionStorage.setItem("curdStatus",0);window.location.href = "../view/list_question.php"</script>';
-            exit(0);
+            $data['fail'] = 1;
+            $data['sql'] = $queryQuestion;
+            return $data;
         }
 
         $array_insert  = array();
         $index = 1;
         foreach ($alldata as $key => $value) {
 
-            // $type = $this->getDataFromTable("questiontype","tb_questiontype","questiontype_name",$value['mainoptiontype']);
             $sqlInsertQuestiondt = new SqlBuilder();
             $sqlInsertQuestiondt->SetTableName("tb_questiondt");
             $ii = 0;
@@ -189,15 +173,16 @@ class question
                 }else{
                     $array_insert['datadt'][$key] = $questionIddt;
                 }
-                $firstStep = true;
+
             } else {
                 $go_ncadb->ncarollback("question");
-                echo '<script>sessionStorage.setItem("curdStatus",0);window.location.href = "../view/list_question.php"</script>';
-                exit(0);
+                $data['fail'] = 1;
+                $data['sql'] = $queryQuestiondt;
+                return $data;
             }
 
             foreach ($value['dataoption'] as $key2 => $value2) {
-                # code...2
+
                 $order = ($key2+1);
                 $sqlInsertQuestionoption = new SqlBuilder();
                 $sqlInsertQuestionoption->SetTableName("tb_questionoption");
@@ -231,13 +216,13 @@ class question
                 }
                     
                 if ($go_ncadb->ncaexec($queryQuestionoption, "question")) {
-                    // $insertIdReward = $go_ncadb->ncaGetInsId("otsdev");
                     $questionIdoption = $go_ncadb->ncaGetInsId("question");
-                    $firstStep = true;
+
                 } else {
                     $go_ncadb->ncarollback("question");
-                    echo '<script>sessionStorage.setItem("curdStatus",0);window.location.href = "../view/list_question.php"</script>';
-                    exit(0);
+                    $data['fail'] = 1;
+                    $data['sql'] = $queryQuestionoption;
+                    return $data;
                 }
 
             }
@@ -249,8 +234,7 @@ class question
         $result_diff = array_diff($info['oldquestion'], $info['questionid']);
         if($result_diff){
             foreach ($result_diff as $key3 => $value3) {
-                # code...
-            
+
                 $sqlInsertQuestiondt = new SqlBuilder();
                 $sqlInsertQuestiondt->SetTableName("tb_questiondt");
                 $ii = 0;
@@ -266,15 +250,21 @@ class question
 
                 if (!$go_ncadb->ncaexec($queryQuestiondtDel, "question")) {
                     $go_ncadb->ncarollback("question");
-                    echo '<script>sessionStorage.setItem("curdStatus",0);window.location.href = "../view/list_question.php"</script>';
-                    exit(0);
+                    $data['fail'] = 1;
+                    $data['sql'] = $queryQuestionoption;
+                    return $data;
                 }
             }
         }
 
-        // echo '<script charset="" language="javascript">alert("'.iconv( 'UTF-8', 'TIS-620', "บันทึกสำเร็จ").'"); window.location.href = "../view/list_question.php";</script>';
-        echo '<script charset="" language="javascript">alert("'.iconv( 'UTF-8', 'TIS-620', "บันทึกสำเร็จ").'"); window.location.href = "../view/addquestion.php?id='.$questionId.'";</script>';
-        // echo '<script charset="" language="javascript">alert("'.iconv( 'UTF-8', 'TIS-620', "บันทึกสำเร็จ").'"); </script>';
+        if($data['fail'] > 0){
+            return $data;
+        }else{
+            $data['success'] = 1;
+            $data['sql'] = "";
+
+            return $data;
+        }
 
     }
 
