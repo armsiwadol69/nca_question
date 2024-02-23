@@ -116,6 +116,8 @@ class ncaQuestion{
         global $go_ncadb;
         global $question;
         global $debugMode;
+
+        $datetime = date('Y-m-d H:i:s');
        
         if($debugMode){
             echo "<pre>";
@@ -149,6 +151,7 @@ class ncaQuestion{
                 $sqlBuild[$i++] = new TField("answer_status", '1', "string");
                 $sqlBuild[$i++] = new TField("answer_active", '1', "string");
                 $sqlBuild[$i++] = new TField("answer_recspid", $answer_userId, "string");
+                $sqlBuild[$i++] = new TField("answer_recdatetime", $datetime, "string");
 
                 $InsertSqlBuilder->setField($sqlBuild);
 
@@ -262,6 +265,8 @@ class ncaQuestion{
                 $sqlBuild[$i++] = new TField("answerdt_order", $questionOrder , "string");
                 $sqlBuild[$i++] = new TField("answerdt_recspid", $answer_userId , "string");
                 $sqlBuild[$i++] = new TField("answerdt_questiondtorder", $questionOrder , "string");
+                $sqlBuild[$i++] = new TField("answerdt_questiondtorder", $questionOrder , "string");
+                $sqlBuild[$i++] = new TField("answerdt_recdatetime", $datetime , "string");
                 #VALUE
                 $sqlBuild[$i++] = new TField("answerdt_value", iconv("utf-8","tis-620", $answerOptionsId) ,"string");
                 $InsertSqlBuilder->setField($sqlBuild);
@@ -269,7 +274,7 @@ class ncaQuestion{
                 $insertAnswerIdType1 = $go_ncadb->ncaGetInsId("question"); 
                 $branchSqlInsert[] = $query.";";
 
-                $this->insertImageToAttachments($go_ncadb,$insert_id,$insertAnswerIdType1,$g_qusetionId,$questionDt,$optionId,$attachmentArray,$answer_userId);
+                $this->insertImageToAttachments($go_ncadb,$insert_id,$insertAnswerIdType1,$g_qusetionId,$questionDt,$optionId,$attachmentArray,$answer_userId,$datetime);
 
             }else if($questionType == "4"){
                 #GET OPTION's Array Data
@@ -288,6 +293,7 @@ class ncaQuestion{
                     $sqlBuild[$i++] = new TField("answerdt_optionid", $answerValue["questionoption"] , "string");
                     $sqlBuild[$i++] = new TField("answerdt_recspid", $answer_userId , "string");
                     $sqlBuild[$i++] = new TField("answerdt_order", $answerValue["questionoption_order"] , "string");
+                    $sqlBuild[$i++] = new TField("answerdt_recdatetime", $datetime , "string");
                     // echo "<pre style='margin-left:10rem'>";
                     // print_r($answerValue);
                     // echo "</pre>";
@@ -295,7 +301,7 @@ class ncaQuestion{
                     $query = $InsertSqlBuilder->InsertSql();
                     $go_ncadb->ncaexec($query, "question");
                     $insertAnswerIdType4 = $go_ncadb->ncaGetInsId("question");
-                    $this->insertImageToAttachments($go_ncadb,$insert_id,$insertAnswerIdType4,$g_qusetionId,$questionDt,$answerValue["questionoption"],$attachmentArray,$answer_userId);
+                    $this->insertImageToAttachments($go_ncadb,$insert_id,$insertAnswerIdType4,$g_qusetionId,$questionDt,$answerValue["questionoption"],$attachmentArray,$answer_userId,$datetime);
                 }
 
                 
@@ -317,7 +323,7 @@ class ncaQuestion{
                         $sqlBuild[$i++] = new TField("answerdt_recspid", $answer_userId , "string");
                         $sqlBuild[$i++] = new TField("answerdt_value", $answerValue["questionoption_value"] ,"string");
                         $sqlBuild[$i++] = new TField("answerdt_optionid", $answerValue["questionoption"] , "string");
-                        $sqlBuild[$i++] = new TField("answerdt_order", $answerValue["questionoption_order"] , "string");
+                        $sqlBuild[$i++] = new TField("answerdt_recdatetime", $datetime , "string");
                         // echo "<pre style='margin-left:10rem'>";
                         // print_r($answerValue);
                         // echo "</pre>";
@@ -325,7 +331,7 @@ class ncaQuestion{
                         $query = $InsertSqlBuilder->InsertSql();
                         $go_ncadb->ncaexec($query, "question");
                         $insertAnswerIdType5 = $go_ncadb->ncaGetInsId("question");
-                        $this->insertImageToAttachments($go_ncadb,$insert_id,$insertAnswerIdType5,$g_qusetionId,$questionDt,$answerValue["questionoption"],$attachmentArray,$answer_userId);
+                        $this->insertImageToAttachments($go_ncadb,$insert_id,$insertAnswerIdType5,$g_qusetionId,$questionDt,$answerValue["questionoption"],$attachmentArray,$answer_userId,$datetime);
                         // $branchSqlInsert[] = $query.";";
                     }
 
@@ -360,7 +366,7 @@ class ncaQuestion{
              ';
 }
 
-    public function insertImageToAttachments($go_ncadb,$answerId,$answerDt,$questionId,$questionDt,$optionId,$attachmentData,$answer_userId)
+    public function insertImageToAttachments($go_ncadb,$answerId,$answerDt,$questionId,$questionDt,$optionId,$attachmentData,$answer_userId,$datetime)
     {   
         // echo "<pre>insertImageToAttachments"."<br>";
         // echo $optionId;
@@ -382,6 +388,7 @@ class ncaQuestion{
                 $sqlBuild[$i++] = new TField("answerattachment_name", $attachmentDataValue["filename"], "string");
                 $sqlBuild[$i++] = new TField("answerattachment_path", $attachmentDataValue["path"], "string");
                 $sqlBuild[$i++] = new TField("answerattachment_recspid", $answer_userId, "string");      
+                $sqlBuild[$i++] = new TField("answerattachment_recdatetime", $datetime, "string");      
                 $InsertSqlBuilder->setField($sqlBuild);
                 $query = $InsertSqlBuilder->InsertSql();
                 $result = $go_ncadb->ncaexec($query, "question");
