@@ -262,6 +262,7 @@ class question
         }else{
             $data['success'] = 1;
             $data['sql'] = "";
+            $data['questioninfoid'] = $questionId;
 
             return $data;
         }

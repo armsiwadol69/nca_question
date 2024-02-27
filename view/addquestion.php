@@ -7,6 +7,21 @@ ini_set('memory_limit', '2048M');
 $go_ncadb = new ncadb();
 $ncaquestion = new question($_GET['id']);
 
+
+if (isset($_SERVER['HTTPS']) &&
+    ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
+    isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
+    $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+  $protocol = 'https://';
+}
+else {
+  $protocol = 'http://';
+}
+
+$url_addlink = $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+// echo $_SERVER['HTTP_HOST'];
+// echo $protocol.$url_addlink;
+
 if($_GET['id']){
     $questioninfo = array();
     $questioninfo = $ncaquestion->getDataQuestion();
@@ -431,7 +446,7 @@ include_once 'v_footer.php';
                 inp += ` คะเเนน : <input class="form-control-custom col-lg-1" type="number" name="optionvalue`+name+`[]" id="optionvalue`+name+index+`" required="">`;
             }
 
-            inp += `<label class="form-check-label" for="questionoption_images_`+name+`">`;
+            inp += `<label class="form-check-label" for="questionoption_images_`+optionname+`">`;
             inp += `&nbsp;ต้องการให้เเนบรูปหรือไม่ :&nbsp;`;
             inp += `</label>`;
             inp += `<input class="form-check-input" type="checkbox" style="vertical-align: middle;" value="1" id="questionoption_images_`+optionname+`" name="questionoption_images[`+name+`][`+optionname+`]">`;
@@ -517,6 +532,7 @@ include_once 'v_footer.php';
         if(validate == true){
             var form = $("#frm_submit");
             var actionUrl = "../phpfunc/curd.php";
+            let questioninfoid = $("#questioninfoid").val();
             
             $.ajax({
                 type: "POST",
@@ -533,9 +549,17 @@ include_once 'v_footer.php';
                     console.log(res);
                     if(res.success > 0){
                         alertSwalSuccess();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
+                        if(questioninfoid > 0){
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        }else{
+                            setTimeout(() => {
+                                let url_replace = "<?php echo $url_addlink;?>?id="+res.questioninfoid;
+                                window.location.replace(url_replace);
+                            }, 1000);
+                        }
+                            
                         // swal.close()
                         // alertSwalSuccess();
                     }else{
