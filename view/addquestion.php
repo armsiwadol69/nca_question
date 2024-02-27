@@ -22,9 +22,9 @@ if($_GET['id']){
 
 }
 
-/* $sqlOptionType = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
+$sqlOptionType = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
 $arr_OptionType = $go_ncadb->ncaretrieve($sqlOptionType, "question");
-$arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType); */
+$arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType);
 
 $sqlbusrecord = "SELECT busrecord, busrecord_number FROM busrecord WHERE busrecord_active = 1 ORDER BY busrecord_number";
 $qbusrecord= $go_ncadb->ncaretrieve($sqlbusrecord, "icms");
@@ -76,7 +76,7 @@ $fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
                                             if(in_array($value['busrecord'],$arr_busrecord)){
                                                 $selected = "selected";
                                             }
-                                            echo '<option value="'.$value['busrecord'].'" data-att-ref="'.$value['busrecord_number'].'" '.$selected.'> '.$value['busrecord_number'].' </option>';
+                                            echo '<option value="'.$value['busrecord'].'" '.$selected.'> '.$value['busrecord_number'].' </option>';
                                         }
                                     ?>
                                 </select>
@@ -169,7 +169,7 @@ $fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5">สร้างคำตอบ</h1>
+                    <h1 class="modal-title fs-5">สร้างคำถาม</h1>
                     <span class="btn-close" data-bs-dismiss="modal" aria-label="Close"></span>
                 </div>
                 <div class="modal-body">
@@ -181,50 +181,6 @@ $fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
                             <div class="col-12">
                                 <label class="form-label" for="option">คำถาม<span class="text-danger">*</span></label>
                                 <input class="form-control" type="text" name="optiontquestion" id="optiontquestion" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label" for="option">เลือกรถ<span class="text-danger">*</span></label>
-                                <div class="dropdown">
-                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
-                                    data-mdb-toggle="dropdown" aria-expanded="false">
-                                    Checkbox dropdown
-                                    </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="Checkme1" />
-                                                <label class="form-check-label" for="Checkme1">Check me</label>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="Checkme2" checked />
-                                                <label class="form-check-label" for="Checkme2">Check me</label>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="Checkme3" />
-                                                <label class="form-check-label" for="Checkme3">Check me</label>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider" /></li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="Checkme4" checked />
-                                                <label class="form-check-label" for="Checkme4">Check me</label>
-                                            </div>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
                             </div>
 
                             <div class="col-12">
@@ -278,7 +234,6 @@ include_once 'v_footer.php';
 
 
     var arr_OptionType = <?php echo json_encode($arr_OptionType); ?>;
-    // console.log("arr_OptionType",arr_OptionType);
 
     $(function() {
         
@@ -298,9 +253,6 @@ include_once 'v_footer.php';
         });
         
         handleScriptLoad();
-
-        // intiCreatePanle();
-        // initSortable();
 
         $("#optiontype").change(function(){
             if($(this).val()  < 4){
@@ -335,10 +287,17 @@ include_once 'v_footer.php';
             data['qafter']          = $("#qafter").val();
             data['qafteroption']    = $("#qafteroption").val();
 
+            if(optiontype > 3 ){
+                if(optiontnumber == "" || optiontnumber == 0){
+                    fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุจำนวน ด้วยค่ะ");
+                    return false;
+                }
+            } 
+
             let html = '';
             if(qmode == 'question'){
                 html = generateInput(data);
-                console.log("------optiontqname------"+optiontqname);
+
                 if(optiontqname){
                     if(qtype == "after"){
                         $("."+optiontqname).append(html);
@@ -372,32 +331,22 @@ include_once 'v_footer.php';
             }
 
             initSortable();
-            // clearModal();
+
         })
-    
+
+        $('.question').each(function () {
+            var hue = 'rgb(' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ')';
+            $(this).css("background-color", hue);
+        });
+
+        $( '#multiple-select-field' ).select2( {
+            theme: "bootstrap-5",
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+        } );
+
     });
-
-    /* (function() {
-        'use strict'
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        var forms = document.querySelectorAll('.needs-validation')
-        // Loop over them and prevent submission
-        Array.prototype.slice.call(forms)
-            .forEach(function(form) {
-                // console.log("form",form);
-                form.addEventListener('submit', function(event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                        alert("กรุณาใส่ข้อมูลให้ครบ ด้วยค่ะ");
-                    } else {
-                        fireSwalOnSubmit();
-                    }
-
-                    form.classList.add('was-validated')
-                }, false)
-            })
-    })() */
 
     function createGroupquestion(data){
 
@@ -423,7 +372,7 @@ include_once 'v_footer.php';
     }
 
     function generateInput(data) {
-        // console.log("generateInput",data);
+
         let type    = data['optiontype'];
         let opques  = data['optiontquestion'];
         let number  = data['optiontnumber'];
@@ -560,22 +509,6 @@ include_once 'v_footer.php';
         $("#qafteroption").val('');
     }
 
-    $(document).ready(function() {
-        $('.question').each(function () {
-            var hue = 'rgb(' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ')';
-            $(this).css("background-color", hue);
-        });
-
-        $( '#multiple-select-field' ).select2( {
-            theme: "bootstrap-5",
-            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-            placeholder: $( this ).data( 'placeholder' ),
-            closeOnSelect: false,
-        } );
-
-        
-    });
-
     function submitFrom(){
 
         let validate = validateForm();
@@ -624,6 +557,11 @@ include_once 'v_footer.php';
             console.log("form",form);
             console.log("form checkValidity",form.checkValidity());
             validate = form.checkValidity();
+            if(validate == false){
+                $("input:invalid").css("border","1px solid red");
+                $("select:invalid").css("border","1px solid red");
+                $("textarea:invalid").css("border","1px solid red");
+            }
             
         });
 
@@ -649,4 +587,11 @@ include_once 'v_footer.php';
         max-height: 23rem !important;
     }
 
+    /* input:invalid, 
+    select:invalid,
+    textarea:invalid
+    {
+        color: red;
+        border-color: red;
+    } */
 </style>
