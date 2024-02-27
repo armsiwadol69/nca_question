@@ -493,7 +493,7 @@ class question
                             .(
                                 count($dataP) > 0 
                                 ? '' 
-                                : '<span class="btn btn-primary ms-3" id="addquestionquestion'.$value['questionoption_questiondt'].$key.'" style onclick="setQuestionmodal(`question`,`af`,`questionquestion'.$value['questionoption_questiondt'].$key.'`,`'.$value['questionoption_questiondt'].'` ,`option'.$dataParent['questiondt'].'`);" >
+                                : '<span class="btn btn-primary ms-3" id="addquestionquestion'.$value['questionoption_questiondt'].$key.'" style onclick="setQuestionmodal(`question`,`af`,`questionquestion'.$value['questionoption_questiondt'].$key.'`,`'.$value['questionoption_questiondt'].'` ,`option'.$dataParent['questiondt'].$key.'`);" >
                                     สร้างคำถาม<!--หลังจากคำตอบนี้--></span>
                                 ' ).'
                         </div>';
