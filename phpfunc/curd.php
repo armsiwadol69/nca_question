@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(0);
 date_default_timezone_set("Asia/Bangkok");
 session_start();
 $gb_notlogin = true;
