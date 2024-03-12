@@ -18,8 +18,10 @@ else {
 }
 
 $url_addlink = $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-// echo $_SERVER['HTTP_HOST'];
-// echo $protocol.$url_addlink;
+if( strpos($url_addlink, "?id") !== false){
+    $cuturl = explode("?id",$url_addlink);
+    $url_addlink = $cuturl[0];
+}
 
 if($_GET['id']){
     $questioninfo = array();
@@ -628,17 +630,24 @@ include_once 'v_footer.php';
                     console.log(res);
                     if(res.success > 0){
                         alertSwalSuccess();
-                        if(questioninfoid > 0){
+                        if(res.questioninfoid > 0){
                             setTimeout(() => {
-                                location.reload();
-                            }, 1000);
+                                    let url_replace = "<?php echo $url_addlink;?>?id="+res.questioninfoid;
+                                    window.location.replace(url_replace);
+                                }, 1000);
                         }else{
-                            setTimeout(() => {
-                                let url_replace = "<?php echo $url_addlink;?>?id="+res.questioninfoid;
-                                window.location.replace(url_replace);
-                            }, 1000);
+                            if(questioninfoid > 0){
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            }else{
+                                
+                                setTimeout(() => {
+                                    let url_replace = "<?php echo $url_addlink;?>?id="+res.questioninfoid;
+                                    window.location.replace(url_replace);
+                                }, 1000);
+                            }
                         }
-                            
                         // swal.close()
                         // alertSwalSuccess();
                     }else{
