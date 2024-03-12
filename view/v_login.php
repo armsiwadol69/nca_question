@@ -40,7 +40,7 @@
             <div class="card-body">
                 <div class="w-100 text-center">
                     <img src="../assets/images/logo.png" alt="ncaLogo">
-                    <p class="mt-1">Reward System</p>
+                    <p class="mt-1">Question&Answer System</p>
                     <hr>
                 </div>
                 <form class="text-start" method="post" action="../phpfunc/auth.php">

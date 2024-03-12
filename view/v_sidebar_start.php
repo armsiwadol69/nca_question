@@ -8,7 +8,7 @@
             <a class="navbar-brand" href="list_question.php">
                 <img src="../assets/images/logo.png" class="ms-3 mt-2 w-75">
             </a>
-            <p class="text-primary mt-2">Question system</p>
+            <p class="text-primary mt-2">Q&A system</p>
         </div>
 
         <div class="list-group list-group-flush d-flex">

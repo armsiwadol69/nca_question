@@ -113,6 +113,9 @@ let itemListTable;
 let giftHistoryTalbe;
 let categoryTalbe;
 
+let getUrl = document.URL;
+let linkUrl = getUrl.replace("list_question", "v_answerForm");
+
 async function initListTable() {
 	rewardListTable = $("#rewardListTable").DataTable({
 		stateSave: false,
@@ -141,6 +144,24 @@ async function initListTable() {
 				},
 			},
 			{
+				data: "question_compfuncname",
+				render: function (data, type, row, meta) {
+					return `${data}`;
+				},
+			},
+			{
+				data: "question_compfuncdepname",
+				render: function (data, type, row, meta) {
+					return `${data}`;
+				},
+			},
+			{
+				data: "question_mquestiontypename",
+				render: function (data, type, row, meta) {
+					return `${data}`;
+				},
+			},
+			{
 				data: "question_recname",
 				render: function (data, type, row, meta) {
 					return `${data}`;
@@ -164,10 +185,13 @@ async function initListTable() {
 					isDisabled = "";
 				}
 				isDisabled = "";
+
 				return `
 						<div class="btn-group" role="group">
 							<button type="button" class="btn btn-warning" onclick="callAction('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
+							<button type="button" class="btn btn-secondary" onclick="callAction('copy','${row.question}')"><i class="bi bi-pencil-square"></i> Copy</button>
 							<button type="button" class="btn btn-danger ${isDisabled}" onclick="callAction('delete','${row.question}','${row.question_name}','${row.currrent_user}')"><i class="bi bi-trash3"></i> ลบ</button>
+							<a href="`+linkUrl +`?formId=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
 						</div>
 						`;
 				},
@@ -523,6 +547,10 @@ function callAction(action, id, name, currentUserId=0) {
 	if (action == "edit") {
 
 		window.location.href = `addquestion.php?id=${id}`;
+
+	} else if (action == "copy") {
+
+		window.location.href = `addquestion.php?id=${id}&copy=1`;
 
 	} else if (action == "delete") {
 

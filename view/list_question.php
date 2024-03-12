@@ -27,6 +27,9 @@ include_once 'v_sidebar_start.php';
                             <td width="50px;">ลำดับ</td>
                             <td>ชุดคำถาม</td>
                             <td>รายละเอียด</td>
+                            <td>ฝ่าย</td>
+                            <td>แผนก</td>
+                            <td>ประเภท</td>
                             <td width="200px;">ผู้บันทึก</td>
                             <td width="150px;">วันที่บันทึก</td>
                             <td width="150px;"></td>
