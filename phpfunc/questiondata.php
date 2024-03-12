@@ -125,11 +125,26 @@ class ncaapicalling
         $result = $go_ncadb->ncaretrieve($sql, "question");
         $data = array();
         foreach ($result as $key => $value) {
-            
+
             if($value['question_recspid'] > 0){
                 $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$value['question_recspid']."' ";
                 $res = $go_ncadb->ncaretrieve($sql, "icms");
                 $value['question_recname'] = $res[0]['staff_dspnm'];
+            }
+            if($value['question_compfunc'] > 0){
+                $sqlmcompfunc = "SELECT m_compfunc_name_th FROM m_compfunc WHERE m_compfunc = '".$value['question_compfunc']."' ";
+                $arr_mcompfunc = $go_ncadb->ncaretrieve($sqlmcompfunc, "icms");
+                $value['question_compfuncname'] = $arr_mcompfunc[0]['m_compfunc_name_th'];
+            }
+            if($value['question_compfuncdep'] > 0){
+                $sqlmcompfuncdep = "SELECT m_compfuncdep_name_th FROM m_compfuncdep WHERE m_compfuncdep = '".$value['question_compfuncdep']."' ";
+                $arr_mcompfuncdep = $go_ncadb->ncaretrieve($sqlmcompfuncdep, "icms");
+                $value['question_compfuncdepname'] = $arr_mcompfuncdep[0]['m_compfuncdep_name_th'];
+            }
+            if($value['question_mquestiontype'] > 0){
+                $sqlmquestiontype = "SELECT m_questiontype_name FROM m_questiontype WHERE m_questiontype = '".$value['question_mquestiontype']."' ";
+                $arr_mquestiontype= $go_ncadb->ncaretrieve($sqlmquestiontype, "question");;
+                $value['question_mquestiontypename'] = $arr_mquestiontype[0]['m_questiontype_name'];
             }
             $value['currrent_user'] = $_SESSION['userData']['stf'];
             $data[] = $value;

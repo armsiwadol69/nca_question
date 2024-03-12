@@ -22,7 +22,10 @@ $go_ncadb = new ncadb();
 $get_username = ncaencode(ncaiconvutf8($par_username, "de"), "en");
 $get_password = ncaencode(ncaiconvutf8($par_password, "de"), "en");
 
-$sql = "SELECT * FROM usr
+$sql = "SELECT U.*,  S.staff_comp, S.staff_compfunc, S.staff_compfuncdep, S.staff_compfuncdepsec
+        FROM usr AS U 
+            LEFT JOIN staff AS S 
+                ON (S.staff=U.stf)
         WHERE usr_username = '$get_username' AND
         usr_password = '$get_password';";
 
@@ -36,6 +39,10 @@ if (!empty($user_infomation)) {
         'userdspms' => $userInfo['usr_stfdspnm'],
         'active' => $userInfo['usr_active'],
         'loginTime' => time(),
+        'staffcomp' => $userInfo['staff_comp'],
+        'staffcompfunc' => $userInfo['staff_compfunc'],
+        'staffcompfuncdep' => $userInfo['staff_compfuncdep'],
+        'staffcompfuncdepsec' => $userInfo['staff_compfuncdepsec'],
     );
 
     if ($debug) {

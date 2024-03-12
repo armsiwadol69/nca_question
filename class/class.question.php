@@ -72,9 +72,39 @@ class question
 
     function addNewQuestion($info,$maindata,$alldata)
     {
+       
         global $go_ncadb;
         $datetime = date('Y-m-d H:i:s');
         $data = array();
+
+        if($info['mquestiontypecheck'] == 1 ){
+
+            $sqlInsertMquestiontype = new SqlBuilder();
+            $sqlInsertMquestiontype->SetTableName("m_questiontype");
+            $questionId = 0;
+            $questionIddt = 0;
+            $ii = 0;
+            $sqlObj = null;
+            $sqlObj[$ii++] = new TField("m_questiontype_compfunc", iconv('utf-8', 'tis-620', $info['staffcompfunc']), "string");
+            $sqlObj[$ii++] = new TField("m_questiontype_compfuncdep", iconv('utf-8', 'tis-620', $info['staffcompfuncdep']), "string");
+            $sqlObj[$ii++] = new TField("m_questiontype_name", iconv('utf-8', 'tis-620', $info['mquestiontype_name']), "string");
+            $sqlObj[$ii++] = new TField("m_questiontype_active", '1', "string");
+            $sqlObj[$ii++] = new TField("m_questiontype_recspid", $info['par_userid'], "string");
+            $sqlObj[$ii++] = new TField("m_questiontype_recdatetime", $datetime, "string");
+
+            $sqlInsertMquestiontype->SetField($sqlObj);
+            $queryMquestiontype = $sqlInsertMquestiontype->InsertSql();
+
+            if ($go_ncadb->ncaexec($queryMquestiontype, "question")) {
+                $m_questiontype = $go_ncadb->ncaGetInsId("question");
+                $info['mquestiontype'] = $m_questiontype;
+            } else {
+                $go_ncadb->ncarollback("question");
+                $data['fail'] = 1;
+                $data['sql'] = $queryMquestiontype;
+                return $data;
+            }
+        }
 
         $sqlInsertQuestion = new SqlBuilder();
         $sqlInsertQuestion->SetTableName("tb_question");
@@ -84,12 +114,13 @@ class question
         $sqlObj = null;
         $sqlObj[$ii++] = new TField("question_name", iconv('utf-8', 'tis-620', $info['par_qname']), "string");
         $sqlObj[$ii++] = new TField("question_detail", iconv('utf-8', 'tis-620', $info['par_qdatail']), "string");
-        $sqlObj[$ii++] = new TField("question_busrecord", iconv('utf-8', 'tis-620', $info['bus_ref']), "string");
-        $sqlObj[$ii++] = new TField("question_busrecordnumber", iconv('utf-8', 'tis-620', $info['bus_number']), "string");
+        $sqlObj[$ii++] = new TField("question_compfunc", iconv('utf-8', 'tis-620', $info['staffcompfunc']), "string");
+        $sqlObj[$ii++] = new TField("question_compfuncdep", iconv('utf-8', 'tis-620', $info['staffcompfuncdep']), "string");
+        $sqlObj[$ii++] = new TField("question_mquestiontype", iconv('utf-8', 'tis-620', $info['mquestiontype']), "string");
         $sqlObj[$ii++] = new TField("question_active", '1', "string");
         
         
-        if($info['par_questioninfoid']){
+        if($info['par_questioninfoid'] && $info['questioncopy'] == 0){
 
             $sqlObj[$ii++] = new TField("question_modispid", $info['par_userid'], "string");
             $sqlObj[$ii++] = new TField("question_modidatetime", $datetime, "string");
@@ -109,7 +140,7 @@ class question
         }
 
         if ($go_ncadb->ncaexec($queryQuestion, "question")) {
-            if($info['par_questioninfoid']){
+            if($info['par_questioninfoid'] && $info['questioncopy'] == 0){
                 $questionId = $info['par_questioninfoid'];
             }else{
                 $questionId = $go_ncadb->ncaGetInsId("question");
@@ -132,8 +163,6 @@ class question
             $sqlObjdt = null;
             $sqlObjdt[$ii++] = new TField("questiondt_question", $questionId, "string");
             $sqlObjdt[$ii++] = new TField("questiondt_title", iconv('utf-8', 'tis-620', $value['datatext']), "string");
-            // $sqlObjdt[$ii++] = new TField("questiondt_content", iconv('utf-8', 'tis-620', $value['datatext']), "string");
-            $sqlObjdt[$ii++] = new TField("questiondt_require", 1, "string");
             $sqlObjdt[$ii++] = new TField("questiondt_parent",  $array_insert['datadt'][$value['mainkey']], "string");
             $order = "";
             if($value['dataafteroption']){
@@ -146,7 +175,7 @@ class question
             $sqlObjdt[$ii++] = new TField("questiondt_active", 1, "string");
             
 
-            if($value['questiondt']){
+            if($value['questiondt'] && $info['questioncopy'] == 0){
 
                 $sqlObjdt[$ii++] = new TField("questiondt_recspid", $info['par_userid'], "string");
                 $sqlObjdt[$ii++] = new TField("questiondt_recdatetime", $datetime, "string");
@@ -164,15 +193,18 @@ class question
                 $queryQuestiondt = $sqlInsertQuestiondt->InsertSql();
 
             }
-
+            
             if ($go_ncadb->ncaexec($queryQuestiondt, "question")) {
-                $questionIddt = $go_ncadb->ncaGetInsId("question");
-                if($value['questiondt']){
-                    $questionIddt = 
-                    $array_insert['datadt'][$key] = $value['questiondt'];
-                }else{
-                    $array_insert['datadt'][$key] = $questionIddt;
-                }
+
+                    
+                    if($value['questiondt'] && $info['questioncopy'] == 0){
+                        $questionIddt = $value['questiondt'];
+                        $array_insert['datadt'][$key] = $value['questiondt'];
+                    }else{
+                        $questionIddt = $go_ncadb->ncaGetInsId("question");
+                        $array_insert['datadt'][$key] = $questionIddt;
+                    }
+
 
             } else {
                 $go_ncadb->ncarollback("question");
@@ -193,11 +225,11 @@ class question
                 $sqlObjoption[$ii++] = new TField("questionoption_questiondt", $questionIddt, "string");
                 $sqlObjoption[$ii++] = new TField("questionoption_name", iconv('utf-8', 'tis-620', $value2), "string");
                 $sqlObjoption[$ii++] = new TField("questionoption_value", $value['dataoptionvalue'][$key2]);
-                $sqlObjoption[$ii++] = new TField("questionoption_images", ($value['optionimages'][$value['questionoption'][$key2]] ? "1" : "0"));
+                $sqlObjoption[$ii++] = new TField("questionoption_images", ($value['optionimages'][$key2] ? "1" : "0"));
                 $sqlObjoption[$ii++] = new TField("questionoption_order", $order, "string");
                 $sqlObjoption[$ii++] = new TField("questionoption_active", 1, "string");
 
-                if($value['questionoption'][$key2] > 0){
+                if($value['questionoption'][$key2] > 0  && $info['questioncopy'] == 0){
 
                     $sqlObjoption[$ii++] = new TField("questionoption_modispid", $info['par_userid'], "string");
                     $sqlObjoption[$ii++] = new TField("questionoption_modidatetime", $datetime, "string");
@@ -241,8 +273,8 @@ class question
                 $sqlObjdt = null;
 
                 $sqlObjdt[$ii++] = new TField("questiondt_active", 0, "string");
-                $sqlObjdt[$ii++] = new TField("questiondt_recspid", $info['par_userid'], "string");
-                $sqlObjdt[$ii++] = new TField("questiondt_recdatetime", $datetime, "string");
+                $sqlObjdt[$ii++] = new TField("questiondt_modispid", $info['par_userid'], "string");
+                $sqlObjdt[$ii++] = new TField("questiondt_modidatetime", $datetime, "string");
 
                 $sqlInsertQuestiondt->SetField($sqlObjdt);
                 $sqlInsertQuestiondt->SetWhereClause(" questiondt = '". $value3."'");
@@ -464,7 +496,6 @@ class question
         }
         
         $html = "";
-            
         $inputTypeName = $this->getInpustType("questiontype",$dataParent['questiondt_questiontype']);
         foreach ($data as $key => $value) {
             $order = ($key + 1);
@@ -474,21 +505,18 @@ class question
             
             $html .= '  <div class="list-group-item nested-2 answer border-none ms-5" data-id="question'.$value['questionoption_questiondt'].$key.'" style >
                             '.$inputTypeName['questiontype_name']." : ".$value['questionoption_order'].' 
-
-                            <input type="hidden" name="questionoption_questiondt_'.$value['questionoption_questiondt'].'" value="'.$value['questionoption_questiondt'].'" />
-
+                            <input type="hidden" name="questionoption_questiondt_'.$value['questionoption_questiondt'].'" value="'.($copy > 0 ? "" : $value['questionoption_questiondt']).'" />
                             <input type="hidden" name="'.$value['questionoption_questiondt'].$key.'" value="'.$inputTypeName['questiontype_type'].'" />
                             <input class="form-control-40 col-lg-4" type="text" name="option'.$value['questionoption_questiondt'].'[]" id="option'.$value['questionoption_questiondt'].$key.'" value="'.$value['questionoption_name'].'" '.($dataParent['questiondt_questiontype'] > 3 ? 'required' : 'readonly="readonly"').'/>
                             คะเเนน : <input class="form-control-custom col-lg-1" type="number" name="optionvalue'.$value['questionoption_questiondt'].'[]" id="optionvalue'.$value['questionoption_questiondt'].$key.'" value="'.$value['questionoption_value'].'"  '.($dataParent['questiondt_questiontype'] > 3 ? 'required' : 'readonly="readonly"').'>
 
-                            
                             <label class="form-check-label" for="questionoption_images_'.$value['questionoption'].'">
                                 ต้องการให้เเนบรูปหรือไม่ : 
                             </label>
-                            <input class="form-check-input" type="checkbox" style="vertical-align: middle;" value="1" id="questionoption_images_'.$value['questionoption'].'" name="questionoption_images['.$value['questionoption_questiondt'].']['.$value['questionoption'].']" '.($value['questionoption_images'] == 1 ?  'checked=checked' : '' ).'>
+                            <input class="form-check-input" type="checkbox" style="vertical-align: middle;" value="1" id="questionoption_images_'.$value['questionoption'].'" name="questionoption_images['.$value['questionoption_questiondt'].']['.$key.']" '.($value['questionoption_images'] == 1 ?  'checked=checked' : '' ).'>
 
                             <input type="hidden" name="optionid'.$value['questionoption_questiondt'].'[]" id="optionid'.$value['questionoption_questiondt'].'" value="'.$value['questionoption'].'" >
-                            <div class="list-group-item nested-3 '.(count($dataP) > 0 ? "" : "hide" ).' questionquestion'.$value['questionoption_questiondt'].$key.' ms-3 mt-3 mb-3" data-id="'.$pid.'" >
+                            <div class="list-group-item nested-3 '.(count($dataP) > 0 ? "" : "hide" ).' questionquestion'.$value['questionoption_questiondt'].$key.' ms-5 mt-3 mb-3" data-id="'.$pid.'" >
                                 '.$this->generateIsParentQuestion("questiondt_parent",$dataParent['questiondt'],$order,$value,$questionArray).'
                             </div>'
                             .(
@@ -497,7 +525,8 @@ class question
                                 : '<span class="btn btn-primary ms-3" id="addquestionquestion'.$value['questionoption_questiondt'].$key.'" style onclick="setQuestionmodal(`question`,`af`,`questionquestion'.$value['questionoption_questiondt'].$key.'`,`'.$value['questionoption_questiondt'].'` ,`option'.$dataParent['questiondt'].$key.'`);" >
                                     สร้างคำถาม<!--หลังจากคำตอบนี้--></span>
                                 ' ).'
-                        </div>';
+                        </div>
+                    ';
         }
        
 
