@@ -238,8 +238,6 @@ if($methodRequest == "addQuestion") {
 
     }
 
-    // print_r($questiondata);
-    // die();
     $data = $ncaquestion->addNewQuestion($array_info,$questionmaindata,$questiondata);
     echo json_encode(array("data"=>$data));
 
@@ -249,5 +247,16 @@ if($methodRequest == "addQuestion") {
     header("Content-Type: application/json");
     
     echo json_encode($data);
+
+} else if($methodRequest == "updatemtype") {
+
+    $data = $ncaquestion->updateMtype($_POST);
+
+    echo json_encode(array("data"=>$data));
+
+} else if($methodRequest == "mquestiontypedata") {
+
+    $data = $ncaquestion->generateMtype($_POST['currentmquestiontype'],$_POST['compfunc']);
+    echo json_encode(array("data"=>$data));
 
 }
