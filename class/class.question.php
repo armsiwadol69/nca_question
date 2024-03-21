@@ -438,7 +438,7 @@ class question
                                     <input type="hidden" name="mainname[]" value="'.$pid.'" />
                                     <input type="hidden" name="oldquestion[]" value="'.$value['questiondt'].'" />
                                     <div class="list-group-item nested-3 question" id="'.$value['questiondt'].'" data-id="'.$value['questiondt'].'">
-                                        <span class="btn btn-primary" id="delQuestion" style="position: absolute; right: 8px;" onclick="if(confirm(`ยืนยันลบคำถามชุดนี้?`)) { deleteQuestion('.$value['questiondt'].'); $(`#'.$value['questiondt'].'`).remove(); }">
+                                        <span class="btn btn-primary" id="delQuestion" style="position: absolute; right: 8px;" onclick="deleteQuestionoption('.$value['questiondt'].');">
                                             ลบ
                                         </span>
                                         <input type="hidden" name="questiondt['.$value['questiondt'].']" value="'.$value['questiondt'].'" />
@@ -619,12 +619,122 @@ class question
         
     }
 
-    /* function setArrayQuestionPush($id){
+    function updateMtype($post){
 
-        if($id){
-            array_push($this->$question,$id);
+        global $go_ncadb;
+        $datetime = date('Y-m-d H:i:s');
+
+        $data = array();
+        $data['success'] = 0;
+        $data['fail'] = 0;
+        $data['html'] = "";
+
+        foreach($post['mname'] as $key => $value){
+
+            $sqlInsertMquestiontype = new SqlBuilder();
+            $sqlInsertMquestiontype->SetTableName("m_questiontype");
+            $ii = 0;
+            $sqlObj = null;
+
+            if($post['editmnamechange'][$key] > 0){
+                $sqlObj[$ii++] = new TField("m_questiontype_name", iconv('utf-8', 'tis-620', $value), "string");
+            }
+            $sqlObj[$ii++] = new TField("m_questiontype_active", ($post['mtypename'][$key] > 0 ? "0" : "1"), "string");
+            $sqlObj[$ii++] = new TField("m_questiontype_modispid", $_SESSION['userData']['stf'], "string");
+            $sqlObj[$ii++] = new TField("m_questiontype_modidatetime", $datetime, "string");
+
+            $sqlInsertMquestiontype->SetField($sqlObj);
+            $sqlInsertMquestiontype->SetWhereClause(" m_questiontype = '".$key."'");
+            $queryMquestiontype = $sqlInsertMquestiontype->UpdateSql();
+            
+            if ($go_ncadb->ncaexec($queryMquestiontype, "question")) {
+                $data['success'] = 1;
+            } else {
+                $go_ncadb->ncarollback("question");
+                $data['fail'] = 1;
+                $data['sql'] = $queryMquestiontype;
+                
+                return $data;
+            }
+        }
+
+        if($data['success'] == 1){
+            $generateMtype = $this->generateMtype($post['mtcurrent'],$post['mtstaffcompfunc']);
+        }
+        $data['html'] = $generateMtype['html'];
+    
+
+        return $data;
+
+    }
+
+
+    function generateMtype($currentid=0,$staffcompfunc){
+
+        global $go_ncadb;
+        $datetime = date('Y-m-d H:i:s');
+        $data = array();
+        $data['array'] = array();
+        $data['html'] = "";
+        $data['htmlmodal'] = "";
+
+        $mstaffcompfunc = ($staffcompfunc > 0 ? $staffcompfunc : $_SESSION['userData']['staffcompfunc']);
+
+        $sqlmquestiontype  = "SELECT * FROM m_questiontype WHERE m_questiontype_compfunc = '".$mstaffcompfunc."' OR m_questiontype_default = 1";
+        $arr_mquestiontype = $go_ncadb->ncaretrieve($sqlmquestiontype, "question");
+        $arrmquestiontype  = $this->ncaArrayConverter($arr_mquestiontype);
+        $data['array'] = $arrmquestiontype;
+
+        $html  = '<select class="form-select" name="mquestiontype" id="mquestiontype">';
+        $html .= '<option >เลือกประเภทเรื่อง</option>';
+        
+        if(count($arrmquestiontype) > 0){
+            foreach ($arrmquestiontype as $key => $value) {
+                $selected = "";
+                if($value['m_questiontype_active'] == 1){
+                    if($value['m_questiontype'] == $currentid && $value['m_questiontype_active'] > 0){
+                        $selected = "selected";
+                    }
+                    $html .= '<option value="'.$value['m_questiontype'].'" '.$selected.'> '.$value['m_questiontype_name'].' </option>';
+                }
+            }
+        }
+
+        $html .= '</select>';
+        
+        $data['html'] = $html;
+
+
+        $htmlmodal = "";
+        if(count($arrmquestiontype) > 0){
+            foreach ($arrmquestiontype as $mkey => $mvalue) {
+                if($mvalue['m_questiontype_default'] == 0){
+                    $isChecked = "";
+                    if($mvalue['m_questiontype_active'] == 0){
+                        $isChecked = "checked";
+                    }
+                    $htmlmodal .= '<tr>
+                                        <td>
+                                        <span id="editmname_'.$mvalue['m_questiontype'].'" onclick="editmname(`inputmname_'.$mvalue['m_questiontype'].'`,`editmname_'.$mvalue['m_questiontype'].'`,`editmnamechange_'.$mvalue['m_questiontype'].'`,`'.$mvalue['m_questiontype'].'`)"> '.$mvalue['m_questiontype_name'].' <i class="bi bi-pencil-square cpointer"></i>
+                                        </span>
+                                        <span id="inputmname_'.$mvalue['m_questiontype'].'" style="display: none;">
+                                            <input type="text" id="mname_'.$mvalue['m_questiontype'].'" name="mname['.$mvalue['m_questiontype'].']" class="form-control" required="" value="'.$mvalue['m_questiontype_name'].'" style="width:88%; float:left;">
+                                            <button onclick="editmname(`editmname_'.$mvalue['m_questiontype'].'`,`inputmname_'.$mvalue['m_questiontype'].'`,`cancel_'.$mvalue['m_questiontype'].'`,`'.$mvalue['m_questiontype'].'`)" type="button" class="btn btn-danger" style="float: right;">ยกเลิก</button>
+                                        </span>
+                                        <input type="hidden" name="editmnamechange['.$mvalue['m_questiontype'].']" id="editmnamechange_'.$mvalue['m_questiontype'].'" value="">
+                                        </td>
+                                        <td align="center" style="vertical-align: middle;">
+                                        <input class="form-check-input" type="checkbox" value="1" name="mtypename['.$mvalue['m_questiontype'].']" id="mtypename5" '.$isChecked.'>
+                                        </td>
+                                    </tr>';
+                }
+            }
         }
         
-    } */
+        $data['htmlmodal'] = $htmlmodal;
+
+        return $data;
+
+    }
 
 }

@@ -125,6 +125,8 @@ async function initListTable() {
 		language: dataTableSettings,
 		dom: tableDom,
 		buttons: tableButton,
+		scrollY: ($('#page-content-wrapper').height() - 300),
+    	scrollCollapse: true,
 		columns: [
 			{
 				render: function (data, type, row, meta) {
@@ -178,22 +180,20 @@ async function initListTable() {
 			{
 				data: "giftdetail",
 				render: function (data, type, row) {
-				let isDisabled;
-				if (row.total_items != "0") {
-					isDisabled = "disabled";
-				} else {
+					let isDisabled;
+					if (row.total_items != "0") {
+						isDisabled = "disabled";
+					} else {
+						isDisabled = "";
+					}
 					isDisabled = "";
-				}
-				isDisabled = "";
 
-				return `
-						<div class="btn-group" role="group">
-							<button type="button" class="btn btn-warning" onclick="callAction('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
-							<button type="button" class="btn btn-secondary" onclick="callAction('copy','${row.question}')"><i class="bi bi-pencil-square"></i> Copy</button>
-							<button type="button" class="btn btn-danger ${isDisabled}" onclick="callAction('delete','${row.question}','${row.question_name}','${row.currrent_user}')"><i class="bi bi-trash3"></i> ลบ</button>
-							<a href="`+linkUrl +`?formId=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
-						</div>
-						`;
+					return `<div class="btn-group" role="group">
+								<button type="button" class="btn btn-warning" onclick="callAction('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
+								<button type="button" class="btn btn-secondary" onclick="callAction('copy','${row.question}')"><i class="bi bi-copy"></i> Copy</button>
+								<button type="button" class="btn btn-danger ${isDisabled}" onclick="callAction('delete','${row.question}','${row.question_name}','${row.currrent_user}')"><i class="bi bi-trash3"></i> ลบ</button>
+								<a href="`+linkUrl +`?formId=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
+							</div>`;
 				},
 			},
 		],
