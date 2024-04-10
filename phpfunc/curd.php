@@ -150,13 +150,6 @@ function changeSubFolderPermissions($id, $action) {
 $ncaquestion = new question();
 
 if($methodRequest == "addQuestion") {
-
-    // echo "<pre>"; 
-    // print_r($_POST);
-    // echo "---------------------------------------------------------------------------------------------";
-    /* print_r($_POST);
-    
-    die(); */
     
     $data = array();
     $questiondata = array();
@@ -172,12 +165,13 @@ if($methodRequest == "addQuestion") {
         "staffcompfunc"      => $_POST['staffcompfunc'],
         "staffcompfuncdep"   => $_POST['staffcompfuncdep'],
         "mquestiontype"      => $_POST['mquestiontype'],
+        "questiongroup"      => $_POST['questiongroup'],
+        "questionmode"       => $_POST['questionmode'],
         "mquestiontypecheck" => $_POST['mquestiontypecheck'],
         "mquestiontype_name" => $_POST['mquestiontype_name'],
         "questioncopy"       => $_POST['questioncopy'],
     );
-    // print_r($array_info);
-    // die();
+
 
     foreach ($_POST['questionismainname'] as $key => $value) {
 
@@ -212,6 +206,8 @@ if($methodRequest == "addQuestion") {
         $data['optionnm']                 = "option".$_POST['questionnameinputafter'][$value];
         $optionval                        = "optionvalue".$value;
         $data['dataoptiontype']           = $_POST['questionnameinput'][$value];
+        $data['dataactivities']           = $_POST['questionactivities'][$value];
+        $data['questiondtdeleted']        = $_POST['questiondtdeleted'][$value];
 
         // ////// ISSUE /////////
         $optionid                         = "optionid".$value;
@@ -244,14 +240,12 @@ if($methodRequest == "addQuestion") {
 } else if($methodRequest == "del") {
 
     $data = $ncaquestion->deleteMainQuestion($id,$currentUserId);
-    header("Content-Type: application/json");
-    
+    // header("Content-Type: application/json");
     echo json_encode($data);
 
 } else if($methodRequest == "updatemtype") {
 
     $data = $ncaquestion->updateMtype($_POST);
-
     echo json_encode(array("data"=>$data));
 
 } else if($methodRequest == "mquestiontypedata") {

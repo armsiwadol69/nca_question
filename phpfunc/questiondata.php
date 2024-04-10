@@ -120,11 +120,16 @@ class ncaapicalling
     {   
 
         global $go_ncadb;
-        $sql = "SELECT * 
-                FROM tb_question 
+        $sql = "SELECT Q.*, QM.questionmode_name, QG.questiongroup_name, QC.questioncategories_name
+                FROM tb_question AS Q
+                LEFT JOIN tb_questioncategories AS QC ON (QC.questioncategories=Q.question_questioncategories)
+                LEFT JOIN tb_questionmode AS QM ON (QM.questionmode=Q.question_questionmode)
+                LEFT JOIN tb_questiongroup AS QG ON (QG.questiongroup=Q.question_questioncategroup)
                 WHERE 
-                    question_active = '1' 
-                    AND question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'";
+                    Q.question_active = '1' 
+                    AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
+                ORDER BY Q.question_name ASC
+                ";
 
         $result = $go_ncadb->ncaretrieve($sql, "question");
         $data = array();
@@ -146,10 +151,17 @@ class ncaapicalling
                     $arr_mcompfuncdep = $go_ncadb->ncaretrieve($sqlmcompfuncdep, "icms");
                     $value['question_compfuncdepname'] = $arr_mcompfuncdep[0]['m_compfuncdep_name_th'];
                 }
-                if($value['question_mquestiontype'] > 0){
-                    $sqlmquestiontype = "SELECT m_questiontype_name FROM m_questiontype WHERE m_questiontype = '".$value['question_mquestiontype']."' ";
+                if($value['question_questioncategories'] > 0){
+                    $sqlmquestiontype = "SELECT questioncategories_name FROM tb_questioncategories WHERE questioncategories = '".$value['question_questioncategories']."' ";
                     $arr_mquestiontype= $go_ncadb->ncaretrieve($sqlmquestiontype, "question");;
-                    $value['question_mquestiontypename'] = $arr_mquestiontype[0]['m_questiontype_name'];
+                    $value['question_questioncategoriesname'] = $arr_mquestiontype[0]['questioncategories_name'];
+                }
+
+                if($value['question_modispid']){
+
+                    $value['question_recspid'] = $value['question_modispid'];
+                    $value['question_recdatetime'] = $value['question_modidatetime'];
+    
                 }
                 $value['currrent_user'] = $_SESSION['userData']['stf'];
                 $data[] = $value;

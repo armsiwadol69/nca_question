@@ -30,5 +30,12 @@
 <script src="../assets/swiper/swiper-bundle.min.js?v=<?php echo $version; ?>"></script>
 <script src="../assets/js/main.js?v=<?php echo $version; ?>"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+<script>
+    $(document).ready(function(){
+        let menuheight = ($(window).height() - 227);
+        $("#menubar").css("height",menuheight+"px");
+        $("#menubar").css("overflow","auto");
+    })
+</script>
 </body>
 </html>

@@ -181,3 +181,16 @@ table.dataTable>tbody>tr.selected>td.select-checkbox:after, table.dataTable>tbod
 .hide{
     display: none;
 }
+#addnewbtn{
+    border: 1px solid #FFFFFF;
+}
+.sorting_disabled{
+    text-align: center !important;
+}
+/* #list_questioncat td, */
+#list_questiongroup td,
+#list_questionmode td,
+#list_activities td,
+#list_mistakelevel td{
+    text-align: center;
+}

@@ -45,9 +45,12 @@ include_once 'v_sidebar_start.php';
 ?>
 <script>
     $(function() {
-        initListTable();
-        getQuestionListDataFromAPI().then(() => {
-            handleScriptLoad();
-        });
+        // initListTable();
+        // getQuestionListDataFromAPI().then(() => {
+        //     handleScriptLoad();
+        // });
+
+        handleScriptLoad();
+        
     })
 </script>
