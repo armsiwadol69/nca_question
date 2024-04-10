@@ -18,13 +18,14 @@ if(time() - $_SESSION['userData']['loginTime'] >= 3600){
 
 header('Content-Type: text/html; charset=utf-8');
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCA Question System</title>
+    <title>Q&A System</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css?v=<?php echo $version; ?>">
     <link rel="stylesheet" href="../assets/sidebarComponents/sidebar.css?v=<?php echo $version; ?>">
     <link rel="stylesheet" href="../assets/css/main.css?v=<?php echo $version; ?>">

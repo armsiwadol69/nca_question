@@ -118,21 +118,54 @@ class ncaapicalling
 
     public function getQuestionList()
     {   
-        $other = "อื่นๆ";
+
         global $go_ncadb;
-        $sql = "SELECT * FROM tb_question WHERE question_active = '1' ";
+        $sql = "SELECT Q.*, QM.questionmode_name, QG.questiongroup_name, QC.questioncategories_name
+                FROM tb_question AS Q
+                LEFT JOIN tb_questioncategories AS QC ON (QC.questioncategories=Q.question_questioncategories)
+                LEFT JOIN tb_questionmode AS QM ON (QM.questionmode=Q.question_questionmode)
+                LEFT JOIN tb_questiongroup AS QG ON (QG.questiongroup=Q.question_questioncategroup)
+                WHERE 
+                    Q.question_active = '1' 
+                    AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
+                ORDER BY Q.question_name ASC
+                ";
 
         $result = $go_ncadb->ncaretrieve($sql, "question");
         $data = array();
-        foreach ($result as $key => $value) {
-            
-            if($value['question_recspid'] > 0){
-                $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$value['question_recspid']."' ";
-                $res = $go_ncadb->ncaretrieve($sql, "icms");
-                $value['question_recname'] = $res[0]['staff_dspnm'];
+        if(count($result) > 0){
+            foreach ($result as $key => $value) {
+
+                if($value['question_recspid'] > 0){
+                    $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$value['question_recspid']."' ";
+                    $res = $go_ncadb->ncaretrieve($sql, "icms");
+                    $value['question_recname'] = $res[0]['staff_dspnm'];
+                }
+                if($value['question_compfunc'] > 0){
+                    $sqlmcompfunc = "SELECT m_compfunc_name_th FROM m_compfunc WHERE m_compfunc = '".$value['question_compfunc']."' ";
+                    $arr_mcompfunc = $go_ncadb->ncaretrieve($sqlmcompfunc, "icms");
+                    $value['question_compfuncname'] = $arr_mcompfunc[0]['m_compfunc_name_th'];
+                }
+                if($value['question_compfuncdep'] > 0){
+                    $sqlmcompfuncdep = "SELECT m_compfuncdep_name_th FROM m_compfuncdep WHERE m_compfuncdep = '".$value['question_compfuncdep']."' ";
+                    $arr_mcompfuncdep = $go_ncadb->ncaretrieve($sqlmcompfuncdep, "icms");
+                    $value['question_compfuncdepname'] = $arr_mcompfuncdep[0]['m_compfuncdep_name_th'];
+                }
+                if($value['question_questioncategories'] > 0){
+                    $sqlmquestiontype = "SELECT questioncategories_name FROM tb_questioncategories WHERE questioncategories = '".$value['question_questioncategories']."' ";
+                    $arr_mquestiontype= $go_ncadb->ncaretrieve($sqlmquestiontype, "question");;
+                    $value['question_questioncategoriesname'] = $arr_mquestiontype[0]['questioncategories_name'];
+                }
+
+                if($value['question_modispid']){
+
+                    $value['question_recspid'] = $value['question_modispid'];
+                    $value['question_recdatetime'] = $value['question_modidatetime'];
+    
+                }
+                $value['currrent_user'] = $_SESSION['userData']['stf'];
+                $data[] = $value;
             }
-            $value['currrent_user'] = $_SESSION['userData']['stf'];
-            $data[] = $value;
         }
 
         if (empty($data)) {

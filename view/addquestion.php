@@ -2,16 +2,38 @@
 include_once 'v_head.php';
 include_once 'v_sidebar_start.php';
 require_once ("../class/class.question.php");
-ini_set('memory_limit', '2048M');
+// ini_set('memory_limit', '2048M');
 
 $go_ncadb = new ncadb();
 $ncaquestion = new question($_GET['id']);
 
+if (isset($_SERVER['HTTPS']) &&
+    ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ||
+    isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&
+    $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+  $protocol = 'https://';
+}
+else {
+  $protocol = 'http://';
+}
+
+$url_addlink = $protocol.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+if( strpos($url_addlink, "?id") !== false){
+    $cuturl = explode("?id",$url_addlink);
+    $url_addlink = $cuturl[0];
+}
+
 if($_GET['id']){
+
     $questioninfo = array();
     $questioninfo = $ncaquestion->getDataQuestion();
     $arr_parent = array();
     $htmlQuestion = "";
+    $copy = 0;
+    if($_GET['copy'] > 0){
+        $copy = 1;
+    }
+
     foreach($questioninfo AS $key => $val){
 
         if(!$val['questiondt_parent']){
@@ -22,13 +44,63 @@ if($_GET['id']){
 
 }
 
+// Get questiontype
 $sqlOptionType = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
 $arr_OptionType = $go_ncadb->ncaretrieve($sqlOptionType, "question");
 $arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType);
 
-$sqlbusrecord = "SELECT busrecord, busrecord_number FROM busrecord WHERE busrecord_active = 1 ORDER BY busrecord_number";
-$qbusrecord= $go_ncadb->ncaretrieve($sqlbusrecord, "icms");
-$fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
+// Get ฝ่าย
+$sqlmcompfunc = "SELECT * FROM m_compfunc WHERE m_compfunc_active = 1 ";
+$arr_mcompfunc = $go_ncadb->ncaretrieve($sqlmcompfunc, "icms");
+$arrmcompfunc = $ncaquestion->ncaArrayConverter($arr_mcompfunc);
+
+// Get แผนก
+$sqlmcompfuncdep = "SELECT * FROM m_compfuncdep WHERE m_compfuncdep_active = 1 ";
+$arr_mcompfuncdep = $go_ncadb->ncaretrieve($sqlmcompfuncdep, "icms");
+$arrmcompfuncdep = $ncaquestion->ncaArrayConverter($arr_mcompfuncdep);
+
+// Get หมวด
+$sqlmquestiontype  = "SELECT * FROM tb_questioncategories WHERE questioncategories_compfunc = '".$_SESSION['userData']['staffcompfunc']."' OR questioncategories_default = 1 AND questioncategories_active = 1 ";
+$arr_mquestiontype = $go_ncadb->ncaretrieve($sqlmquestiontype, "question");
+$arrmquestiontype  = $ncaquestion->ncaArrayConverter($arr_mquestiontype);
+
+// Get กลุ่ม
+$sqlquestiongroup = "SELECT * FROM tb_questiongroup WHERE questiongroup_active = 1";
+$arr_questiongroup = $go_ncadb->ncaretrieve($sqlquestiongroup, "question");
+$arrquestiongroup  = $ncaquestion->ncaArrayConverter($arr_questiongroup);
+
+// Get ประเภทของคำถาม
+$sqlquestionmode  = "SELECT * FROM tb_questionmode WHERE questionmode_active = 1";
+$arr_questionmode = $go_ncadb->ncaretrieve($sqlquestionmode, "question");
+$arrquestionmode  = $ncaquestion->ncaArrayConverter($arr_questionmode);
+
+// Get activities
+$sqlactivities = "SELECT * FROM tb_activities WHERE activities_active = 1";
+$arractivities = $go_ncadb->ncaretrieve($sqlactivities, "question");
+$arr_activities  = $ncaquestion->ncaArrayConverter($arractivities);
+
+
+if($_GET['id'] > 0){
+    $staffcompfunc    = ($questioninfo[0]['question_compfunc'] > 0 ? $questioninfo[0]['question_compfunc'] : $_SESSION['userData']['staffcompfunc']);
+    $staffcompfuncdep = ($questioninfo[0]['question_compfuncdep'] > 0 ? $questioninfo[0]['question_compfuncdep'] : $_SESSION['userData']['staffcompfuncdep']);
+    $mquestiontype    = $questioninfo[0]['question_questioncategories'];
+    $questiongroup    = $questioninfo[0]['question_questioncategroup'];
+    $questionmode     = $questioninfo[0]['question_questionmode'];
+}else{
+    $staffcompfunc    = $_SESSION['userData']['staffcompfunc'];
+    $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
+    $mquestiontype    = "";
+}
+
+if($_GET['id'] > 0){
+    if($copy > 0){ 
+        $texttitle = " Copy คำชุดถามจาก : ".$questioninfo[0]['question_name']; 
+    }else{
+        $texttitle =  " แก้ไขชุดคำถาม";
+    }
+}else{ 
+    $texttitle =  " เพิ่มข้อมูลชุดคำถามใหม่"; 
+} 
 
 ?>
 
@@ -49,41 +121,174 @@ $fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
 
                             <div class="w-100 d-flex mt-2">
 
-                                <h4 class="me-auto mt-1">เพิ่มข้อมูลชุดคำถาม</h4>
+                                <h4 class="me-auto">
+                                    <?php echo $texttitle; ?>
+                                
+                                </h4>
 
                             </div>
+                            
                             <hr>
 
                         </div>
 
                         <div class="col-lg-12 col-md-12 mt-2">
 
-                            <div class="col-lg-12 col-md-12">
+                            <div class="col-lg-12 col-md-12 mt-2">
+                                <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+
+                                        <label for="par_staffcompfunc" class="form-label">ฝ่าย<span class="text-danger">*</span></label>
+                                        <select class="form-select" name="staffcompfunc" id="staffcompfunc" >
+                                            <!-- <option>เลือกฝ่าย</option> -->
+                                            <?php
+                                                foreach ($arrmcompfunc as $key => $value) {
+                                                    $selected = "";
+                                                    if($value['m_compfunc'] == $staffcompfunc){
+                                                        $selected = "selected";
+                                                        echo '<option value="'.$value['m_compfunc'].'" '.$selected.'> '.$value['m_compfunc_name_th'].' </option>';
+                                                    }
+                                                }
+                                            ?>
+                                        </select>
+                                    
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+
+                                        <label for="par_staffcompfuncdep" class="form-label">แผนก<span class="text-danger">*</span></label>
+                                        <select class="form-select" name="staffcompfuncdep" id="staffcompfuncdep" onchange="changestaffcompfuncdep()">
+                                            <option value="0">เลือกแผนก</option>
+                                            <?php
+                                                foreach ($arrmcompfuncdep as $key => $value) {
+                                                    $selected = "";
+                                                    // if($value['m_compfuncdep'] == $staffcompfuncdep){
+                                                    //     $selected = "selected";
+                                                    // }
+                                                    if($value['m_compfuncdep_compfunc'] == $staffcompfunc){
+                                                        if($value['m_compfuncdep'] == $staffcompfuncdep){
+                                                            $selected = "selected";
+                                                        }
+                                                        echo '<option value="'.$value['m_compfuncdep'].'" '.$selected.'> '.$value['m_compfuncdep_name_th'].' </option>';
+                                                    }
+                                                }
+                                            ?>
+                                        </select>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-12 col-md-12 mt-2">
+                                
+                                <div class="row">
+                                    
+                                    <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+
+                                        <label for="par_mquestiontype" class="form-label">หมวด<span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input class="form-check-input" type="checkbox" value="1" name="mquestiontypecheck" id="mquestiontypecheck">
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            ต้องการเพิ่มประเภทใหม่?
+                                        </label>
+                                        <span title="แก้ไข" onclick="editMquestiontype()" style="cursor: pointer;">
+                                            <i class="bi bi-gear"></i> ซ่อน
+                                        </span>
+                                        <div id="mquestiontypeselect">
+                                            <select class="form-select" name="mquestiontype" id="mquestiontype" onchange="changemquestiontype()" required>
+                                                <option value="0">เลือกหมวด</option>
+                                                <?php
+                                                    // if($_GET['id'] > 0){
+                                                        foreach ($arrmquestiontype as $key => $value) {
+                                                            $selected = "";
+                                                            if($value['questioncategories_compfunc'] == $staffcompfunc && $value['questioncategories_compfuncdep'] == $staffcompfuncdep && $value['questioncategories_active'] == 1 || $value['questioncategories_default'] == 1){
+                                                            //if($value['questioncategories_active'] == 1){
+                                                                if($value['questioncategories'] == $mquestiontype && $value['questioncategories_active'] > 0){
+                                                                    $selected = "selected";
+                                                                }
+                                                                echo '<option value="'.$value['questioncategories'].'" '.$selected.'> '.$value['questioncategories_name'].' </option>';
+                                                            }
+                                                        }
+                                                    // }else{
+
+                                                    // }
+                                                ?>
+                                            </select>
+                                        </div>
+                                        <div id="mquestiontypeinput" style="display: none;">
+                                            <input type="text" id="mquestiontype_name" name="mquestiontype_name" class="form-control" value="" placeholder="เพิ่มประเภทใหม่">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+
+                                        <label for="par_mquestiongroup" class="form-label">กลุ่ม<span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <!-- <input class="form-check-input" type="checkbox" value="1" name="mquestiontypecheck" id="mquestiontypecheck">
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            ต้องการเพิ่มประเภทใหม่?
+                                        </label>
+                                        <span title="แก้ไข" onclick="editMquestiontype()" style="cursor: pointer;">
+                                            <i class="bi bi-gear"></i> แก้ไข
+                                        </span> -->
+                                        <div id="mquestiontypeselect">
+                                            <select class="form-select" name="questiongroup" id="questiongroup" required>
+                                                <option value="0">เลือกกลุ่ม</option>
+                                                <?php
+                                                    if($_GET['id'] > 0){
+                                                        foreach ($arrquestiongroup as $key => $value) {
+                                                            $selected = "";
+                                                            //if($value['questioncategories_compfunc'] == $staffcompfunc && $value['questioncategories_compfuncdep'] == $staffcompfuncdep){
+
+                                                            if($value['questiongroup'] == $questiongroup){
+                                                                $selected = "selected";
+                                                            }
+                                                            echo '<option value="'.$value['questiongroup'].'" '.$selected.'> '.$value['questiongroup_name'].' </option>';
+                                                            
+                                                        }
+                                                    }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-12 col-md-12 mt-2">
+
+                                <label for="par_mquestionmode" class="form-label">ประเภท<span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <!-- <input class="form-check-input" type="checkbox" value="1" name="mquestiontypecheck" id="mquestiontypecheck">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                    ต้องการเพิ่มประเภทใหม่?
+                                </label>
+                                <span title="แก้ไข" onclick="editMquestiontype()" style="cursor: pointer;">
+                                    <i class="bi bi-gear"></i> แก้ไข
+                                </span> -->
+                                <div id="mquestiontypeselect">
+                                    <select class="form-select" name="questionmode" id="questionmode" required>
+                                        <option value="0">เลือกประเภท</option>
+                                        <?php
+                                            foreach ($arrquestionmode as $key => $value) {
+                                                $selected = "";
+                                                //if($value['questioncategories_compfunc'] == $staffcompfunc && $value['questioncategories_compfuncdep'] == $staffcompfuncdep){
+
+                                                if($value['questionmode'] == $questionmode){
+                                                    $selected = "selected";
+                                                }
+                                                echo '<option value="'.$value['questionmode'].'" '.$selected.'> '.$value['questionmode_name'].' </option>';
+                                                
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="col-lg-12 col-md-12 mt-2">
 
                                 <label for="par_qname" class="form-label">ชื่อของชุดคำถาม<span class="text-danger">*</span></label>
                                 <input type="text" id="par_qname" name="par_qname" class="form-control" required value="<?php echo $questioninfo[0]['question_name']; ?>">
 
                             </div>
-                            <div class="col-lg-12 col-md-12 mt-2">
-
-                                <label for="par_qname" class="form-label">รถ<span class="text-danger">*</span></label>
-                                <select class="form-select" name="bus_ref[]" id="multiple-select-field" data-placeholder="เลือกรถ" multiple required>
-
-                                    <?php 
-                                        $arr_busrecord = explode(",",$questioninfo[0]['question_busrecord']);
-                                        foreach ($fbusrecord as $key => $value) {
-                                            $selected = "";
-                                            if(in_array($value['busrecord'],$arr_busrecord)){
-                                                $selected = "selected";
-                                            }
-                                            echo '<option value="'.$value['busrecord'].'" '.$selected.'> '.$value['busrecord_number'].' </option>';
-                                        }
-                                    ?>
-                                </select>
-
-                            </div>
-
-                            <div class="col-lg-12 mt-2">
+                            
+                            <div class="col-lg-12 mt-2 ">
 
                                 <label for="par_qdatail" class="form-label">รายละเอียด<span class="text-danger">*</span></label>
                                 <textarea class="form-control" id="par_qdatail" name="par_qdatail" rows="5" required><?php echo $questioninfo[0]['question_detail']; ?></textarea>
@@ -103,6 +308,7 @@ $fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
                                 <h4 class="me-auto mt-1">ส่วนคำถาม</h4>
 
                             </div>
+                            <hr>
 
                         </div>
 
@@ -148,21 +354,23 @@ $fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
 
         </div>
 
-        <div class="col-lg-6 col-md-12">
-            <input type="hidden"  class="form-control" name="questioninfoid" id="questioninfoid" value="<?php echo $_GET['id']; ?>">
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <input type="hidden"  class="form-control" name="questioninfoid" id="questioninfoid" value="<?php echo $_GET['id'];?>">
+            <input type="hidden"  class="form-control" name="questioncopy" id="questioncopy" value="<?php echo $copy?>">
             <input type="hidden"  class="form-control" name="mode" id="addQuestion" value="addQuestion">
             <input type="hidden"  class="form-control" name="par_userId" id="par_userId" value="<?php echo $_SESSION['userData']['stf']; ?>">
             <input type="hidden"  class="form-control" name="par_usernm" id="par_usernm" value="<?php echo $_SESSION['userData']['userdspms']; ?>">
-            <button type="button" class="btn btn-primary w-100 mt-5" onclick="submitFrom()"><i class="bi bi-save"></i> บันทึกข้อมูล </button>
+            <button type="button" class="btn btn-primary w-100 mt-2" onclick="submitFrom()"><i class="bi bi-save"></i><?php if($copy > 0){ echo " บันทึกข้อมูลจากการ Copy "; }else{ echo " บันทึกข้อมูล"; } ?> </button>
         </div>
 
-        <div class="col-lg-6 col-md-12">
-            <a href="list_question.php" class="btn btn-secondary w-100 mt-5"><i class="bi bi-back"></i> ย้อนกลับ </a>
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <a href="list_question.php" class="btn btn-secondary w-100 mt-2"><i class="bi bi-back"></i> ย้อนกลับหน้ารายการ </a>
         </div>
 
     </div>
     
 </form>
+
     <!-- Modal generate input box -->
 
     <div class="modal fade" id="generateinputbox" tabindex="-1" aria-labelledby="createBatch" aria-hidden="true" >
@@ -184,9 +392,21 @@ $fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label" for="par_icon">ประเถทคำตอบ<span class="text-danger">*</span></label>
+                                <label class="form-label" for="par_icon">ลักษณะของการตรวจ<span class="text-danger">*</span></label>
+                                <select class="form-select" name="activities" id="activities" aria-label="isshowing">
+                                    <option value="0">เลือกลักษณะของการตรวจ</option>
+                                    <?php    
+                                        foreach ($arr_activities as $key => $value) {
+                                            echo '<option value="'.$value['activities'].'">'.$value['activities_name'].'</option>';
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+
+                            <div class="col-12" id="normal_type">
+                                <label class="form-label" for="par_icon">ประเภทคำตอบ<span class="text-danger">*</span></label>
                                 <select class="form-select" name="optiontype" id="optiontype" aria-label="isshowing">
-                                    <option value="0">เลือกประเถทคำตอบ</option>
+                                    <option value="0">เลือกประเภทคำตอบ</option>
                                     <?php    
                                         foreach ($arr_OptionType as $key => $value) {
                                             echo '<option value="'.$value['questiontype'].'">'.$value['questiontype_name'].'</option>';
@@ -216,10 +436,96 @@ $fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
                     <!-- </form> -->
                     
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 <!-- </main> -->
+
+<!-- Modal setting mquestiontype START -->
+
+<div class="modal fade" id="mquestiontypeSeting" tabindex="-1" aria-labelledby="createBatch" aria-hidden="true" >
+    <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">แก้ไขประเภท</h1>
+                <span class="btn-close" data-bs-dismiss="modal" aria-label="Close"></span>
+            </div>
+            <div class="modal-body">
+
+                <form  action="" enctype="multipart/form-data" method="POST" id="frm_submit_mtype" novalidate>
+
+                    <div class="row gy-3">
+                        
+                        <div class="col-12" style="max-height: 300px; overflow: auto;">
+                            <!-- <label class="form-label" for="option">คำถาม<span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="optiontquestion" id="optiontquestion" required> -->
+
+                            <table id="rewardListTable" class="table table-bordered table-striped shadow-sm w-100">
+                                <thead class="text-bg-primary" style="position: sticky; top: 0;">
+                                    <tr>
+                                        <td align="left">ชื่อ</td>
+                                        <td align="center" style="width: 100px">ซ่อน</td>
+                                    </tr>
+                                </thead>
+                                <tbody id="mt_tbody" style="border-top: none;">
+                                    <div id="mt_tbody_select">
+                                        <?php 
+                                            foreach ($arrmquestiontype as $key => $value) {
+                                                if($value['questioncategories_default'] != 1 && $value['questioncategories_active'] == 1){
+                                                    $nquestioncategories1 = 'editmname_'.$value['questioncategories'];
+                                                    $nquestioncategories2 = 'inputmname_'.$value['questioncategories'];
+                                                    $labelclick = '<span id="editmname_'.$value['questioncategories'].'" onclick="editmname(`'.$nquestioncategories2.'`,`'.$nquestioncategories1.'`,`editmnamechange_'.$value['questioncategories'].'`,`'.$value['questioncategories'].'`)" > '.$value['questioncategories_name'].' <i class="bi bi-pencil-square cpointer"></i></span>';
+
+                                                    $labelEdit = '<span id="inputmname_'.$value['questioncategories'].'" style="display: none;"><input type="text" id="mname_'.$value['questioncategories'].'" name="mname['.$value['questioncategories'].']" class="form-control" required="" value="'.$value['questioncategories_name'].'" style="width:88%; float:left;">
+                                                    <button onclick="editmname(`'.$nquestioncategories1.'`,`'.$nquestioncategories2.'`,`cancel_'.$value['questioncategories'].'`,`'.$value['questioncategories'].'`)" type="button" class="btn btn-danger" style="float: right;">ยกเลิก</button>
+                                                    </span>
+                                                    <input type="hidden" name="editmnamechange['.$value['questioncategories'].']" id="editmnamechange_'.$value['questioncategories'].'" value="">
+                                                    ';
+                                                    
+                                                
+                                                    $isChecked = "";
+                                                    if($value['questioncategories_active'] == 0){
+                                                        $isChecked = "checked";
+                                                    }
+                                                    echo '<tr>';
+                                                        echo '<td> '.$labelclick.$labelEdit.' </td>';
+                                                        echo '<td align="center" style="vertical-align: middle;">
+                                                                <input class="form-check-input" type="checkbox" value="1" name="mtypename['.$value['questioncategories'].']" id="mtypename'.$value['questioncategories'].'" '.$isChecked.'>
+                                                            </td>';
+                                                    echo '</tr>';
+                                                }
+                                            }
+                                        ?>
+                                    </div>
+                                <tbody>
+                            </table>
+                        </div>
+
+                        <div class="col-12">
+                            <input type="hidden" name="mode" id="idupdatemtype" value="updatemtype">
+                            <input type="hidden" name="mtstaffcompfunc" id="mtstaffcompfunc" value="<?php echo $staffcompfunc;?>">
+                            <input type="hidden" name="mtstaffcompfuncdep" id="mtstaffcompfuncdep" value="<?php echo $staffcompfuncdep;?>">
+                            <input type="hidden" name="mtcurrent" id="mtcurrent" value="<?php echo $mquestiontype;?>">
+                            <span id="createOption" class="btn btn-primary w-100" onclick="submitFromMtype()"><i class="bi bi-save"></i> บันทึกข้อมูล</span>
+                        </div>
+                    </div>
+
+                </form>
+                
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+    
+
+<!-- Modal setting mquestiontype END -->
 <?php
 include_once 'v_sidebar_end.php';
 include_once 'v_footer.php';
@@ -232,8 +538,12 @@ include_once 'v_footer.php';
         });
     });
 
-
     var arr_OptionType = <?php echo json_encode($arr_OptionType); ?>;
+    var arr_mquestiontype  = <?php echo json_encode($arrmquestiontype ); ?>;
+    var arr_questiongroup  = <?php echo json_encode($arrquestiongroup ); ?>;
+    var arr_activities  = <?php echo json_encode($arr_activities ); ?>;
+    var questionId  = '<?php if($_GET['id'] > 0){ echo $_GET['id']; }else{ echo '0'; } ?>';
+    var Iscopy  = '<?php if($_GET['copy'] > 0){ echo '1'; }else{ echo '0'; } ?>';
 
     $(function() {
         
@@ -266,26 +576,42 @@ include_once 'v_footer.php';
         });
 
         $("#createOption").click(function(){
+            let data = [];  
+            let optiontype            = $("#optiontype").val();
+            let optiontquestion       = $("#optiontquestion").val();
+            let optiontnumber         = $("#optiontnumber").val();
+            let optiontqname          = $("#qinpname").val();
+            let optiontqclass         = $("#qinpclass").val();
+            let optiontactivities     = $("#activities").val();
+            let qmode                 = $("#qmode").val();
+            let qtype                 = $("#qtype").val();
+            let qafter                = $("#qafter").val();
+            let qafteroption          = $("#qafteroption").val();
+            data['optiontype']        = $("#optiontype").val();
+            data['optiontquestion']   = $("#optiontquestion").val();
+            data['optiontnumber']     = $("#optiontnumber").val();
+            data['optiontqname']      = $("#qinpname").val();
+            data['optiontqclass']     = $("#qinpclass").val();
+            data['qmode']             = $("#qmode").val();
+            data['qtype']             = $("#qtype").val();
+            data['qafter']            = $("#qafter").val();
+            data['qafteroption']      = $("#qafteroption").val();
+            data['optiontactivities'] = $("#activities").val();
 
-            let optiontype          = $("#optiontype").val();
-            let optiontquestion     = $("#optiontquestion").val();
-            let optiontnumber       = $("#optiontnumber").val();
-            let optiontqname        = $("#qinpname").val();
-            let optiontqclass       = $("#qinpclass").val();
-            let qmode               = $("#qmode").val();
-            let qtype               = $("#qtype").val();
-            let qafter              = $("#qafter").val();
-            let qafteroption        = $("#qafteroption").val();
-            let data = [];
-            data['optiontype']      = $("#optiontype").val();
-            data['optiontquestion'] = $("#optiontquestion").val();
-            data['optiontnumber']   = $("#optiontnumber").val();
-            data['optiontqname']    = $("#qinpname").val();
-            data['optiontqclass']   = $("#qinpclass").val();
-            data['qmode']           = $("#qmode").val();
-            data['qtype']           = $("#qtype").val();
-            data['qafter']          = $("#qafter").val();
-            data['qafteroption']    = $("#qafteroption").val();
+            if(optiontquestion == ""){
+                fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุคำถาม ด้วยค่ะ");
+                return false;
+            }
+
+            if(optiontactivities == "0"){
+                fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุลักษณะของการตรวจ ด้วยค่ะ");
+                return false;
+            }
+
+            if(optiontype == "0" ){
+                fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุประเภทคำตอบ ด้วยค่ะ");
+                return false;
+            }
 
             if(optiontype > 3 ){
                 if(optiontnumber == "" || optiontnumber == 0){
@@ -293,6 +619,13 @@ include_once 'v_footer.php';
                     return false;
                 }
             } 
+
+            if(optiontnumber == "" || optiontnumber == "0"){
+                if(optiontnumber == "" || optiontnumber == 0){
+                    fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุจำนวน ด้วยค่ะ");
+                    return false;
+                }
+            }
 
             let html = '';
             if(qmode == 'question'){
@@ -322,7 +655,6 @@ include_once 'v_footer.php';
                 $(".nestedQuestionContent").append(html);
             }
 
-            // console.log(html);
             $('#generateinputbox').modal('hide'); 
 
             if(qtype == 'mainQuestionStart'){
@@ -339,12 +671,20 @@ include_once 'v_footer.php';
             $(this).css("background-color", hue);
         });
 
-        $( '#multiple-select-field' ).select2( {
-            theme: "bootstrap-5",
-            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-            placeholder: $( this ).data( 'placeholder' ),
-            closeOnSelect: false,
-        } );
+        $("#mquestiontypecheck").click(function(){
+            let checked  = $(this).is(":checked");
+            if(checked == true){
+                $("#mquestiontypeselect").hide();
+                $("#mquestiontype_name").prop('required',true);
+                $("#mquestiontypeinput").show();
+            }else{
+                $("#mquestiontype_name").prop('required',false);
+                $("#mquestiontypeselect").show();
+                $("#mquestiontypeinput").hide();
+                
+            }
+        })
+
 
     });
 
@@ -373,30 +713,32 @@ include_once 'v_footer.php';
 
     function generateInput(data) {
 
-        let type    = data['optiontype'];
-        let opques  = data['optiontquestion'];
-        let number  = data['optiontnumber'];
-        let opname  = data['optiontqname'];  
-        let opclass = data['optiontqclass'];   
-        let opqmode = data['qmode'];  
-        let qtype = data['qtype'];  
-        let qafter = data['qafter'];  
+        let type         = data['optiontype'];
+        let opques       = data['optiontquestion'];
+        let number       = data['optiontnumber'];
+        let opname       = data['optiontqname'];  
+        let opclass      = data['optiontqclass'];   
+        var opactivities = data['optiontactivities'];   
+        let opqmode      = data['qmode'];  
+        let qtype        = data['qtype'];  
+        let qafter       = data['qafter'];  
         let qafteroption = data['qafteroption'];  
-
-        let inputType = parseInt(parseInt(type) - 1);
-        let html = '';
-        name = makeid(15);
+        let inputType    = parseInt(parseInt(type) - 1);
+        let html         = '';
         
-        let inptype = arr_OptionType[inputType]["questiontype_type"];
+        name = makeid(15);
+
+        let inptype     = arr_OptionType[inputType]["questiontype_type"];
         let inptypename = arr_OptionType[inputType]["questiontype_name"];
-        // console.log( "-->", inptype);
 
         mainname = makeid(15);
         var bgColor = 'rgb(' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ')';
         html += `<div class="content`+name+`" id="`+mainname+`" >`;
         html += `   <input type="hidden" name="mainname[]" value="`+mainname+`" >`;
         html += `   <div class="list-group-item nested-3 question" id="`+name+`" data-id="`+name+`" style="background-color :`+bgColor+`">`;
-        html += `      <span class="btn btn-primary " id="delQuestion" style="position: absolute;right: 8px;" onclick="if(confirm('ยืนยันลบคำถามชุดนี้?')) { $('#`+name+`').remove(); }">ลบ</span>`;
+        // html += `      <span class="btn btn-primary " id="delQuestion" style="position: absolute;right: 8px;" onclick="if(confirm('ยืนยันลบคำถามชุดนี้?')) { $('#`+name+`').remove(); }">ลบ</span>`;
+        let listquest = $("input[name='questionnameinfrom["+qafter+"]']").length
+        html += `      <span class="btn btn-primary " id="delQuestion`+name+`" style="position: absolute;right: 8px;" onclick="deleteQuestionoption('`+name+`','`+qafter+`','question`+name+`',0);">ลบ</span>`;
         // html += `   <input type="hidden" name="questionname[`+name+`]" value="`+name+`" >`;
         html += `       <input type="hidden" name="questionname[]" value="`+name+`" >`;
         html += `       <input type="hidden" name="datainputtype[]" value="`+type+`" >`;
@@ -404,19 +746,45 @@ include_once 'v_footer.php';
         html += `       <input type="hidden" name="questionismain[`+name+`]" value="`+(qafter ? "" : "1")+`" >`;
         html += `       <input type="hidden" name="questionismainname[`+name+`]" value="`+(qafter ? "" : name)+`" >`;
         html += `       <input type="hidden" name="questionnameinputafter[`+name+`]" value="`+qafter+`" >`;
+        html += `       <input type="hidden" name="questionnameinfrom[`+qafter+`]" value="`+qafter+`" >`;
+        html += `       <input type="hidden" name="questionactivities[`+name+`]" value="`+opactivities+`" >`;
         if(qafter){
             html += `       <input type="hidden" name="questionnameinputparent[`+qafter+`][]" value="`+name+`" >`;
         }
         html += `       <input type="hidden" name="questionnameinputafteroptoion[`+name+`]" value="`+qafteroption+`" >`;
-        html += `           <div class="col-lg-12">`;
-        html += `               คำถาม : <input class="form-control-50 col-lg-5" type="text" name="questiontext[`+name+`]" required="" value="`+opques+`">`;
-        html += `           </div>`;
+        // html += `           <div class="col-lg-12">`;
+        // html += `               คำถาม : <input class="form-control-50 col-lg-5" type="text" name="questiontext[`+name+`]" required="" value="`+opques+`">`;
+        // html += `           </div>`;
+
+        html += `<div class="form-group row">`;
+        html += `    <div class="col-lg-6">`;
+        html += `        คำถาม : <input class="form-control-50 col-lg-10" type="text" name="questiontext[`+name+`]" required="" value="`+opques+`">`;
+        html += `    </div>`;
+        html += `    <span style="float: left; width: unset; line-height: 37px;">เลือกลักษณะของการตรวจ : </span>`;
+        html += `    <div class="col-sm-3">`;
+        html += `    <select class="form-select" name="questionactivities[`+name+`] id="questionactivities_`+name+`" aria-label="isshowing" required>`;
+
+        arr_activities.forEach(element => {
+            let selected = "";
+            if(opactivities == element.activities){
+                selected = "selected";
+            }
+            // console.log("opactivities",opactivities);
+            // console.log( "element.activities",element.activities);
+            html += `<option value="`+element.activities+`" `+selected+`> `+element.activities_name+` </option>`;
+            // console.log(element);
+        });
+
+        html += `    </select>`;
+        html += `    </div>`;
+        html += `</div>`;
+        
         html += `           <div class="list-group nested-sortable">`;
                 
         $order = 1
         for (let index = 0; index < number; index++) {
 
-            html += `<div class="list-group-item nested-2 answer border-none ms-5" data-id="`+name+index+`" style="">`;
+            html += `<div class="list-group-item nested-2 answer questionquestion border-none ms-4" data-id="`+name+index+`" style="">`;
             let formctr = '';
             $readonly = "";
             if(inputType  < 2 ){
@@ -426,15 +794,15 @@ include_once 'v_footer.php';
             let optionname = makeid(3);
 
             let inp = `<input type="hidden" name="`+name+index+`" value="`+inptype+`" >`;
-            inp += inptypename+` `+$order+` : <input class="form-control-40 col-lg-4" type="text" name="option`+name+`[]" id="option`+name+index+`" `+(parseInt(inputType) < 3 ? `readonly="readonly" ` : ` required `)+`>`;
+            inp += inptypename+` `+$order+` : <input class="form-control-40" type="text" name="option`+name+`[]" id="option`+name+index+`" `+(parseInt(inputType) < 3 ? `readonly="readonly" ` : ` required `)+`>`;
             if(parseInt(inputType) > 2){
                 inp += ` คะเเนน : <input class="form-control-custom col-lg-1" type="number" name="optionvalue`+name+`[]" id="optionvalue`+name+index+`" required="">`;
             }
 
-            inp += `<label class="form-check-label" for="questionoption_images_`+name+`">`;
+            inp += `<label class="form-check-label" for="questionoption_images_`+optionname+`">`;
             inp += `&nbsp;ต้องการให้เเนบรูปหรือไม่ :&nbsp;`;
             inp += `</label>`;
-            inp += `<input class="form-check-input" type="checkbox" style="vertical-align: middle;" value="1" id="questionoption_images_`+optionname+`" name="questionoption_images[`+name+`][`+optionname+`]">`;
+            inp += `<input class="form-check-input" type="checkbox" style="vertical-align: middle;" value="1" id="questionoption_images_`+optionname+`" name="questionoption_images[`+name+`][`+index+`]">`;
 
             inp += `<input type="hidden" name="optionid`+name+index+`[]" id="optionid`+name+index+`" value="`+index+`" >`;
 
@@ -443,7 +811,6 @@ include_once 'v_footer.php';
             inp += `<div class="list-group-item nested-3 hide question`+name+index+` `+(opques ? 'ms-3 mt-3 mb-3 ' : '')+`" data-id="li8La">`;
             inp += `</div>`;
             inp += `<span class="btn btn-primary ms-3" id="addquestion`+name+index+`" style="" onclick="setQuestionmodal('question','af','question`+name+index+`','`+name+`' ,'option`+name+index+`');">สร้างคำถาม<!--หลังจากคำตอบนี้--></span>`;
-
             
             html += inp;
             html += `</div>`;
@@ -462,7 +829,6 @@ include_once 'v_footer.php';
         }
 
         if(opname ){
-            console.log("opname -->>>", opname);
             $("#add"+opname).hide();  
             $("#add2"+opname).show();  
         }
@@ -477,6 +843,7 @@ include_once 'v_footer.php';
     }
 
     function setQuestionmodal(qmode,qtype,qname,after,afteroption){
+        clearModal();
         $('#qinpname').val(qname);
         $('#qmode').val(qmode); // question || parent
         $('#qtype').val(qtype);
@@ -499,6 +866,7 @@ include_once 'v_footer.php';
 
     function clearModal(){
         $("#optiontype").val(0);
+        $("#activities").val(0);
         $("#optiontquestion").val('');
         $("#optiontnumber").val('');
         $("#qinpname").val('');
@@ -511,12 +879,44 @@ include_once 'v_footer.php';
 
     function submitFrom(){
 
+        let staffcompfunc = ($("#staffcompfunc").val() ? $("#staffcompfunc").val() : 0);
+        if(staffcompfunc == "0"){
+            fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุฝ่าย ด้วยค่ะ");
+            return false;
+        }
+        
+        let staffcompfuncdep = ($("#staffcompfuncdep").val() ? $("#staffcompfuncdep").val() : 0);
+        if(staffcompfuncdep == "0"){
+            fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุแผนก ด้วยค่ะ");
+            return false;
+        }
+
+        let mquestiontype = ($("#mquestiontype").val() ? $("#mquestiontype").val() : 0);
+        if(mquestiontype == "0"){
+            fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุหมวด ด้วยค่ะ");
+            return false;
+        }
+
+        let questiongroup = ($("#questiongroup").val() ? $("#questiongroup").val() : 0);
+        if(questiongroup == "0"){
+            fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุกลุ่ม ด้วยค่ะ");
+            return false;
+        }
+
+        let questionmode = ($("#questionmode").val() ? $("#questionmode").val() : 0);
+        if(questionmode == "0"){
+            fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุประเภท ด้วยค่ะ");
+            return false;
+        }
+
+
         let validate = validateForm();
-        console.log(validate);
+        console.log("validate",validate);
 
         if(validate == true){
             var form = $("#frm_submit");
             var actionUrl = "../phpfunc/curd.php";
+            let questioninfoid = $("#questioninfoid").val();
             
             $.ajax({
                 type: "POST",
@@ -533,9 +933,24 @@ include_once 'v_footer.php';
                     console.log(res);
                     if(res.success > 0){
                         alertSwalSuccess();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
+                        if(res.questioninfoid > 0){
+                            setTimeout(() => {
+                                    let url_replace = "<?php echo $url_addlink;?>?id="+res.questioninfoid;
+                                    window.location.replace(url_replace);
+                                }, 1000);
+                        }else{
+                            if(questioninfoid > 0){
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            }else{
+                                
+                                setTimeout(() => {
+                                    let url_replace = "<?php echo $url_addlink;?>?id="+res.questioninfoid;
+                                    window.location.replace(url_replace);
+                                }, 1000);
+                            }
+                        }
                         // swal.close()
                         // alertSwalSuccess();
                     }else{
@@ -569,6 +984,154 @@ include_once 'v_footer.php';
         
     }
 
+    function changestaffcompfuncdep(){
+        let compfunc = $("#staffcompfunc").val();
+        let compfuncdep = $("#staffcompfuncdep").val();
+        let html_mquestiontype = '<select class="form-select" name="mquestiontype" id="mquestiontype" onchange="changemquestiontype()" required>';
+        html_mquestiontype += '<option value="0">เลือกหมวด</option>';
+
+        console.log("compfunc",compfunc,"compfuncdep",compfuncdep);
+        arr_mquestiontype.forEach(element => {
+            if(compfunc == element.questioncategories_compfunc && compfuncdep == element.questioncategories_compfuncdep && element.questioncategories_active == 1 || element.questioncategories_default == 1 ){
+                html_mquestiontype += '<option value="'+element.questioncategories+'" > '+element.questioncategories_name+' </option>';
+            }
+        });
+        html_mquestiontype += '</select>';
+
+        $("#mquestiontype").html(html_mquestiontype);
+        
+    }   
+
+    function changemquestiontype(){
+
+        let mquestiontype = $("#mquestiontype").val();
+        let html_questiongroup = '<select class="form-select" name="questiongroup" id="questiongroup" onchange="changemquestiontype()" required>';
+        html_questiongroup += '<option value="0">เลือกกลุ่ม</option>';
+        arr_questiongroup.forEach(element => {
+            if(mquestiontype == element.questiongroup_questioncategories){
+                html_questiongroup += '<option value="'+element.questiongroup+'" > '+element.questiongroup_name+' </option>';
+            }
+        });
+        html_questiongroup += '</select>';
+
+        $("#questiongroup").html(html_questiongroup);
+        
+    }   
+
+    function editMquestiontype(){
+
+        var form = $("#frm_submit_mtype");
+        var actionUrl = "../phpfunc/curd.php";
+        
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: {
+                mode: "mquestiontypedata",
+                compfunc : $("#staffcompfunc").val(),
+                compfuncdep : $("#staffcompfuncdep").val(),
+                currentmquestiontype : $("#mquestiontype").val(),
+            },
+            dataType: "JSON",
+            // beforeSend: function(){
+            //     fireSwalOnSubmit();
+            // },
+            success: function(obj)
+            {
+                var res = obj.data;
+                $("#mt_tbody").html(res.htmlmodal);
+            }
+        });
+
+        $("#mquestiontypeSeting").modal("show");
+    }
+
+    function deleteQuestionoption(name,main,cont,type){
+        console.log("deleteQuestionoption => "+cont);
+        console.log(name,main,cont);
+        Swal.fire({
+			title: "คุณต้องการที่จะลบคำถามนี้หรือไม่?",
+			//text: `รายการ : ${name}`,
+			icon: "question",
+			showCancelButton: true,
+			confirmButtonText: "ใช่",
+			cancelButtonText: "ไม่",
+			confirmButtonColor: "#FE0000",
+		}).then((result) => {
+			if (result.isConfirmed == true) {
+                if(questionId > 0 && Iscopy == 0){ deleteQuestion(name); }
+				// $('#'+name).remove();
+                if(type == 1){
+				    $('#'+name).css("display","none");
+                }else{
+				    $('#'+name).remove();
+                }
+                $('#questiondtdeleted_'+name).val(1);
+                let countquest = $("input[name='questionnameinfrom["+main+"]']").length
+                console.log("countquest",countquest);
+                if(countquest == 0){ $("."+cont).hide(); $("#addquestionquestion"+main).show(); }
+			}
+		});
+    }
+
+    function editmname(name1,name2,hiddent,id){
+        $("#"+name1).show()
+        $("#"+name2).hide()
+        if(hiddent.indexOf('editmnamechange_') != -1){
+            $("#"+hiddent).val("1");
+        }else{
+            $("#editmnamechange_"+id).val("");
+        }
+    }
+
+    function submitFromMtype(){
+        var form = $("#frm_submit_mtype").serialize();
+        var actionUrl = "../phpfunc/curd.php";
+        var form = $("#frm_submit_mtype");
+        var actionUrl = "../phpfunc/curd.php";
+        var currentmquestiontype = $("#mquestiontype").val();
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: form.serialize(), // serializes the form's elements.
+            dataType: "JSON",
+            beforeSend: function(){
+                fireSwalOnSubmit();
+            },
+            success: function(obj)
+            {
+                var res = obj.data;
+                if(res.success > 0){
+
+                    alertSwalSuccess();
+                    $("#mquestiontypeselect").html(res.html);
+                    $("#mquestiontypeSeting").modal("hide");
+                    
+                    
+                    setTimeout(() => {
+                        $("#mquestiontype").val(currentmquestiontype);
+                        swal.close();
+                    }, 1200);
+
+                }else{
+                    fireSwalOnError("บันทึกข้อมูลไม่สำเร็จ <br>"+res.sql);
+                    
+                }
+            }
+        });
+
+    }
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+
 </script>
 <style>
 
@@ -577,9 +1140,6 @@ include_once 'v_footer.php';
     }
 
     .list-group-item.nested-3 {
-        /* background-color: rgba(255, 255, 255, 0.15); */
-        /* background-color: rgb(0 0 0 / 15%) */
-        /* background-color: #D5D6EE; */
         background-color: #FFFFFF;
     }
 
@@ -587,11 +1147,10 @@ include_once 'v_footer.php';
         max-height: 23rem !important;
     }
 
-    /* input:invalid, 
-    select:invalid,
-    textarea:invalid
-    {
-        color: red;
-        border-color: red;
-    } */
+    input[type=text]:read-only,input[type=number]:read-only {
+        background-color: #E7E9EB;
+    }
+    .cpointer{
+        cursor: pointer;
+    }
 </style>

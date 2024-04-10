@@ -113,68 +113,8 @@ let itemListTable;
 let giftHistoryTalbe;
 let categoryTalbe;
 
-async function initListTable() {
-	rewardListTable = $("#rewardListTable").DataTable({
-		stateSave: false,
-		aLengthMenu: aLengthMenu,
-		iDisplayLength: 25,
-		ordering: false,
-		language: dataTableSettings,
-		dom: tableDom,
-		buttons: tableButton,
-		columns: [
-			{
-				render: function (data, type, row, meta) {
-					return meta.row + meta.settings._iDisplayStart + 1;
-				},
-			},
-			{
-				data: "question_name",
-				render: function (data, type, row, meta) {
-					return `${data}`;
-				},
-			},
-			{
-				data: "question_detail",
-				render: function (data, type, row, meta) {
-					return `${data}`;
-				},
-			},
-			{
-				data: "question_recname",
-				render: function (data, type, row, meta) {
-					return `${data}`;
-				},
-			},
-			{
-				data: "question_recdatetime",
-				render: function (data, type, row) {
-					return (
-						dayjs(data, "YYYY-MM-DD hh:mm").format("DD/MM/BBBB HH:mm")
-					);
-				},
-			},
-			{
-				data: "giftdetail",
-				render: function (data, type, row) {
-				let isDisabled;
-				if (row.total_items != "0") {
-					isDisabled = "disabled";
-				} else {
-					isDisabled = "";
-				}
-				isDisabled = "";
-				return `
-						<div class="btn-group" role="group">
-							<button type="button" class="btn btn-warning" onclick="callAction('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
-							<button type="button" class="btn btn-danger ${isDisabled}" onclick="callAction('delete','${row.question}','${row.question_name}','${row.currrent_user}')"><i class="bi bi-trash3"></i> ลบ</button>
-						</div>
-						`;
-				},
-			},
-		],
-	});
-}
+let getUrl = document.URL;
+let linkUrl = getUrl.replace("list_question", "v_answerForm");
 
 async function initItemListTable() {
 	itemListTable = $("#itemListTalbe").DataTable({
@@ -484,22 +424,6 @@ async function initGiftHistoryTalbe() {
 	});
 }
 
-async function getQuestionListDataFromAPI() {
-	try {
-		var endpoint = `../phpfunc/questiondata.php?method=getQuestionList`;
-		console.log("Test",endpoint);
-		const response = await axios.get(endpoint);
-		console.log(response.data);
-		var data = response.data;
-		rewardListTable.clear();
-		rewardListTable.rows.add(data);
-		rewardListTable.draw();
-		//console.log(response);
-	} catch (error) {
-		console.log(error);
-	}
-}
-
 async function getItemListDataFromAPI(par_id) {
 	return;
 	try {
@@ -523,6 +447,10 @@ function callAction(action, id, name, currentUserId=0) {
 	if (action == "edit") {
 
 		window.location.href = `addquestion.php?id=${id}`;
+
+	} else if (action == "copy") {
+
+		window.location.href = `addquestion.php?id=${id}&copy=1`;
 
 	} else if (action == "delete") {
 
@@ -1135,12 +1063,14 @@ function alertSwalSuccess(text=""){
 		showConfirmButton: false,
 		showCloseButton: false,
 	}) */
+	
 	if(text != ""){
 		swtext = text;
 		
 	}else{
 		swtext = "บันทึกข้อมูลสำเร็จ";
 	}
+
 	Swal.fire({
 		icon: "success",
 		text: swtext,

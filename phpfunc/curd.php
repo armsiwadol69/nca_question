@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(0);
 date_default_timezone_set("Asia/Bangkok");
 session_start();
 $gb_notlogin = true;
@@ -150,25 +150,10 @@ function changeSubFolderPermissions($id, $action) {
 $ncaquestion = new question();
 
 if($methodRequest == "addQuestion") {
-
-    // echo "<pre>"; 
-    // print_r($_POST);
-    // print_r($array_info);
-    // die();
     
     $data = array();
     $questiondata = array();
     $questionmaindata = array();
-
-
-
-    $sqlbusrecord = "SELECT busrecord_number FROM busrecord WHERE busrecord IN( ".implode(",", $_POST['bus_ref'])." )";
-    $qbusrecord= $go_ncadb->ncaretrieve($sqlbusrecord, "icms");
-    $fbusrecord = $ncaquestion->ncaArrayConverter($qbusrecord);
-    $bus_number = array();
-    foreach ($fbusrecord as $key => $value) {
-        $bus_numbe[] = $value['busrecord_number'];
-    }
 
     $array_info = array(
         "par_questioninfoid" => $_POST['questioninfoid'],
@@ -177,11 +162,16 @@ if($methodRequest == "addQuestion") {
         "par_userid"         => $_POST['par_userId'],
         "oldquestion"        => $_POST['oldquestion'],
         "questionid"         => $_POST['questionid'],
-        "bus_ref"            => implode(",", $_POST['bus_ref']),
-        "bus_number"         => implode(",", $bus_numbe),
+        "staffcompfunc"      => $_POST['staffcompfunc'],
+        "staffcompfuncdep"   => $_POST['staffcompfuncdep'],
+        "mquestiontype"      => $_POST['mquestiontype'],
+        "questiongroup"      => $_POST['questiongroup'],
+        "questionmode"       => $_POST['questionmode'],
+        "mquestiontypecheck" => $_POST['mquestiontypecheck'],
+        "mquestiontype_name" => $_POST['mquestiontype_name'],
+        "questioncopy"       => $_POST['questioncopy'],
     );
 
-    
 
     foreach ($_POST['questionismainname'] as $key => $value) {
 
@@ -216,19 +206,21 @@ if($methodRequest == "addQuestion") {
         $data['optionnm']                 = "option".$_POST['questionnameinputafter'][$value];
         $optionval                        = "optionvalue".$value;
         $data['dataoptiontype']           = $_POST['questionnameinput'][$value];
+        $data['dataactivities']           = $_POST['questionactivities'][$value];
+        $data['questiondtdeleted']        = $_POST['questiondtdeleted'][$value];
 
         // ////// ISSUE /////////
-        // $optionid                         = "optionid".$value;
-        // $data['questionoption']           = $_POST[$optionid];
+        $optionid                         = "optionid".$value;
+        $data['questionoption']           = $_POST[$optionid];
         // ////// ISSUE /////////
 
-        if(!$_POST['questiondt'][$value] ){
-            $data['questionoption']           = $_POST['questionoption'][$value];
-        }else{
-            $optionid                         = "optionid".$value;
-            $data['questionoption']           = $_POST[$optionid];
+        // if(!$_POST['questiondt'][$value] && $_POST['questioninfoid'] > 0){
+        //     $data['questionoption']           = $_POST['questionoption'][$value];
+        // }else{
+        //     $optionid                         = "optionid".$value;
+        //     $data['questionoption']           = $_POST[$optionid];
+        // }
 
-        }
 
         $data['dataoption']               = $_POST[$option];
         $data['dataoptionvalue']          = $_POST[$optionval];
@@ -248,8 +240,17 @@ if($methodRequest == "addQuestion") {
 } else if($methodRequest == "del") {
 
     $data = $ncaquestion->deleteMainQuestion($id,$currentUserId);
-    header("Content-Type: application/json");
-    
+    // header("Content-Type: application/json");
     echo json_encode($data);
+
+} else if($methodRequest == "updatemtype") {
+
+    $data = $ncaquestion->updateMtype($_POST);
+    echo json_encode(array("data"=>$data));
+
+} else if($methodRequest == "mquestiontypedata") {
+
+    $data = $ncaquestion->generateMtype($_POST['currentmquestiontype'],$_POST['compfunc']);
+    echo json_encode(array("data"=>$data));
 
 }
