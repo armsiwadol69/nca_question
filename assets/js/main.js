@@ -116,90 +116,6 @@ let categoryTalbe;
 let getUrl = document.URL;
 let linkUrl = getUrl.replace("list_question", "v_answerForm");
 
-async function initListTable() {
-	rewardListTable = $("#rewardListTable").DataTable({
-		stateSave: false,
-		aLengthMenu: aLengthMenu,
-		iDisplayLength: 25,
-		ordering: false,
-		language: dataTableSettings,
-		dom: tableDom,
-		buttons: tableButton,
-		scrollY: ($('#page-content-wrapper').height() - 300),
-    	scrollCollapse: true,
-		columns: [
-			{
-				render: function (data, type, row, meta) {
-					return meta.row + meta.settings._iDisplayStart + 1;
-				},
-			},
-			{
-				data: "question_name",
-				render: function (data, type, row, meta) {
-					return `${data}`;
-				},
-			},
-			{
-				data: "question_detail",
-				render: function (data, type, row, meta) {
-					return `${data}`;
-				},
-			},
-			{
-				data: "question_compfuncname",
-				render: function (data, type, row, meta) {
-					return `${data}`;
-				},
-			},
-			{
-				data: "question_compfuncdepname",
-				render: function (data, type, row, meta) {
-					return `${data}`;
-				},
-			},
-			{
-				data: "question_mquestiontypename",
-				render: function (data, type, row, meta) {
-					return `${data}`;
-				},
-			},
-			{
-				data: "question_recname",
-				render: function (data, type, row, meta) {
-					return `${data}`;
-				},
-			},
-			{
-				data: "question_recdatetime",
-				render: function (data, type, row) {
-					return (
-						dayjs(data, "YYYY-MM-DD hh:mm").format("DD/MM/BBBB HH:mm")
-					);
-				},
-			},
-			{
-				data: "giftdetail",
-				render: function (data, type, row) {
-					let isDisabled;
-					if (row.total_items != "0") {
-						isDisabled = "disabled";
-					} else {
-						isDisabled = "";
-					}
-					isDisabled = "";
-
-					return `<div class="btn-group" role="group">
-								<button type="button" class="btn btn-warning" onclick="callAction('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
-								<button type="button" class="btn btn-secondary" onclick="callAction('copy','${row.question}')"><i class="bi bi-copy"></i> Copy</button>
-								<button type="button" class="btn btn-danger ${isDisabled}" onclick="callAction('delete','${row.question}','${row.question_name}','${row.currrent_user}')"><i class="bi bi-trash3"></i> ลบ</button>
-								<a href="`+linkUrl +`?formId=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
-							</div>`;
-				},
-			},
-		],
-	});
-}
-
 async function initItemListTable() {
 	itemListTable = $("#itemListTalbe").DataTable({
 		//data: busBreakdownList,
@@ -506,22 +422,6 @@ async function initGiftHistoryTalbe() {
 		},
 		],
 	});
-}
-
-async function getQuestionListDataFromAPI() {
-	try {
-		var endpoint = `../phpfunc/questiondata.php?method=getQuestionList`;
-		console.log("Test",endpoint);
-		const response = await axios.get(endpoint);
-		console.log(response.data);
-		var data = response.data;
-		rewardListTable.clear();
-		rewardListTable.rows.add(data);
-		rewardListTable.draw();
-		//console.log(response);
-	} catch (error) {
-		console.log(error);
-	}
 }
 
 async function getItemListDataFromAPI(par_id) {
@@ -1163,12 +1063,14 @@ function alertSwalSuccess(text=""){
 		showConfirmButton: false,
 		showCloseButton: false,
 	}) */
+	
 	if(text != ""){
 		swtext = text;
 		
 	}else{
 		swtext = "บันทึกข้อมูลสำเร็จ";
 	}
+
 	Swal.fire({
 		icon: "success",
 		text: swtext,
