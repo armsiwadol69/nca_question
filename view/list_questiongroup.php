@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once 'v_head.php';
 include_once 'v_sidebar_start.php';
 require_once ("../class/class.question.php");
@@ -21,7 +22,7 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
     <div class="col-12">
         <div class="w-100 d-flex mt-2">
             <h3 class="me-auto mt-1">กลุ่มคำถาม</h3>
-            <button type="button" class="btn btn-primary"  onclick="callQuestionGroup('addquestionegroup','0')"><i class="bi bi-plus-square"></i> เพิ่มชุดคำถามใหม่</button>
+            <button type="button" class="btn btn-primary"  onclick="callQuestionGroup('addquestionegroup','0')"><i class="bi bi-plus-square"></i> เพิ่มกลุ่มใหม่</button>
         </div>
         <hr>
     </div>
@@ -31,9 +32,10 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
                 <thead class="text-bg-primary" style="vertical-align: middle;">
                     <tr>
                         <td width="50px;">ลำดับ</td>
-                        <td>ชุดคำถาม</td>
+                        <td>กลุ่ม</td>
                         <td>หมวด</td>
                         <td>รายละเอียด</td>
+                        <td>สถานะ</td>
                         <td width="200px;">ผู้บันทึก</td>
                         <td width="150px;">วันที่บันทึก</td>
                         <td width="150px;"></td>
@@ -61,12 +63,12 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
                     <div class="row gy-3">
                         
                         <div class="col-12">
-                            <label class="form-label" for="option">ชื่อ<span class="text-danger">*</span></label>
+                            <label class="form-label" for="questiongroup_name">ชื่อ<span class="text-danger">*</span></label>
                             <input class="form-control" type="text" name="questiongroup_name" id="questiongroup_name" required>
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label" for="questiongroup_hidden">หมวด<span class="text-danger">*</span></label>
+                            <label class="form-label" for="questiongroup_questioncategories">หมวด<span class="text-danger">*</span></label>
                             <select class="form-select" name="questiongroup_questioncategories" id="questiongroup_questioncategories" aria-label="isshowing">
                                 <option value="0">เลือกหมวด</option>
                                 <?php 
@@ -74,6 +76,15 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
                                        echo '<option value="'.$value['questioncategories'].'">'.$value['questioncategories_name'].'</option>';
                                     }
                                 ?>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label" for="questiongroup_hidden">สถานะ<span class="text-danger">*</span></label>
+                            <select class="form-select" name="questiongroup_hidden" id="questiongroup_hidden" aria-label="isshowing">
+                                <option value="">เลือกสถานะ</option>
+                                <option value="0">เเสดง</option>
+                                <option value="1">ซ่อน</option>
                             </select>
                         </div>
 
@@ -154,7 +165,7 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
                     },
                 },
                 {
-                    data: "questiongroup_categoriesname",
+                    data: "questioncategories_name",
                     render: function (data, type, row, meta) {
                         return `${data}`;
                     },
@@ -163,6 +174,17 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
                     data: "questiongroup_description",
                     render: function (data, type, row, meta) {
                         return `${data}`;
+                    },
+                },
+                {
+                    data: "questiongroup_hidden",
+                    render: function (data, type, row, meta) {
+                        // return `${data}`;
+                        if(data > 0){
+                            return `ซ่อน`;
+                        }else{
+                            return `แสดง`;
+                        }
                     },
                 },
                 {
@@ -223,6 +245,7 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
 
                         $("#questiongroup_name").val(res.questiongroup_name);
                         $("#questiongroup_questioncategories").val(res.questiongroup_questioncategories);
+                        $("#questiongroup_hidden").val(res.questiongroup_hidden);
                         $("#questiongroup_description").val(res.questiongroup_description);
                         $("#questiongroup").val(res.questiongroup);
                         $("#method").val(mode);

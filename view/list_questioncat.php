@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once 'v_head.php';
 include_once 'v_sidebar_start.php';
 require_once ("../class/class.question.php");
@@ -35,7 +36,7 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
     <div class="col-12">
         <div class="w-100 d-flex mt-2">
             <h3 class="me-auto mt-1">หมวดคำตอบ</h3>
-            <button type="button" class="btn btn-primary"  onclick="callQuestionCate('addquestioncategories','0')"><i class="bi bi-plus-square"></i> เพิ่มชุดคำถามใหม่</button>
+            <button type="button" class="btn btn-primary"  onclick="callQuestionCate('addquestioncategories','0')"><i class="bi bi-plus-square"></i> เพิ่มหมวดใหม่</button>
         </div>
         <hr>
     </div>
@@ -45,7 +46,7 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
                 <thead class="text-bg-primary" style="vertical-align: middle;">
                     <tr>
                         <td width="50px;">ลำดับ</td>
-                        <td>ชุดคำถาม</td>
+                        <td>หมวด</td>
                         <td>รายละเอียด</td>
                         <td>ฝ่าย</td>
                         <td>แผนก</td>
@@ -66,7 +67,7 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
     <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5">แก้ไขประเภท</h1>
+                <h1 class="modal-title fs-5">แก้ไขหมวด</h1>
                 <span class="btn-close" data-bs-dismiss="modal" aria-label="Close"></span>
             </div>
 
@@ -265,8 +266,8 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
                         isDisabled = "";
 
                         return `<div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-warning" onclick="callQuestionCate('editquestioncategories','${row.questioncategories}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
-                                    <button type="button" class="btn btn-danger ${isDisabled}" onclick="callQuestionCate('delete','${row.questioncategories}','${row.questioncategories_name}')"><i class="bi bi-trash3"></i> ลบ</button>
+                                    <button type="button" class="btn btn-warning `+(row.questioncategories_default == 1 ? "disabled" : "")+`" onclick="callQuestionCate('editquestioncategories','${row.questioncategories}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
+                                    <button type="button" class="btn btn-danger `+(row.questioncategories_default == 1 ? "disabled" : "")+`" onclick="callQuestionCate('delete','${row.questioncategories}','${row.questioncategories_name}')"><i class="bi bi-trash3"></i> ลบ</button>
                                 </div>`;
                     },
                 },
