@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once 'v_head.php';
 include_once 'v_sidebar_start.php';
 require_once ("../class/class.question.php");
@@ -21,7 +22,7 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
     <div class="col-12">
         <div class="w-100 d-flex mt-2">
             <h3 class="me-auto mt-1">กำหนดน้ำหนักความผิด</h3>
-            <button type="button" class="btn btn-primary"  onclick="callmistakelevel('addmistakelevel','0')"><i class="bi bi-plus-square"></i> เพิ่มชุดคำถามใหม่</button>
+            <button type="button" class="btn btn-primary"  onclick="callmistakelevel('addmistakelevel','0')"><i class="bi bi-plus-square"></i> เพิ่มน้ำหนักความผิดใหม่</button>
         </div>
         <hr>
     </div>

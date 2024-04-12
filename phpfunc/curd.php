@@ -28,9 +28,8 @@ if (is_array($_POST)) {
     }
 }
 
-$debug = 0;
 
-if ($debug) {
+if ($_POST['debug'] > 0) {
     echo '<pre>';
     print_r($ar_prm);
     print_r($_POST);
@@ -39,6 +38,7 @@ if ($debug) {
     // print_r($ar_prm["imageFilesOld"]);
     echo '<br>------------------------------------------------------<br>';
     echo '</pre>';
+    die();
 }
 
 function upload_file($files, $id)
@@ -151,6 +151,10 @@ $ncaquestion = new question();
 
 if($methodRequest == "addQuestion") {
     
+    /* echo "<pre>";
+    print_r($_POST);
+    die(); */
+
     $data = array();
     $questiondata = array();
     $questionmaindata = array();
@@ -169,6 +173,8 @@ if($methodRequest == "addQuestion") {
         "questionmode"       => $_POST['questionmode'],
         "mquestiontypecheck" => $_POST['mquestiontypecheck'],
         "mquestiontype_name" => $_POST['mquestiontype_name'],
+        "questiongroupcheck" => $_POST['questiongroupcheck'],
+        "questiongroup_name" => $_POST['questiongroup_name'],
         "questioncopy"       => $_POST['questioncopy'],
     );
 
@@ -228,6 +234,7 @@ if($methodRequest == "addQuestion") {
         
         $optionkey                        = $_POST[$optionid][$key];
         $data['optionimages']             = $_POST["questionoption_images"][$value];
+        $data['optionmistakelevel']             = $_POST["questionoption_mistakelevel"][$value];
         $questiontype                     = $ncaquestion->getInpustType("questiontype_type",$_POST['questionnameinput'][$value]);
         $data['datainputtype']            = $questiontype['questiontype'];
         $questiondata[$value]             = $data;
@@ -253,4 +260,14 @@ if($methodRequest == "addQuestion") {
     $data = $ncaquestion->generateMtype($_POST['currentmquestiontype'],$_POST['compfunc']);
     echo json_encode(array("data"=>$data));
 
-}
+} else if($methodRequest == "questionGroupdata") {
+
+    $data = $ncaquestion->generatequestiongroup($_POST['questioncate'],$_POST['current_group']);
+    echo json_encode(array("data"=>$data));
+
+}else if($methodRequest == "updategroup") {
+
+    $data = $ncaquestion->updategroup($_POST);
+    echo json_encode(array("data"=>$data));
+
+} 

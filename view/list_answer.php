@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once 'v_head.php';
 include_once 'v_sidebar_start.php';
 ?>

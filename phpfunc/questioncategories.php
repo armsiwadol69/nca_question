@@ -31,7 +31,7 @@ if ($debug) {
 
 if($ar_prm["method"] == "getlist"){
 
-    $sql = "SELECT *  FROM tb_questioncategories WHERE questioncategories_active = '1' AND questioncategories_default = '0' AND questioncategories_compfunc = '".$ar_prm['staffcompfunc']."' ";
+    $sql = "SELECT *  FROM tb_questioncategories WHERE (questioncategories_active = '1' AND questioncategories_compfunc = '".$ar_prm['staffcompfunc']."' ) OR questioncategories_default = 1";
 
     $result = $go_ncadb->ncaretrieve($sql, "question");
     $data = array();
@@ -63,6 +63,12 @@ if($ar_prm["method"] == "getlist"){
 
             if($value['questioncategories_modispid']){
                 $value['questioncategories_recdatetime'] = $value['questioncategories_modidatetime'];
+            }
+
+            if($value['questioncategories_default'] == 1){
+                $value['questioncategories_compfuncname'] = "-";
+                $value['questioncategories_compfuncdepname'] = "-";
+                $value['questioncategories_recname'] = "-";
             }
 
             $value['currrent_user'] = $_SESSION['userData']['stf'];

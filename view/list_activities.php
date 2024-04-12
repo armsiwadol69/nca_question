@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once 'v_head.php';
 include_once 'v_sidebar_start.php';
 require_once ("../class/class.question.php");
@@ -20,8 +21,8 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
 <div class="row">
     <div class="col-12">
         <div class="w-100 d-flex mt-2">
-            <h3 class="me-auto mt-1">กลุ่มคำถาม</h3>
-            <button type="button" class="btn btn-primary"  onclick="callactivities('addquestionctivities','0')"><i class="bi bi-plus-square"></i> เพิ่มชุดคำถามใหม่</button>
+            <h3 class="me-auto mt-1">ลักษณะของการตรวจ</h3>
+            <button type="button" class="btn btn-primary"  onclick="callactivities('addquestionctivities','0')"><i class="bi bi-plus-square"></i> เพิ่มลักษณะของการตรวจใหม่</button>
         </div>
         <hr>
     </div>
@@ -31,7 +32,7 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
                 <thead class="text-bg-primary" style="vertical-align: middle;">
                     <tr>
                         <td width="50px;">ลำดับ</td>
-                        <td>ชุดคำถาม</td>
+                        <td>ลักษณะของการตรวจ</td>
                         <td>รายละเอียด</td>
                         <td width="200px;">ผู้บันทึก</td>
                         <td width="150px;">วันที่บันทึก</td>

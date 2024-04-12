@@ -6,10 +6,10 @@ function handleScriptLoad() {
 		// Set the opacity to 0 to initiate the fade-out effect
 		loadingIndicator.style.opacity = "0";
 		// After the fade-out animation completes, hide the loading indicator
-		setTimeout(function () {
+		//setTimeout(function () {
 			loadingIndicator.style.display = "none";
 			resolve(); // Resolve the promise once the loading indicator is hidden
-		}, 500); // 500 milliseconds = 0.5 seconds
+		//}, 100); // 500 milliseconds = 0.5 seconds
 
 		// Any other code you want to execute after the script has loaded
 	});

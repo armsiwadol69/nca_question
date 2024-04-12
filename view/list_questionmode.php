@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once 'v_head.php';
 include_once 'v_sidebar_start.php';
 require_once ("../class/class.question.php");
@@ -20,8 +21,8 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
 <div class="row">
     <div class="col-12">
         <div class="w-100 d-flex mt-2">
-            <h3 class="me-auto mt-1">กลุ่มคำถาม</h3>
-            <button type="button" class="btn btn-primary"  onclick="callQuestionMode('addquestionemode','0')"><i class="bi bi-plus-square"></i> เพิ่มชุดคำถามใหม่</button>
+            <h3 class="me-auto mt-1">ประเภทคำถาม</h3>
+            <button type="button" class="btn btn-primary"  onclick="callQuestionMode('addquestionemode','0')"><i class="bi bi-plus-square"></i> เพิ่มประเภทใหม่</button>
         </div>
         <hr>
     </div>
@@ -31,7 +32,7 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
                 <thead class="text-bg-primary" style="vertical-align: middle;">
                     <tr>
                         <td width="50px;">ลำดับ</td>
-                        <td>ชุดคำถาม</td>
+                        <td>ประเภท</td>
                         <td>รายละเอียด</td>
                         <td width="200px;">ผู้บันทึก</td>
                         <td width="150px;">วันที่บันทึก</td>
@@ -163,17 +164,10 @@ $arrquestioncategories = $ncaquestion->ncaArrayConverter($arr_questioncategories
                 {
                     data: "giftdetail",
                     render: function (data, type, row) {
-                        let isDisabled;
-                        if (row.total_items != "0") {
-                            isDisabled = "disabled";
-                        } else {
-                            isDisabled = "";
-                        }
-                        isDisabled = "";
 
                         return `<div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-warning" onclick="callQuestionMode('editquestionemode','${row.questionmode}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
-                                    <button type="button" class="btn btn-danger ${isDisabled}" onclick="callQuestionMode('delete','${row.questionmode}','${row.questionmode_name}')"><i class="bi bi-trash3"></i> ลบ</button>
+                                    <button type="button" class="btn btn-warning `+(row.questionmode > 2 ? "" : "disabled")+`" onclick="callQuestionMode('editquestionemode','${row.questionmode}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
+                                    <button type="button" class="btn btn-danger `+(row.questionmode > 2 ? "" : "disabled")+`" onclick="callQuestionMode('delete','${row.questionmode}','${row.questionmode_name}')"><i class="bi bi-trash3"></i> ลบ</button>
                                 </div>`;
                     },
                 },

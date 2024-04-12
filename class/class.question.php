@@ -83,8 +83,8 @@ class question
 
         if($info['mquestiontypecheck'] == 1 ){
 
-            $sqlInsertMquestiontype = new SqlBuilder();
-            $sqlInsertMquestiontype->SetTableName("tb_questioncategories");
+            $sqlInsertCate = new SqlBuilder();
+            $sqlInsertCate->SetTableName("tb_questioncategories");
             $questionId = 0;
             $questionIddt = 0;
             $ii = 0;
@@ -96,8 +96,8 @@ class question
             $sqlObj[$ii++] = new TField("questioncategories_recspid", $info['par_userid'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_recdatetime", $datetime, "string");
 
-            $sqlInsertMquestiontype->SetField($sqlObj);
-            $queryMquestiontype = $sqlInsertMquestiontype->InsertSql();
+            $sqlInsertCate->SetField($sqlObj);
+            $queryMquestiontype = $sqlInsertCate->InsertSql();
 
             if ($go_ncadb->ncaexec($queryMquestiontype, "question")) {
                 $questioncategories = $go_ncadb->ncaGetInsId("question");
@@ -108,6 +108,72 @@ class question
                 $data['sql'] = $queryMquestiontype;
                 return $data;
             }
+
+
+            $sqlInsertGroup= new SqlBuilder();
+            $sqlInsertGroup->SetTableName("tb_questiongroup");
+            $ii = 0;
+            $sqlObj = null;
+            
+            if($info['questiongroupcheck'] == 1 ){
+                $arrmquestiongroup[0]['questiongroup_name'] = $info['questiongroup_name'];
+
+            }else{
+                $sql = "SELECT *  FROM tb_questiongroup WHERE questiongroup = '".$info['questiongroup']."'";
+                $result = $go_ncadb->ncaretrieve($sql, "question");
+                $arrmquestiongroup  = $this->ncaArrayConverter($result);
+            }
+
+
+            $sqlObj[$ii++] = new TField("questiongroup_name", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_name']), "string");
+            $sqlObj[$ii++] = new TField("questiongroup_description", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_description']), "string");
+            $sqlObj[$ii++] = new TField("questiongroup_questioncategories", $info['mquestiontype'] , "string");
+            $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['stf'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_recdatetime", $datetime, "string");
+            $sqlObj[$ii++] = new TField("questiongroup_active", "1", "string");
+
+            $sqlInsertGroup->SetField($sqlObj);
+            $queryGroupe = $sqlInsertGroup->InsertSql();
+
+            if ($go_ncadb->ncaexec($queryGroupe, "question")) {
+                $questionGroup = $go_ncadb->ncaGetInsId("question");
+                $info['questiongroup'] = $questionGroup;
+            } else {
+                $go_ncadb->ncarollback("question");
+                $data['fail'] = 1;
+                $data['sql'] = $queryGroupe;
+                return $data;
+            }
+            
+        }else if($info['questiongroupcheck'] == 1 ){
+
+            $sqlInsertGroup= new SqlBuilder();
+            $sqlInsertGroup->SetTableName("tb_questiongroup");
+            $ii = 0;
+            $sqlObj = null;
+
+            $arrmquestiongroup[0]['questiongroup_name'] = $info['questiongroup_name'];
+
+            $sqlObj[$ii++] = new TField("questiongroup_name", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_name']), "string");
+            $sqlObj[$ii++] = new TField("questiongroup_description", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_description']), "string");
+            $sqlObj[$ii++] = new TField("questiongroup_questioncategories", $info['mquestiontype'] , "string");
+            $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['stf'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_recdatetime", $datetime, "string");
+            $sqlObj[$ii++] = new TField("questiongroup_active", "1", "string");
+
+            $sqlInsertGroup->SetField($sqlObj);
+            $queryGroupe = $sqlInsertGroup->InsertSql();
+
+            if ($go_ncadb->ncaexec($queryGroupe, "question")) {
+                $questionGroup = $go_ncadb->ncaGetInsId("question");
+                $info['questiongroup'] = $questionGroup;
+            } else {
+                $go_ncadb->ncarollback("question");
+                $data['fail'] = 1;
+                $data['sql'] = $queryGroupe;
+                return $data;
+            }
+
         }
 
         $sqlInsertQuestion = new SqlBuilder();
@@ -185,6 +251,7 @@ class question
                 }
 
             }else{
+
                 $sqlInsertQuestiondt = new SqlBuilder();
                 $sqlInsertQuestiondt->SetTableName("tb_questiondt");
                 $ii = 0;
@@ -262,6 +329,7 @@ class question
                     $sqlObjoption[$ii++] = new TField("questionoption_name", iconv('utf-8', 'tis-620', $value2), "string");
                     $sqlObjoption[$ii++] = new TField("questionoption_value", $value['dataoptionvalue'][$key2]);
                     $sqlObjoption[$ii++] = new TField("questionoption_images", ($value['optionimages'][$key2] ? "1" : "0"));
+                    $sqlObjoption[$ii++] = new TField("questionoption_mistakelevel", ($value['optionmistakelevel'][$key2]));
                     $sqlObjoption[$ii++] = new TField("questionoption_order", $order, "string");
                     $sqlObjoption[$ii++] = new TField("questionoption_active", 1, "string");
 
@@ -448,7 +516,8 @@ class question
 
             $html = "";
             global $go_ncadb;
-            $sql        = "SELECT * FROM tb_questiondt WHERE ".$field." = '".$questiondt."' AND questiondt_active = '1' ";
+            $sql        = "SELECT * FROM tb_questiondt AS QDT LEFT JOIN tb_question AS Q ON (Q.question=questiondt_question) WHERE QDT.".$field." = '".$questiondt."' AND QDT.questiondt_active = '1' ";
+
             if($after > 0){
                 $sql .= " AND questiondt_after = '".$after."'";
             }
@@ -508,13 +577,13 @@ class question
                                             </div>
                                             <span style="float: left; width: unset; line-height: 35px;">เลือกลักษณะของการตรวจ : </span>
                                             <div class="col-sm-3">
-                                            <select class="form-select" name="questionactivities['.$value['questiondt'].']" name="questionactivities_'.$value['questiondt'].'" aria-label="isshowing">
+                                            <select class="form-select-40 selectmistakeoption" name="questionactivities['.$value['questiondt'].']" name="questionactivities_'.$value['questiondt'].'" aria-label="isshowing">
                                                 '. $htmlActivities.'
                                             </select>
                                             </div>
                                         </div>
                                         <div class="list-group nested-sortable">
-                                            '.$this->getDataOption($value['questiondt'],$pid,$value,$questionArray).'
+                                            '.$this->getDataOption($value,$pid,$value,$questionArray).'
                                         </div>
                                     </div>';
                         $html .= '</div>
@@ -541,7 +610,7 @@ class question
     {
         global $go_ncadb;
 
-        $sql        = "SELECT * FROM tb_questionoption WHERE questionoption_questiondt = '".$question."' ORDER BY questionoption_order ASC";
+        $sql        = "SELECT * FROM tb_questionoption WHERE questionoption_questiondt = '".$question['questiondt']."' ORDER BY questionoption_order ASC";
         $dataOption = $go_ncadb->ncaretrieve($sql, "question");
         $data       = $this->ncaArrayConverter($dataOption);
 
@@ -557,35 +626,77 @@ class question
         $html = "";
         $inputTypeName = $this->getInpustType("questiontype",$dataParent['questiondt_questiontype']);
         foreach ($data as $key => $value) {
-            $order = ($key + 1);
-            $sql_parent= "SELECT * FROM tb_questiondt WHERE questiondt_parent = '".$dataParent['questiondt']."' AND questiondt_after = '".$order."' AND questiondt_active = 1";
-            $dp = $go_ncadb->ncaretrieve($sql_parent, "question");
-            $dataP       = $this->ncaArrayConverter($dp);
+            $order      = ($key + 1);
+            $sql_parent = "SELECT * FROM tb_questiondt WHERE questiondt_parent = '".$dataParent['questiondt']."' AND questiondt_after = '".$order."' AND questiondt_active = 1";
+            $dp         = $go_ncadb->ncaretrieve($sql_parent, "question");
+            $dataP      = $this->ncaArrayConverter($dp);
+        
+            $sqlmistakelevele  = "SELECT *  FROM tb_mistakelevel WHERE mistakelevel_active = '1'";
+            $arr_mistakelevele = $go_ncadb->ncaretrieve($sqlmistakelevele, "question");
+            $arrmistakelevele = $this->ncaArrayConverter($arr_mistakelevele);
+            $htmlmistakelevele = '<option value="0">เลือกน้ำหนักความผิด</option>';
+            if(count($arrmistakelevele) > 0){
+                foreach ($arrmistakelevele as $keymis => $valuemis) {
+                    $selected = "";
+                    if($valuemis['mistakelevel_active'] == 1){
+                        if($valuemis['mistakelevel'] == $value['questionoption_mistakelevel'] ){
+                            $selected = "selected";
+                        }
+                        $htmlmistakelevele .= '<option value="'.$valuemis['mistakelevel'].'" '.$selected.'>'.$valuemis['mistakelevel_name'].' ('.$valuemis['mistakelevel_value'].') </option>';
+                    }
+                }
+            }
+
             
+            $mistakedisplay = " display: inline;";
+            if($question['question_questionmode'] == 2){
+                if($value['questionoption_value'] == 0){
+                    $mistakedisplay = " display: inline;";
+                }else{
+                    $mistakedisplay = " display: none;";
+                }
+            }else{
+                $mistakedisplay = " display: none;";
+            }
+
             $html .= '  <div class="list-group-item nested-2 answer border-none ms-4" data-id="question'.$value['questionoption_questiondt'].$key.'" style >
-                            '.$inputTypeName['questiontype_name']." : ".$value['questionoption_order'].' 
                             <input type="hidden" name="questionoption_questiondt_'.$value['questionoption_questiondt'].'" value="'.($copy > 0 ? "" : $value['questionoption_questiondt']).'" />
                             <input type="hidden" name="'.$value['questionoption_questiondt'].$key.'" value="'.$inputTypeName['questiontype_type'].'" />
-                            <input class="form-control-40" type="text" name="option'.$value['questionoption_questiondt'].'[]" id="option'.$value['questionoption_questiondt'].$key.'" value="'.$value['questionoption_name'].'" '.($dataParent['questiondt_questiontype'] > 3 ? 'required' : 'readonly="readonly"').'/>
-                            คะเเนน : <input class="form-control-custom col-lg-1" type="number" name="optionvalue'.$value['questionoption_questiondt'].'[]" id="optionvalue'.$value['questionoption_questiondt'].$key.'" value="'.$value['questionoption_value'].'"  '.($dataParent['questiondt_questiontype'] > 3 ? 'required' : 'readonly="readonly"').'>
 
-                            <label class="form-check-label" for="questionoption_images_'.$value['questionoption'].'">
+                            '.$inputTypeName['questiontype_name']." : ".$value['questionoption_order'].' 
+                            <input class="form-control-40" type="text" name="option'.$value['questionoption_questiondt'].'[]" id="option'.$value['questionoption_questiondt'].$key.'" value="'.$value['questionoption_name'].'" '.($dataParent['questiondt_questiontype'] > 3 ? 'required' : 'readonly="readonly"').'/>
+
+                            คะเเนน : <input class="form-control-custom col-lg-1 changevaluemistake" type="number" name="optionvalue'.$value['questionoption_questiondt'].'[]" id="optionvalue'.$value['questionoption_questiondt'].$key.'" value="'.$value['questionoption_value'].'"  '.($dataParent['questiondt_questiontype'] > 3 ? 'required' : 'readonly="readonly"').' min="0" >
+
+                            <div id="questionoption_mistakelevel'.$value['questionoption_questiondt'].$key.'" style="'. $mistakedisplay .'">
+                                <select class="form-select-40" id="questionoption_mistakelevel_'.$value['questionoption_questiondt'].$key.'" name="questionoption_mistakelevel['.$value['questionoption_questiondt'].']['.$key.']" >
+                                    '.$htmlmistakelevele.'
+                                </select>
+                            </div>
+
+                            <label class="form-check-label" for="questionoption_images_'.$value['questionoption_questiondt'].$key.'">
                                 ต้องการให้เเนบรูปหรือไม่ : 
                             </label>
+
                             <input class="form-check-input" type="checkbox" style="vertical-align: middle;" value="1" id="questionoption_images_'.$value['questionoption'].'" name="questionoption_images['.$value['questionoption_questiondt'].']['.$key.']" '.($value['questionoption_images'] == 1 ?  'checked=checked' : '' ).'>
 
                             <input type="hidden" name="optionid'.$value['questionoption_questiondt'].'[]" id="optionid'.$value['questionoption_questiondt'].'" value="'.$value['questionoption'].'" >
                             <div class="list-group-item nested-3 '.(count($dataP) > 0 ? "" : "hide" ).' questionquestion'.$value['questionoption_questiondt'].$key.' ms-5 mt-3 mb-3" data-id="'.$pid.'" >
                                 '.$this->generateIsParentQuestion("questiondt_parent",$dataParent['questiondt'],$order,$value,$questionArray).'
                             </div>'
+
+
                             .(
-                                count($dataP) > 0 
-                                ? '<span class="btn btn-primary ms-3 hide" id="addquestionquestion'.$value['questionoption_questiondt'].$key.'" style onclick="setQuestionmodal(`question`,`af`,`questionquestion'.$value['questionoption_questiondt'].$key.'`,`'.$value['questionoption_questiondt'].'` ,`option'.$dataParent['questiondt'].$key.'`);" >
-                                สร้างคำถาม</span>
-                            ' 
-                                : '<span class="btn btn-primary ms-3" id="addquestionquestion'.$value['questionoption_questiondt'].$key.'" style onclick="setQuestionmodal(`question`,`af`,`questionquestion'.$value['questionoption_questiondt'].$key.'`,`'.$value['questionoption_questiondt'].'` ,`option'.$dataParent['questiondt'].$key.'`);" >
-                                    สร้างคำถาม</span>
-                                ' 
+                                $question['question_questionmode'] != 2 ?
+                                (
+                                    count($dataP) > 0 
+                                    ? '<span class="btn btn-primary ms-3 hide" id="addquestionquestion'.$value['questionoption_questiondt'].$key.'" style onclick="setQuestionmodal(`question`,`af`,`questionquestion'.$value['questionoption_questiondt'].$key.'`,`'.$value['questionoption_questiondt'].'` ,`option'.$dataParent['questiondt'].$key.'`);" >
+                                    สร้างคำถาม</span>' 
+                                    : '<span class="btn btn-primary ms-3" id="addquestionquestion'.$value['questionoption_questiondt'].$key.'" style onclick="setQuestionmodal(`question`,`af`,`questionquestion'.$value['questionoption_questiondt'].$key.'`,`'.$value['questionoption_questiondt'].'` ,`option'.$dataParent['questiondt'].$key.'`);" >
+                                        สร้างคำถาม</span>
+                                    ' 
+                                )
+                                : ""
                             ).'
                         </div>
                     ';
@@ -593,24 +704,6 @@ class question
        
         return $html;
         
-    }
-
-    function generateParentQuestion($data,$parent)
-    {
-
-        global $go_ncadb;
-        if(!is_array($data) || count($data) === 0){
-            return;
-        }
-
-        $sqlOptionType = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
-        $arr_OptionType = $go_ncadb->ncaretrieve($sqlOptionType, "question");
-
-        print_r($data);
-        foreach ($data as $key => $value) {
-           
-        }
-
     }
 
     function generateRandomString($length = 10)
@@ -701,7 +794,7 @@ class question
             if($post['editmnamechange'][$key] > 0){
                 $sqlObj[$ii++] = new TField("questioncategories_name", iconv('utf-8', 'tis-620', $value), "string");
             }
-            $sqlObj[$ii++] = new TField("questioncategories_active", ($post['mtypename'][$key] > 0 ? "0" : "1"), "string");
+            $sqlObj[$ii++] = new TField("questioncategories_hidden", ($post['mtypename'][$key] > 0 ? "1" : "0"), "string");
             $sqlObj[$ii++] = new TField("questioncategories_modispid", $_SESSION['userData']['stf'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_modidatetime", $datetime, "string");
 
@@ -721,7 +814,54 @@ class question
         }
 
         if($data['success'] == 1){
-            $generateMtype = $this->generateMtype($post['mtcurrent'],$post['mtstaffcompfunc']);
+            $generateMtype = $this->generateMtype($post['groupcurrent'],$post['mtstaffcompfunc']);
+        }
+        $data['html'] = $generateMtype['html'];
+    
+
+        return $data;
+
+    }
+    function updategroup($post){
+
+        global $go_ncadb;
+        $datetime = date('Y-m-d H:i:s');
+
+        $data = array();
+        $data['success'] = 0;
+        $data['fail'] = 0;
+        $data['html'] = "";
+
+        foreach($post['editmnamechange'] as $key => $value){
+
+            $sqlInsertMquestiontype = new SqlBuilder();
+            $sqlInsertMquestiontype->SetTableName("tb_questiongroup");
+            $ii = 0;
+            $sqlObj = null;
+
+
+            $sqlObj[$ii++] = new TField("questiongroup_hidden", ($post['groupenamecheck'][$key] > 0 ? "1" : "0"), "string");
+            $sqlObj[$ii++] = new TField("questiongroup_modispid", $_SESSION['userData']['stf'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_modidatetime", $datetime, "string");
+
+            $sqlInsertMquestiontype->SetField($sqlObj);
+            $sqlInsertMquestiontype->SetWhereClause(" questiongroup = '".$key."'");
+            $queryMquestiontype = $sqlInsertMquestiontype->UpdateSql();
+            
+            if ($go_ncadb->ncaexec($queryMquestiontype, "question")) {
+                $data['success'] = 1;
+            } else {
+                $go_ncadb->ncarollback("question");
+                $data['fail'] = 1;
+                $data['sql'][] = $queryMquestiontype;
+                
+                return $data;
+            }
+        }
+
+        if($data['success'] == 1){
+
+            $generateMtype = $this->generatequestiongroup($post['groupcurrentcate'],$post['groupcurrent']);
         }
         $data['html'] = $generateMtype['html'];
     
@@ -747,13 +887,13 @@ class question
         $arrmquestiontype  = $this->ncaArrayConverter($arr_mquestiontype);
         $data['array'] = $arrmquestiontype;
 
-        $html  = '<select class="form-select" name="mquestiontype" id="mquestiontype">';
-        $html .= '<option >เลือกประเภทเรื่อง</option>';
+        $html  = '<select class="form-select" name="mquestiontype" id="mquestiontype" onchange="changemquestiontype()">';
+        $html .= '<option >เลือกหมวด</option>';
         
         if(count($arrmquestiontype) > 0){
             foreach ($arrmquestiontype as $key => $value) {
                 $selected = "";
-                if($value['questioncategories_active'] == 1){
+                if($value['questioncategories_active'] == 1 && $value['questioncategories_hidden'] == 0){
                     if($value['questioncategories'] == $currentid && $value['questioncategories_active'] > 0){
                         $selected = "selected";
                     }
@@ -772,7 +912,7 @@ class question
             foreach ($arrmquestiontype as $mkey => $mvalue) {
                 if($mvalue['questioncategories_default'] == 0){
                     $isChecked = "";
-                    if($mvalue['questioncategories_active'] == 0){
+                    if($mvalue['questioncategories_hidden'] == 1){
                         $isChecked = "checked";
                     }
                     /* $htmlmodal .= ' <tr>
@@ -807,6 +947,69 @@ class question
             }
         }
         
+        $data['htmlmodal'] = $htmlmodal;
+
+        return $data;
+
+    }
+    function generatequestiongroup($cateid,$currentid){
+
+        global $go_ncadb;
+        $datetime = date('Y-m-d H:i:s');
+        $data = array();
+        $data['html'] = "";
+        $data['htmlmodal'] = "";
+
+        $sqlquestiongroup  = "SELECT * FROM tb_questiongroup WHERE questiongroup_questioncategories = '".$cateid."' AND questiongroup_active = 1 ";
+        $arr_questiongroup = $go_ncadb->ncaretrieve($sqlquestiongroup, "question");
+        $arrquestiongroup = $this->ncaArrayConverter($arr_questiongroup);
+
+        $html  = '<select class="form-select" name="questiongroup" id="questiongroup" required="">';
+        $html .= '<option value="0">เลือกกลุ่ม</option>';
+        
+        if(count($arrquestiongroup) > 0){
+            foreach ($arrquestiongroup as $keyy => $valuee) {
+                $selected = "";
+                if($valuee['questiongroup_active'] == 1 && $valuee['questiongroup_hidden'] == 0){
+                    if($valuee['questiongroup'] == $currentid){
+                        $selected = "selected";
+                    }
+                    $html .= '<option value="'.$valuee['questiongroup'].'" '.$selected.'> '.$valuee['questiongroup_name'].' </option>';
+                }
+            }
+        }
+
+        $html .= '</select>';
+        
+        $data['html'] = $html;
+
+        $htmlmodal = "";
+        if(count($arrquestiongroup) > 0){
+            foreach ($arrquestiongroup as $key => $value) {
+                if($value['questiongroup_active'] == 1){
+                    $isChecked = "";
+                    if($value['questiongroup_hidden'] == 1){
+                        $isChecked = "checked";
+                    }
+                    $htmlmodal .= ' <tr>
+                                        <td>
+                                        <span id="editmname_'.$value['questiongroup'].'" > '.$value['questiongroup_name'].'
+                                        </span>
+                                        <span id="inputmname_'.$value['questiongroup'].'" style="display: none;">
+                                            <input type="text" id="mname_'.$value['questiongroup'].'" name="mname['.$value['questiongroup'].']" class="form-control" required="" value="'.$value['questiongroup_name'].'" style="width:88%; float:left;">
+                                            <button onclick="editmname(`editmname_'.$value['questiongroup'].'`,`inputmname_'.$value['questiongroup'].'`,`cancel_'.$value['questiongroup'].'`,`'.$value['questiongroup'].'`)" type="button" class="btn btn-danger" style="float: right;">ยกเลิก</button>
+                                        </span>
+                                        <input type="hidden" name="editmnamechange['.$value['questiongroup'].']" id="editmnamechange_'.$value['questiongroup'].'" value="">
+                                        </td>value
+                                        <td align="center" style="vertical-align: middle;">
+                                        <input class="form-check-input" type="checkbox" value="1" name="groupenamecheck['.$value['questiongroup'].']" id="mtypename5" '.$isChecked.'>
+                                        </td>
+                                    </tr>';
+                }
+            }
+        }
+        
+        $data['sql'] = $sqlquestiongroup;
         $data['htmlmodal'] = $htmlmodal;
 
         return $data;
