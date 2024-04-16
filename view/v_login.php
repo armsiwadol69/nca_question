@@ -11,7 +11,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCA Reward System</title>
+    <title>Q&A System</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/sidebarComponents/sidebar.css">
     <link rel="stylesheet" href="../assets/css/main.css">
@@ -40,7 +40,7 @@
             <div class="card-body">
                 <div class="w-100 text-center">
                     <img src="../assets/images/logo.png" alt="ncaLogo">
-                    <p class="mt-1">Question&Answer System</p>
+                    <p class="mt-1">Q&A System</p>
                     <hr>
                 </div>
                 <form class="text-start" method="post" action="../phpfunc/auth.php">
