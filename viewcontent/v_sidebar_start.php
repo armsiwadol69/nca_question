@@ -8,7 +8,7 @@
             <a class="navbar-brand" href="list_question.php">
                 <img src="../assets/images/logo.png" class="ms-3 mt-2 w-75">
             </a>
-            <p class="text-primary mt-2">Inquiry system</p>
+            <!-- <p class="text-primary mt-2">Inquiry system</p> -->
         </div>
 
         <div class="list-group list-group-flush d-flex">
@@ -41,7 +41,7 @@
                     <div class="d-flex">
                         <!-- <button class="btn btn-outline-primary d-block d-xl-block d-xxl-block d-xxl-none me-2"
                                 id="sidebarToggle">MENU</button> -->
-                        <button class="btn btn-outline-danger" onclick="clickToLogout();">ออกจากระบบ</button>
+                        <button class="btn btn-outline-danger" onclick="clickToLogout();"> <i class="fa-solid fa-power-off"></i>ออกจากระบบ</button> <i class="fa-solid fa-power-off"></i>
                     </div>  
                 </div>
             </div>

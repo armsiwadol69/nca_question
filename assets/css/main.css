@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
 
 html {
@@ -6,7 +7,8 @@ html {
 }
 
 body {
-    font-family: 'Prompt', sans-serif;
+    /* font-family: 'Prompt', sans-serif; */
+    font-family: 'Roboto';
     background: rgb(245, 245, 245);
     background: radial-gradient(circle, rgba(245, 245, 245, 1) 0%, rgba(255, 255, 255, 1) 100%);
 }

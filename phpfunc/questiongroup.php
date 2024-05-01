@@ -31,7 +31,7 @@ if ($debug) {
 
 if($ar_prm["method"] == "getlist"){
 
-    $sql = "SELECT *  FROM tb_questiongroup WHERE questiongroup_active = '1'";
+    $sql = "SELECT *  FROM tb_questiongroup AS QG LEFT JOIN tb_questioncategories AS QC ON (QC.questioncategories=QG.questiongroup_questioncategories)  WHERE QG.questiongroup_active = '1' AND QC.questioncategories_compfunc = '".$_SESSION['userData']['staffcompfunc']."' OR (QC.questioncategories_default = 1)";
 
     $result = $go_ncadb->ncaretrieve($sql, "question");
     $data = array();
@@ -45,16 +45,16 @@ if($ar_prm["method"] == "getlist"){
                 $rec_id = $value['questiongroup_recspid'];
             }
 
-            $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$rec_id."' ";
-            $res = $go_ncadb->ncaretrieve($sql, "icms");
-            $value['questiongroup_recname'] = $res[0]['staff_dspnm'];
+            $sql_staff = "SELECT staff_dspnm FROM staff WHERE staff = '".$rec_id."' ";
+            $res_staff = $go_ncadb->ncaretrieve($sql_staff, "icms");
+            $value['questiongroup_recname'] = $res_staff[0]['staff_dspnm'];
             
 
-            if($value['questiongroup_questioncategories'] > 0){
+            /* if($value['questiongroup_questioncategories'] > 0){
                 $sql = "SELECT questioncategories_name FROM tb_questioncategories WHERE questioncategories = '".$value['questiongroup_questioncategories']."' ";
                 $res = $go_ncadb->ncaretrieve($sql, "question");
                 $value['questiongroup_categoriesname'] = $res[0]['questioncategories_name'];
-            }
+            } */
             if($value['questiongroup_modispid']){
 
                 $value['questiongroup_recspid'] = $value['questiongroup_modispid'];
@@ -62,6 +62,7 @@ if($ar_prm["method"] == "getlist"){
 
             }
             $value['currrent_user'] = $_SESSION['userData']['stf'];
+            $value['sql'] = $sql;
             $data[] = $value;
         }
 
@@ -107,6 +108,7 @@ if($ar_prm["method"] == "editquestionegroup" || $ar_prm["method"] == "addquestio
     $sqlObj[$ii++] = new TField("questiongroup_name", iconv('utf-8', 'tis-620', $ar_prm['questiongroup_name']), "string");
     $sqlObj[$ii++] = new TField("questiongroup_description", iconv('utf-8', 'tis-620', $ar_prm['questiongroup_description']), "string");
     $sqlObj[$ii++] = new TField("questiongroup_questioncategories", iconv('utf-8', 'tis-620', $ar_prm['questiongroup_questioncategories']), "string");
+    $sqlObj[$ii++] = new TField("questiongroup_hidden", iconv('utf-8', 'tis-620', $ar_prm['questiongroup_hidden']), "string");
 
     if($ar_prm['questiongroup'] > 0){
 
