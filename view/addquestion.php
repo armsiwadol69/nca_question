@@ -145,15 +145,17 @@ if($_GET['id'] > 0){
                                 <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
 
                                         <label for="par_staffcompfunc" class="form-label">ฝ่าย <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="staffcompfunc" id="staffcompfunc" >
-                                            <!-- <option>เลือกฝ่าย</option> -->
+                                        <select class="form-select" name="staffcompfunc" id="staffcompfunc" onchange="changestaffcompfunc();">
+                                            <option>เลือกฝ่าย</option>
                                             <?php
                                                 foreach ($arrmcompfunc as $key => $value) {
                                                     $selected = "";
-                                                    if($value['m_compfunc'] == $staffcompfunc){
+                                                    /* if($value['m_compfunc'] == $staffcompfunc){
                                                         $selected = "selected";
                                                         echo '<option value="'.$value['m_compfunc'].'" '.$selected.'> '.$value['m_compfunc_name_th'].' </option>';
-                                                    }
+                                                    } */
+
+                                                    echo '<option value="'.$value['m_compfunc'].'" '.$selected.'> '.$value['m_compfunc_name_th'].' </option>';
                                                 }
                                             ?>
                                         </select>
@@ -170,12 +172,14 @@ if($_GET['id'] > 0){
                                                     // if($value['m_compfuncdep'] == $staffcompfuncdep){
                                                     //     $selected = "selected";
                                                     // }
-                                                    if($value['m_compfuncdep_compfunc'] == $staffcompfunc){
+                                                    /* if($value['m_compfuncdep_compfunc'] == $staffcompfunc){
                                                         if($value['m_compfuncdep'] == $staffcompfuncdep){
                                                             $selected = "selected";
                                                         }
                                                         echo '<option value="'.$value['m_compfuncdep'].'" '.$selected.'> '.$value['m_compfuncdep_name_th'].' </option>';
-                                                    }
+                                                    } */
+
+                                                    // echo '<option value="'.$value['m_compfuncdep'].'" '.$selected.'> '.$value['m_compfuncdep_name_th'].' </option>';
                                                 }
                                             ?>
                                         </select>
@@ -192,7 +196,7 @@ if($_GET['id'] > 0){
 
                                         <label for="par_mquestiontype" class="form-label">หมวด <span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp;
                                         <input class="form-check-input" type="checkbox" value="1" name="mquestiontypecheck" id="mquestiontypecheck">
-                                        <label class="form-check-label" for="flexCheckDefault">
+                                        <label class="form-check-label" for="mquestiontypecheck">
                                             ต้องการเพิ่มหมวดใหม่?
                                         </label>
                                         <span title="แก้ไข" onclick="editMquestiontype()" style="cursor: pointer;">
@@ -235,7 +239,7 @@ if($_GET['id'] > 0){
 
                                         <label for="par_mquestiongroup" class="form-label">กลุ่ม <span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp;
                                         <input class="form-check-input" type="checkbox" value="1" name="questiongroupcheck" id="questiongroupcheck">
-                                        <label class="form-check-label" for="flexCheckDefault">
+                                        <label class="form-check-label" for="questiongroupcheck">
                                             ต้องการเพิ่มกลุ่มใหม่?
                                         </label>
                                         <span title="แก้ไข" onclick="editquestiontGroup()" style="cursor: pointer;">
@@ -589,6 +593,9 @@ include_once 'v_footer.php';
     var questionId  = '<?php if($_GET['id'] > 0){ echo $_GET['id']; }else{ echo '0'; } ?>';
     var Iscopy  = '<?php if($_GET['copy'] > 0){ echo '1'; }else{ echo '0'; } ?>';
     var timeout = null;
+
+    var arrmcompfunc = <?php echo json_encode($arrmcompfunc); ?>;
+    var arrmcompfuncdep = <?php echo json_encode($arrmcompfuncdep); ?>;
 
     $(function() {
 
@@ -1030,14 +1037,19 @@ include_once 'v_footer.php';
 
         let mquestiontype = ($("#mquestiontype").val() ? $("#mquestiontype").val() : 0);
         if(mquestiontype == "0"){
-            fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุหมวด ด้วยค่ะ");
-            return false;
+            
+            if($("#mquestiontype_name").val() == ""){
+                fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุหมวด ด้วยค่ะ");
+                return false;
+            }
         }
 
         let questiongroup = ($("#questiongroup").val() ? $("#questiongroup").val() : 0);
         if(questiongroup == "0"){
-            fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุกลุ่ม ด้วยค่ะ");
-            return false;
+            if($("#questiongroup_name").val() == ""){
+                fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุกลุ่ม ด้วยค่ะ");
+                return false;
+            }
         }
         
         if($("#questiongroupcheck").is(":checked")){
@@ -1142,6 +1154,28 @@ include_once 'v_footer.php';
         
     }
 
+    function changestaffcompfunc(){
+        let staffcompfunc = $("#staffcompfunc").val();
+        let html = ``; 
+        console.log(arrmcompfuncdep);
+        html += `<select class="form-select" name="staffcompfuncdep" id="staffcompfuncdep" onchange="changestaffcompfuncdep()">
+                        <option value="0">เลือกแผนก</option>`;
+       
+        arrmcompfuncdep.forEach(element => {
+            if(staffcompfunc > 0){
+                if(element.m_compfuncdep_compfunc == staffcompfunc){
+                    html += `<option value="` + element.m_compfuncdep + `">` + element.m_compfuncdep_name_th + `</option>`;
+                }
+            }/*else{
+                html += `<option value="` + element.m_compfuncdep + `">` + element.m_compfuncdep_name_th + `</option>`;
+            }*/
+        });
+        html += `</select>`;
+
+        $("#staffcompfuncdep").html(html);
+
+    }    
+    
     function changestaffcompfuncdep(){
         let compfunc = $("#staffcompfunc").val();
         let compfuncdep = $("#staffcompfuncdep").val();
@@ -1308,13 +1342,13 @@ include_once 'v_footer.php';
                             console.log($("#mquestiontype").val() , currentmquestiontype);
                         }, 1200);
                         
-                        //$("#questiongroup").html(`<select class="form-select" name="questiongroup" id="questiongroup" required=""><option value="0">เลือกกลุ่ม</option></select>`);
                     }else{
                         $("#mquestiontype").val(0);
                         $("#questiongroup").html(`<select class="form-select" name="questiongroup" id="questiongroup" required=""><option value="0">เลือกกลุ่ม</option></select>`);
                     }
 
                     alertSwalSuccess();
+                    
                     $("#mquestiontypeselect").html(res.html);
                     $("#mquestiontypeSeting").modal("hide");
                     
@@ -1406,5 +1440,10 @@ include_once 'v_footer.php';
     }
     .cpointer{
         cursor: pointer;
+    }
+
+    input[type=checkbox] {
+        font-size: 18px;
+        margin: 0 auto;
     }
 </style>
