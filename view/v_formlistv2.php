@@ -135,12 +135,12 @@ function curlPostNca($url, $data)
 <body>
     <div class="row d-flex justify-content-center align-items-center g-0" style="height:100dvh;">
         <div class="col-12 h-100">
-            <div class=" bg-white w-100 text-center position-absolute" style="z-index:3;">
+            <div class=" bg-dark w-100 text-center position-absolute" style="z-index:3;">
                 <h1 class="mt-2 text-white">เลือกฟอร์ม</h1>
                 <form action="#" method="post" id="q_filter"></form>
                 <div class="row g-0">
 
-                    <div class="col-4">
+                    <div class="col-6">
                         <?
                             // Department
                             $getDepartment = json_decode(curlGetNca("http://61.91.248.20/ncaprj/nca_project/nca_project/leave/api/ncaorg.inc.service.php?method=getsection"),true);
@@ -160,7 +160,7 @@ function curlPostNca($url, $data)
                             <label for="floatingSelect">สายงาน</label>
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-6">
                         <?
                             // Category
                             $cate_sql = "SELECT tb_questioncategories.* FROM tb_questioncategories WHERE tb_questioncategories.questioncategories_active = '1';";
@@ -183,7 +183,7 @@ function curlPostNca($url, $data)
                             <label for="floatingSelect">หมวดคำถาม</label>
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-6" hidden>
                         <?
                         //Get Form Type
                         $formTypeSql = "SELECT tb_questionmode.* FROM tb_questionmode WHERE tb_questionmode.questionmode_active = '1' ORDER BY tb_questionmode.questionmode ASC;";
@@ -270,9 +270,20 @@ function curlPostNca($url, $data)
     });
 
     function genBox(data) {
-        if (!data) {
+
+        
+        if (data.length == 0) {
+            const html = `
+                <div class="col-12">
+                    <div class="alert alert-warning w-100" role="alert">
+                    ไม่พบข้อมูล
+                    </div>
+                </div>
+            `;
+            document.getElementById("result").innerHTML = html;
             return;
         }
+
         let html = "";
         let gid = "";
 
@@ -283,37 +294,20 @@ function curlPostNca($url, $data)
         html += `<div class="col-12">`;
         html += `<div class="card"">
                 <div class="card-body">
-                    <h5 class="card-title">${fCate}</h5>
+                    <h5 class="card-title">แบบ${fCate}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">${departName}</h6>
+                    <ul>
                 `;
         data.forEach(el => {
-            html += `<p class="card-text fw-bold">${el.question_name}</p>`;
+            html += `<li><p class="card-text fw-bold">${el.question_name}</p></li>`;
             gid += ',' + el.question;
         });
-        html += `<a class="my-2" href="v_askFormV2.php?id=${gid}" class="card-link"><button class="btn btn-sm w-100 btn-primary">เลือก</button></a>
+        html += `</ul>
+                <a href="v_askFormV2.php?id=${gid}" class="card-link mt-5"><button class="btn btn-sm w-100 btn-primary mt-5">เลือก</button></a>
                 </div>
             </div>`;
         document.getElementById("result").innerHTML = html;
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('mForm').addEventListener('submit', function(event) {
-            let allFilled = true;
-            const requiredFields = this.querySelectorAll('[required]');
-
-            requiredFields.forEach(function(field) {
-                if (!field.value.trim()) {
-                    allFilled = false;
-                    return false; // Break out of the loop if a field is empty
-                }
-            });
-
-            if (!allFilled) {
-                alert('Please fill all required fields.');
-                event.preventDefault(); // Prevent form submission
-            }
-        });
-    });
     </script>
 
     <?php include_once 'v_footer.php';?>
