@@ -36,13 +36,14 @@
     #GET FORM LIST DATA
     $go_ncadb = new ncadb();
 
-    if(!empty($ar_prm["busnumber"])){
-        $busnumber = $ar_prm["busnumber"];
-        $sql = "SELECT * 
-        FROM tb_question 
-        WHERE question_busrecordnumber LIKE '%$busnumber%'
-        ORDER BY question DESC
-        ";
+    if(!empty($ar_prm["busnumber"]) || true){
+        // $busnumber = $ar_prm["busnumber"];
+
+    $sql = "SELECT * 
+    FROM tb_question 
+    -- WHERE question_busrecordnumber LIKE '%$busnumber%'
+    ORDER BY question DESC
+    ";
 
     $arr = $go_ncadb->ncaretrieve($sql, "question");
 
@@ -135,8 +136,8 @@
 
         function openFormPage(id){
             const obj_prm = <? echo json_encode($ar_prm)?>;
-            let get_prm = objectToQueryString(obj_prm);
-            get_prm += `&formId=${id}`;
+            // let get_prm = objectToQueryString(obj_prm);
+            get_prm = `&formId=${id}`;
             console.log(get_prm);
             window.location = 'v_answerForm.php?'+get_prm;
         }

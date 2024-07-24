@@ -30,11 +30,9 @@ if($_GET['formId']){
     $formName = $questioninfo[0]["question_name"];
     $formDes = $questioninfo[0]["question_detail"];
     foreach($questioninfo AS $key => $val){
-
         if(!$val['questiondt_parent']){
             $htmlQuestion  .= $ncaquestion->genareteViewFormData("questiondt",$val['questiondt'],0,$arr_parent);
         }
-        
     }
 }
 
@@ -213,7 +211,7 @@ function arrayToInputsBootstrap($array) {
             console.log(groupOfHeading4.length);
             console.log(groupOfAnswerBox.length);
 
-            const imageUploadInput = $(this).next('.file-upload-option');
+            const imageUploadInput = $(this).next().next('.file-upload-option');
 
             console.log(imageUploadInput);
 
