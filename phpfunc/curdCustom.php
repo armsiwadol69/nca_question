@@ -160,22 +160,25 @@ if($methodRequest == "addQuestion") {
     $questionmaindata = array();
 
     $array_info = array(
-        "par_questioninfoid" => $_POST['questioninfoid'],
-        "par_qname"          => $_POST['par_qname'],
-        "par_qdatail"        => $_POST['par_qdatail'],
-        "par_userid"         => $_POST['par_userId'],
-        "oldquestion"        => $_POST['oldquestion'],
-        "questionid"         => $_POST['questionid'],
-        "staffcompfunc"      => $_POST['staffcompfunc'],
-        "staffcompfuncdep"   => $_POST['staffcompfuncdep'],
-        "mquestiontype"      => $_POST['mquestiontype'],
-        "questiongroup"      => $_POST['questiongroup'],
-        "questionmode"       => $_POST['questionmode'],
-        "mquestiontypecheck" => $_POST['mquestiontypecheck'],
-        "mquestiontype_name" => $_POST['mquestiontype_name'],
-        "questiongroupcheck" => $_POST['questiongroupcheck'],
-        "questiongroup_name" => $_POST['questiongroup_name'],
-        "questioncopy"       => $_POST['questioncopy'],
+        "par_questioninfoid"  => $_POST['questioninfoid'],
+        "par_qname"           => $_POST['par_qname'],
+        "par_qdatail"         => $_POST['par_qdatail'],
+        "par_userid"          => $_POST['par_userId'],
+        "oldquestion"         => $_POST['oldquestion'],
+        "questionid"          => $_POST['questionid'],
+        "staffcompfunc"       => $_POST['staffcompfunc'],
+        "staffcompfuncdep"    => $_POST['staffcompfuncdep'],
+        "staffcompfuncdepsec" => $_POST['staffcompfuncdepsec'],
+        "mquestiontype"       => $_POST['mquestiontype'],
+        "questiongroup"       => $_POST['questiongroup'],
+        "questionmode"        => $_POST['questionmode'],
+        "departmentid"        => $_POST['question_departmentid'],
+        "offensegroupid"      => $_POST['question_offensegroupid'],
+        "mquestiontypecheck"  => $_POST['mquestiontypecheck'],
+        "mquestiontype_name"  => $_POST['mquestiontype_name'],
+        "questiongroupcheck"  => $_POST['questiongroupcheck'],
+        "questiongroup_name"  => $_POST['questiongroup_name'],
+        "questioncopy"        => $_POST['questioncopy'],
     );
 
 
@@ -214,34 +217,22 @@ if($methodRequest == "addQuestion") {
         $data['dataoptiontype']           = $_POST['questionnameinput'][$value];
         $data['dataactivities']           = $_POST['questionactivities'][$value];
         $data['questiondtdeleted']        = $_POST['questiondtdeleted'][$value];
-
-        // ////// ISSUE /////////
         $optionid                         = "optionid".$value;
         $data['questionoption']           = $_POST[$optionid];
-        // ////// ISSUE /////////
-
-        // if(!$_POST['questiondt'][$value] && $_POST['questioninfoid'] > 0){
-        //     $data['questionoption']           = $_POST['questionoption'][$value];
-        // }else{
-        //     $optionid                         = "optionid".$value;
-        //     $data['questionoption']           = $_POST[$optionid];
-        // }
-
-
         $data['dataoption']               = $_POST[$option];
         $data['dataoptionvalue']          = $_POST[$optionval];
         $data['dataafteroption']          = $_POST['questionnameinputafteroptoion'][$value];
-        
         $optionkey                        = $_POST[$optionid][$key];
         $data['optionimages']             = $_POST["questionoption_images"][$value];
-        $data['optionmistakelevel']             = $_POST["questionoption_mistakelevel"][$value];
+        $data['optionmistakelevel']       = $_POST["questionoption_mistakelevel"][$value];
         $questiontype                     = $ncaquestion->getInpustType("questiontype_type",$_POST['questionnameinput'][$value]);
         $data['datainputtype']            = $questiontype['questiontype'];
+        $data['dataoffense']              = $_POST['dataoffense'][$value];
         $questiondata[$value]             = $data;
 
     }
 
-    $data = $ncaquestion->addNewQuestion($array_info,$questionmaindata,$questiondata);
+    $data = $ncaquestion->addNewQuestionCustom($array_info,$questionmaindata,$questiondata);
     echo json_encode(array("data"=>$data));
 
 } else if($methodRequest == "del") {

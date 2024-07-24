@@ -95,26 +95,26 @@ class ncaapicalling
                 LEFT JOIN tb_questiongroup AS QG ON (QG.questiongroup=Q.question_questioncategroup)
                 WHERE 
                     Q.question_active = '1' 
-                    AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
+                    -- AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
                     ".$serach."
                 ORDER BY Q.question_name ASC";
         $resultCount = $go_ncadb->ncaretrieve($sqlCount, "question");
 
-        $sql = "SELECT Q.*, QM.questionmode_name, QG.questiongroup_name, QC.questioncategories_name
+        $sql_data = "SELECT Q.*, QM.questionmode_name, QG.questiongroup_name, QC.questioncategories_name
                 FROM tb_question AS Q
                 LEFT JOIN tb_questioncategories AS QC ON (QC.questioncategories=Q.question_questioncategories)
                 LEFT JOIN tb_questionmode AS QM ON (QM.questionmode=Q.question_questionmode)
                 LEFT JOIN tb_questiongroup AS QG ON (QG.questiongroup=Q.question_questioncategroup)
                 WHERE 
                     Q.question_active = '1' 
-                    AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
+                    -- AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
                     ".$serach."
   
                 ORDER BY Q.question_name ASC LIMIT ".$post['start'].",".$post['length'];
 
        
 
-        $result = $go_ncadb->ncaretrieve($sql, "question");
+        $result = $go_ncadb->ncaretrieve($sql_data, "question");
         $data = array();
         if(count($result) > 0){
             foreach ($result as $key => $value) {
@@ -160,6 +160,8 @@ class ncaapicalling
             "recordsTotal" => $resultCount[0]["count"],
             "data" => $this->ncaArrayConverter($data),
             "recordsFiltered" => $resultCount[0]["count"],
+            "sql" => $sql_data,
+            "sqlCount" => $sqlCount,
         );
 
         return json_encode($rtn);
