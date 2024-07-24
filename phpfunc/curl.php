@@ -1,6 +1,6 @@
 <?php
-header('Content-Type: text/html; charset=utf-8');
-session_start();
+// header('Content-Type: text/html; charset=utf-8');
+// session_start();
 
 // if(!isset($_SESSION["userInfo"])){
 //     header("location:  phpfucnstaff/logout.php");

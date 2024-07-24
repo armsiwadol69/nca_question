@@ -30,11 +30,9 @@ if($_GET['formId']){
     $formName = $questioninfo[0]["question_name"];
     $formDes = $questioninfo[0]["question_detail"];
     foreach($questioninfo AS $key => $val){
-
         if(!$val['questiondt_parent']){
             $htmlQuestion  .= $ncaquestion->genareteViewFormData("questiondt",$val['questiondt'],0,$arr_parent);
         }
-        
     }
 }
 

@@ -91,7 +91,7 @@ class questionview
                     //                     </div>
                     //                 </div>';
                         // $html .='<div '.$isHidden.'>';
-                        $html .= "<h4 class='answerTitle' id='questionTitle$questiondt' $isHidden>".$value['questiondt_title']."</h4>";
+                        $html .= "<h4 class='answerTitle my-3' id='questionTitle$questiondt' $isHidden>".$value['questiondt_title']."</h4>";
                         $html .= "<div class='answerBox' id='questionBox$questiondt' $isHidden>".$this->genareteViewOptions($value['questiondt'],$pid,$value,$questionArray, "")."</div>";
                         // $html .='<div>';
                     $html .= '<input type="hidden" name="allquestionName[]" id="allquestionName_'.$value['questiondt'].'" value="'.$value['questiondt'].'" />';
@@ -234,9 +234,13 @@ class questionview
     function createAnswerByType($id,$name,$type, $order, $text, $dt){
         switch ($type) {
             case '1':
-                return ' <input type="text" class="form-control" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="" aria-label="คำตอบ" aria-describedby="คำตอบ">';
+                return ' <input type="text" class="form-control" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="" aria-label="คำตอบ" aria-describedby="คำตอบ" required>';
             case '2':
-                return ' <input type="number" class="form-control" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="" aria-label="คำตอบ" aria-describedby="คำตอบ">';
+                return '
+                            <label for="inputId'.$dt.'">จำนวนที่พบ</label>
+                            <input type="number" class="form-control form-control-inline" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="0" min="0" max="69" aria-label="คำตอบ" aria-describedby="คำตอบ" required>
+                            <span>ครั้ง</span>
+                       ';
             case '3':
                 return ' <input type="date" class="form-control" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="" aria-label="คำตอบ" aria-describedby="คำตอบ">';
             case '4':
