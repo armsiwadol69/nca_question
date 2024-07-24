@@ -11,8 +11,8 @@
 <script src="../assets/dayjs/plugin/buddhistEra.js?v=<?php echo $version; ?>"></script>
 <script src="../assets/dayjs/plugin/relativeTime.js?v=<?php echo $version; ?>"></script>
 <script src="../assets/dayjs/locale/th.js?v=<?php echo $version; ?>"></script>
-<script src="../assets/Sortable/sortablejs/Sortable.min.js?v=<?php echo $version; ?>">
-</script><script src="../assets/Sortable/jquery-sortablejs/jquery-sortable.js?v=<?php echo $version; ?>"></script>
+<script src="../assets/Sortable/sortablejs/Sortable.min.js?v=<?php echo $version; ?>"></script>
+<script src="../assets/Sortable/jquery-sortablejs/jquery-sortable.js?v=<?php echo $version; ?>"></script>
 <script src="../assets/js/sort-function.js?v=<?php echo $version; ?>"></script>
 <script>
     dayjs.extend(window.dayjs_plugin_duration);

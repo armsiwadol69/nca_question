@@ -152,13 +152,12 @@ exit();
     function getDataOption($qDt)
     {
         global $go_ncadb;
-        // $sqlChoice        = "SELECT * FROM tb_questionoption WHERE questionoption_questiondt = '$qDt' ORDER BY questionoption_order ASC";
-        $sqlChoice = "SELECT
-        tb_questionoption.*
-        FROM
-        tb_questionoption
-        WHERE
-        tb_questionoption.questionoption_question = '$qDt' ORDER BY questionoption_order ASC";
+        $sqlChoice = "  SELECT
+                            tb_questionoption.*
+                        FROM
+                            tb_questionoption
+                        WHERE
+                            tb_questionoption.questionoption_question = '$qDt' ORDER BY questionoption_order ASC";
 
         $dataOption = $go_ncadb->ncaretrieve($sqlChoice, "question");
         $data       = $this->ncaArrayConverter($dataOption);
