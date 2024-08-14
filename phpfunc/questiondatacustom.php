@@ -85,22 +85,37 @@ class ncaapicalling
 
         global $go_ncadb;
         $ncaquestion = new question();
-        if($post['search']){
+        $where = "";
+        $gruop = "";
+        if($post['search']['value'] != ""){
             $textSearch = $post['search']['value'];
-            $serach = " AND Q.question_name LIKE '%".iconv('utf-8', 'tis-620', $textSearch)."%' ";
+            $serach = " AND Q.question_name LIKE '%".$textSearch."%' ";
         }
 
-        $sqlCount = "SELECT COUNT(Q.question) AS count
-                FROM tb_question AS Q
-                LEFT JOIN tb_questioncategories AS QC ON (QC.questioncategories=Q.question_questioncategories)
-                LEFT JOIN tb_questionmode AS QM ON (QM.questionmode=Q.question_questionmode)
-                LEFT JOIN tb_questiongroup AS QG ON (QG.questiongroup=Q.question_questioncategroup)
-                WHERE 
-                    Q.question_active = '1' 
-                    -- AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
-                    ".$serach."
-                ORDER BY Q.question_name ASC";
-        $resultCount = $go_ncadb->ncaretrieve($sqlCount, "question");
+        if($post['start'] && $post['length']){
+            $limit = "LIMIT ".$post['start'].",".$post['length'];
+        }
+
+        if($post['parent_id']){
+            $where = " AND Q.question_questioncategories = '".$post['parent_id']."' ";
+        }else{
+            $gruop = " GROUP BY Q.question_questioncategories ";
+        }
+
+        if(!$post['parent_id']){
+            $sqlCount = "SELECT COUNT(Q.question) AS count
+                    FROM tb_question AS Q
+                    LEFT JOIN tb_questioncategories AS QC ON (QC.questioncategories=Q.question_questioncategories)
+                    LEFT JOIN tb_questionmode AS QM ON (QM.questionmode=Q.question_questionmode)
+                    LEFT JOIN tb_questiongroup AS QG ON (QG.questiongroup=Q.question_questioncategroup)
+                    WHERE 
+                        Q.question_active = '1' 
+                        -- AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
+                        ".$serach."
+                    $gruop
+                    ORDER BY Q.question_name ASC";
+            $resultCount = $go_ncadb->ncaretrieve($sqlCount, "question");
+        }
 
         $sql_data = "SELECT Q.*, QM.questionmode_name, QG.questiongroup_name, QC.questioncategories_name
                 FROM tb_question AS Q
@@ -111,8 +126,9 @@ class ncaapicalling
                     Q.question_active = '1' 
                     -- AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
                     ".$serach."
-  
-                ORDER BY Q.question_name ASC";
+                    $where
+                    $gruop
+                ORDER BY Q.question_name ASC ".$limit;
         /* $sql_data = "SELECT Q.*, QM.questionmode_name, QG.questiongroup_name, QC.questioncategories_name
                 FROM tb_question AS Q
                 LEFT JOIN tb_questioncategories AS QC ON (QC.questioncategories=Q.question_questioncategories)

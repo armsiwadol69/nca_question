@@ -270,7 +270,7 @@ table.dataTable tbody tr {
                 // console.log(api.rows());
                 api.rows().every(function() {
                     var row = this;
-                    var parentId = row.data().question;
+                    var parentId = row.data().question_questioncategories;
                     $.ajax({
                         // url: `https://yourserver.com/api/children/${parentId}`,  // Replace with your actual API endpoint
                         url: `../phpfunc/questiondatacustom.php`,  // Replace with your actual API endpoint

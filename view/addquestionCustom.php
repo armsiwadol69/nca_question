@@ -274,8 +274,6 @@ if($_GET['id'] > 0){
                                         <?php
                                             foreach ($arrquestionmode as $key => $value) {
                                                 $selected = "";
-                                                //if($value['questioncategories_compfunc'] == $staffcompfunc && $value['questioncategories_compfuncdep'] == $staffcompfuncdep){
-
                                                 if($value['questionmode'] == $questionmode){
                                                     $selected = "selected";
                                                 }
