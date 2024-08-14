@@ -115,6 +115,7 @@ let categoryTalbe;
 
 let getUrl = document.URL;
 let linkUrl = getUrl.replace("list_question", "v_answerForm");
+let linkUrlCustom = getUrl.replace("list_questionCustom", "v_askFormV2");
 
 async function initItemListTable() {
 	itemListTable = $("#itemListTalbe").DataTable({

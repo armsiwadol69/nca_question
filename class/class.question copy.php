@@ -29,7 +29,7 @@ class question
                 ORDER BY QDT.questiondt ASC 
                 ";
         $arr = $go_ncadb->ncaretrieve($sql, "question");
-        return $this->ncaArrayConverter($arr);
+        return $arr;
     }
 
     function getDataFromTable($field="*",$tableName,$wherefield="",$data="",$orderfield="",$order="ASC")
@@ -275,7 +275,7 @@ class question
             }
 
             $dataOption = $go_ncadb->ncaretrieve($sql, "question");
-            $data       = $this->ncaArrayConverter($dataOption);
+            $data       = $dataOption;
             // $pid = $this->generateRandomString(5);
             if($data){
                 $sqlOptionType = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
@@ -408,7 +408,7 @@ class question
 
         $sql        = "SELECT * FROM tb_questionoption WHERE questionoption_questiondt = '".$question."'";
         $dataOption = $go_ncadb->ncaretrieve($sql, "question");
-        $data       = $this->ncaArrayConverter($dataOption);
+        $data       = $dataOption;
         $html = "";
         // echo "getDataOption"; print_r($dataParent);
         // echo $sql."<br>";
@@ -421,7 +421,7 @@ class question
 
             $sql_parent= "SELECT * FROM tb_questiondt WHERE questiondt_parent = '".$dataParent['questiondt']."' AND questiondt_after = '".$order."'";
             $dp = $go_ncadb->ncaretrieve($sql_parent, "question");
-            $dataP       = $this->ncaArrayConverter($dp);
+            $dataP       = $dp;
             // echo "sql_parent".$sql_parent;
 
             $html .= '<div class="list-group-item nested-2 answer border-none ms-5" data-id="question'.$value['questionoption_questiondt'].$key.'" style >

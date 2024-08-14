@@ -59,7 +59,7 @@ if($ar_prm["method"] == "getlist"){
             $data[] = $value;
         }
 
-        echo json_encode($ncaquestion->ncaArrayConverter($data));
+        echo json_encode($data);
 
     } else if (empty($data)) {
 
@@ -77,7 +77,7 @@ if($ar_prm["method"] == "getlistmistakelevel"){
     $data = array();
     if(count($result) > 0){
 
-        echo json_encode($ncaquestion->ncaArrayConverter($result));
+        echo json_encode($result);
 
     } else if (empty($data)) {
 
@@ -98,10 +98,10 @@ if($ar_prm["method"] == "editmistakelevel" || $ar_prm["method"] == "addmistakele
     $ii = 0;
     $sqlObj = null;
 
-    $sqlObj[$ii++] = new TField("mistakelevel_shortname", iconv('utf-8', 'tis-620', $ar_prm['mistakelevel_shortname']), "string");
-    $sqlObj[$ii++] = new TField("mistakelevel_name", iconv('utf-8', 'tis-620', $ar_prm['mistakelevel_name']), "string");
-    $sqlObj[$ii++] = new TField("mistakelevel_value", iconv('utf-8', 'tis-620', $ar_prm['mistakelevel_value']), "string");
-    $sqlObj[$ii++] = new TField("mistakelevel_description", iconv('utf-8', 'tis-620', $ar_prm['mistakelevel_description']), "string");
+    $sqlObj[$ii++] = new TField("mistakelevel_shortname", $ar_prm['mistakelevel_shortname'], "string");
+    $sqlObj[$ii++] = new TField("mistakelevel_name", $ar_prm['mistakelevel_name'], "string");
+    $sqlObj[$ii++] = new TField("mistakelevel_value", $ar_prm['mistakelevel_value'], "string");
+    $sqlObj[$ii++] = new TField("mistakelevel_description", $ar_prm['mistakelevel_description'], "string");
 
     if($ar_prm['mistakelevel'] > 0){
 

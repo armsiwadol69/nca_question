@@ -29,7 +29,7 @@ class question
                 ORDER BY QDT.questiondt ASC 
                 ";
         $arr = $go_ncadb->ncaretrieve($sql, "question");
-        return $this->ncaArrayConverter($arr);
+        return $arr;
     }
 
     function getDataFromTable($field="*",$tableName,$wherefield="",$data="",$orderfield="",$order="ASC")
@@ -89,9 +89,9 @@ class question
             $questionIddt = 0;
             $ii = 0;
             $sqlObj = null;
-            $sqlObj[$ii++] = new TField("questioncategories_compfunc", iconv('utf-8', 'tis-620', $info['staffcompfunc']), "string");
-            $sqlObj[$ii++] = new TField("questioncategories_compfuncdep", iconv('utf-8', 'tis-620', $info['staffcompfuncdep']), "string");
-            $sqlObj[$ii++] = new TField("questioncategories_name", iconv('utf-8', 'tis-620', $info['mquestiontype_name']), "string");
+            $sqlObj[$ii++] = new TField("questioncategories_compfunc", $info['staffcompfunc'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_compfuncdep", $info['staffcompfuncdep'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_name", $info['mquestiontype_name'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_active", '1', "string");
             $sqlObj[$ii++] = new TField("questioncategories_recspid", $info['par_userid'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_recdatetime", $datetime, "string");
@@ -121,12 +121,12 @@ class question
             }else{
                 $sql = "SELECT *  FROM tb_questiongroup WHERE questiongroup = '".$info['questiongroup']."'";
                 $result = $go_ncadb->ncaretrieve($sql, "question");
-                $arrmquestiongroup  = $this->ncaArrayConverter($result);
+                $arrmquestiongroup  = $result;
             }
 
 
-            $sqlObj[$ii++] = new TField("questiongroup_name", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_name']), "string");
-            $sqlObj[$ii++] = new TField("questiongroup_description", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_description']), "string");
+            $sqlObj[$ii++] = new TField("questiongroup_name", $arrmquestiongroup[0]['questiongroup_name'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_description", $arrmquestiongroup[0]['questiongroup_description'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_questioncategories", $info['mquestiontype'] , "string");
             $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['stf'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_recdatetime", $datetime, "string");
@@ -154,8 +154,8 @@ class question
 
             $arrmquestiongroup[0]['questiongroup_name'] = $info['questiongroup_name'];
 
-            $sqlObj[$ii++] = new TField("questiongroup_name", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_name']), "string");
-            $sqlObj[$ii++] = new TField("questiongroup_description", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_description']), "string");
+            $sqlObj[$ii++] = new TField("questiongroup_name",  $arrmquestiongroup[0]['questiongroup_name'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_description", $arrmquestiongroup[0]['questiongroup_description'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_questioncategories", $info['mquestiontype'] , "string");
             $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['stf'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_recdatetime", $datetime, "string");
@@ -182,13 +182,13 @@ class question
         $questionIddt = 0;
         $ii = 0;
         $sqlObj = null;
-        $sqlObj[$ii++] = new TField("question_name", iconv('utf-8', 'tis-620', $info['par_qname']), "string");
-        $sqlObj[$ii++] = new TField("question_detail", iconv('utf-8', 'tis-620', $info['par_qdatail']), "string");
-        $sqlObj[$ii++] = new TField("question_compfunc", iconv('utf-8', 'tis-620', $info['staffcompfunc']), "string");
-        $sqlObj[$ii++] = new TField("question_compfuncdep", iconv('utf-8', 'tis-620', $info['staffcompfuncdep']), "string");
-        $sqlObj[$ii++] = new TField("question_questioncategories", iconv('utf-8', 'tis-620', $info['mquestiontype']), "string");
-        $sqlObj[$ii++] = new TField("question_questioncategroup", iconv('utf-8', 'tis-620', $info['questiongroup']), "string");
-        $sqlObj[$ii++] = new TField("question_questionmode", iconv('utf-8', 'tis-620', $info['questionmode']), "string");
+        $sqlObj[$ii++] = new TField("question_name", $info['par_qname'], "string");
+        $sqlObj[$ii++] = new TField("question_detail", $info['par_qdatail'], "string");
+        $sqlObj[$ii++] = new TField("question_compfunc", $info['staffcompfunc'], "string");
+        $sqlObj[$ii++] = new TField("question_compfuncdep", $info['staffcompfuncdep'], "string");
+        $sqlObj[$ii++] = new TField("question_questioncategories", $info['mquestiontype'], "string");
+        $sqlObj[$ii++] = new TField("question_questioncategroup", $info['questiongroup'], "string");
+        $sqlObj[$ii++] = new TField("question_questionmode", $info['questionmode'], "string");
         $sqlObj[$ii++] = new TField("question_active", '1', "string");
         
         
@@ -257,7 +257,7 @@ class question
                 $ii = 0;
                 $sqlObjdt = null;
                 $sqlObjdt[$ii++] = new TField("questiondt_question", $questionId, "string");
-                $sqlObjdt[$ii++] = new TField("questiondt_title", iconv('utf-8', 'tis-620', $value['datatext']), "string");
+                $sqlObjdt[$ii++] = new TField("questiondt_title", $value['datatext'], "string");
                 $sqlObjdt[$ii++] = new TField("questiondt_parent",  $array_insert['datadt'][$value['mainkey']], "string");
                 $sqlObjdt[$ii++] = new TField("questiondt_activities",  $value['dataactivities'], "string");
                 $order = "";
@@ -326,7 +326,7 @@ class question
                     $sqlObjoption = null;
                     $sqlObjoption[$ii++] = new TField("questionoption_question", $questionId, "string");
                     $sqlObjoption[$ii++] = new TField("questionoption_questiondt", $questionIddt, "string");
-                    $sqlObjoption[$ii++] = new TField("questionoption_name", iconv('utf-8', 'tis-620', $value2), "string");
+                    $sqlObjoption[$ii++] = new TField("questionoption_name", $value2, "string");
                     $sqlObjoption[$ii++] = new TField("questionoption_value", $value['dataoptionvalue'][$key2]);
                     $sqlObjoption[$ii++] = new TField("questionoption_images", ($value['optionimages'][$key2] ? "1" : "0"));
                     $sqlObjoption[$ii++] = new TField("questionoption_mistakelevel", ($value['optionmistakelevel'][$key2]));
@@ -421,10 +421,10 @@ class question
             $questionIddt = 0;
             $ii = 0;
             $sqlObj = null;
-            $sqlObj[$ii++] = new TField("questioncategories_compfunc", iconv('utf-8', 'tis-620', $info['staffcompfunc']), "string");
-            $sqlObj[$ii++] = new TField("questioncategories_compfuncdep", iconv('utf-8', 'tis-620', $info['staffcompfuncdep']), "string");
-            $sqlObj[$ii++] = new TField("questioncategories_compfuncdepsec", iconv('utf-8', 'tis-620', $info['staffcompfuncdepsec']), "string");
-            $sqlObj[$ii++] = new TField("questioncategories_name", iconv('utf-8', 'tis-620', $info['mquestiontype_name']), "string");
+            $sqlObj[$ii++] = new TField("questioncategories_compfunc", $info['staffcompfunc'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_compfuncdep", $info['staffcompfuncdep'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_compfuncdepsec", $info['staffcompfuncdepsec'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_name", $info['mquestiontype_name'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_active", '1', "string");
             $sqlObj[$ii++] = new TField("questioncategories_hidden", '0', "string");
             $sqlObj[$ii++] = new TField("questioncategories_recspid", $info['par_userid'], "string");
@@ -454,12 +454,12 @@ class question
             } else {
                 $sql = "SELECT *  FROM tb_questiongroup WHERE questiongroup = '" . $info['questiongroup'] . "'";
                 $result = $go_ncadb->ncaretrieve($sql, "question");
-                $arrmquestiongroup  = $this->ncaArrayConverter($result);
+                $arrmquestiongroup  = $result;
             }
 
 
-            $sqlObj[$ii++] = new TField("questiongroup_name", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_name']), "string");
-            $sqlObj[$ii++] = new TField("questiongroup_description", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_description']), "string");
+            $sqlObj[$ii++] = new TField("questiongroup_name", $arrmquestiongroup[0]['questiongroup_name'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_description", $arrmquestiongroup[0]['questiongroup_description'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_questioncategories", $info['mquestiontype'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['stf'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_recdatetime", $datetime, "string");
@@ -487,8 +487,8 @@ class question
 
             $arrmquestiongroup[0]['questiongroup_name'] = $info['questiongroup_name'];
 
-            $sqlObj[$ii++] = new TField("questiongroup_name", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_name']), "string");
-            $sqlObj[$ii++] = new TField("questiongroup_description", iconv('utf-8', 'tis-620', $arrmquestiongroup[0]['questiongroup_description']), "string");
+            $sqlObj[$ii++] = new TField("questiongroup_name", $arrmquestiongroup[0]['questiongroup_name'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_description", $arrmquestiongroup[0]['questiongroup_description'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_questioncategories", $info['mquestiontype'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['stf'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_recdatetime", $datetime, "string");
@@ -515,14 +515,14 @@ class question
         $questionIddt = 0;
         $ii = 0;
         $sqlObj = null;
-        $sqlObj[$ii++] = new TField("question_name", iconv('utf-8', 'tis-620', $info['par_qname']), "string");
-        $sqlObj[$ii++] = new TField("question_detail", iconv('utf-8', 'tis-620', $info['par_qdatail']), "string");
-        $sqlObj[$ii++] = new TField("question_compfunc", iconv('utf-8', 'tis-620', $info['staffcompfunc']), "string");
-        $sqlObj[$ii++] = new TField("question_compfuncdep", iconv('utf-8', 'tis-620', $info['staffcompfuncdep']), "string");
-        $sqlObj[$ii++] = new TField("question_compfuncdepsec", iconv('utf-8', 'tis-620', $info['staffcompfuncdepsec']), "string");
-        $sqlObj[$ii++] = new TField("question_questioncategories", iconv('utf-8', 'tis-620', $info['mquestiontype']), "string");
-        $sqlObj[$ii++] = new TField("question_questioncategroup", iconv('utf-8', 'tis-620', $info['questiongroup']), "string");
-        $sqlObj[$ii++] = new TField("question_questionmode", iconv('utf-8', 'tis-620', $info['questionmode']), "string");
+        $sqlObj[$ii++] = new TField("question_name", $info['par_qname'], "string");
+        $sqlObj[$ii++] = new TField("question_detail", $info['par_qdatail'], "string");
+        $sqlObj[$ii++] = new TField("question_compfunc", $info['staffcompfunc'], "string");
+        $sqlObj[$ii++] = new TField("question_compfuncdep", $info['staffcompfuncdep'], "string");
+        $sqlObj[$ii++] = new TField("question_compfuncdepsec", $info['staffcompfuncdepsec'], "string");
+        $sqlObj[$ii++] = new TField("question_questioncategories", $info['mquestiontype'], "string");
+        $sqlObj[$ii++] = new TField("question_questioncategroup", $info['questiongroup'], "string");
+        $sqlObj[$ii++] = new TField("question_questionmode", $info['questionmode'], "string");
         $sqlObj[$ii++] = new TField("question_departmentid", $info['departmentid'], "string");
         $sqlObj[$ii++] = new TField("question_offensegroupid", $info['offensegroupid'], "string");
         $sqlObj[$ii++] = new TField("question_active", '1', "string");
@@ -591,7 +591,7 @@ class question
                 $ii = 0;
                 $sqlObjdt = null;
                 $sqlObjdt[$ii++] = new TField("questiondt_question", $questionId, "string");
-                $sqlObjdt[$ii++] = new TField("questiondt_title", iconv('utf-8', 'tis-620', $value['datatext']), "string");
+                $sqlObjdt[$ii++] = new TField("questiondt_title",  $value['datatext'], "string");
                 $sqlObjdt[$ii++] = new TField("questiondt_parent",  $array_insert['datadt'][$value['mainkey']], "string");
                 $sqlObjdt[$ii++] = new TField("questiondt_activities",  $value['dataactivities'], "string");
                 $sqlObjdt[$ii++] = new TField("questiondt_offenseid",  $value['dataoffense'], "string");
@@ -658,7 +658,7 @@ class question
                         $sqlObjoption = null;
                         $sqlObjoption[$ii++] = new TField("questionoption_question", $questionId, "string");
                         $sqlObjoption[$ii++] = new TField("questionoption_questiondt", $questionIddt, "string");
-                        $sqlObjoption[$ii++] = new TField("questionoption_name", iconv('utf-8', 'tis-620', $value2), "string");
+                        $sqlObjoption[$ii++] = new TField("questionoption_name", $value2, "string");
                         $sqlObjoption[$ii++] = new TField("questionoption_value", $value['dataoptionvalue'][$key2]);
                         $sqlObjoption[$ii++] = new TField("questionoption_images", ($value['optionimages'][$key2] ? "1" : "0"));
                         $sqlObjoption[$ii++] = new TField("questionoption_mistakelevel", ($value['optionmistakelevel'][$key2]));
@@ -825,11 +825,11 @@ class question
             }
 
             $dataOption = $go_ncadb->ncaretrieve($sql, "question");
-            $data       = $this->ncaArrayConverter($dataOption);
+            $data       = $dataOption;
             
             $sqlactivities = "SELECT * FROM tb_activities WHERE activities_active = 1";
             $arractivities = $go_ncadb->ncaretrieve($sqlactivities, "question");
-            $arr_activities  = $this->ncaArrayConverter($arractivities);
+            $arr_activities  = $arractivities;
 
             if($data){
 
@@ -921,11 +921,11 @@ class question
             }
 
             $dataOption = $go_ncadb->ncaretrieve($sql, "question");
-            $data       = $this->ncaArrayConverter($dataOption);
+            $data       = $dataOption;
             
             $sqlactivities = "SELECT * FROM tb_activities WHERE activities_active = 1";
             $arractivities = $go_ncadb->ncaretrieve($sqlactivities, "question");
-            $arr_activities  = $this->ncaArrayConverter($arractivities);
+            $arr_activities  = $arractivities;
 
             if($data){
 
@@ -1001,11 +1001,11 @@ class question
 
         $sql        = "SELECT * FROM tb_questionoption WHERE questionoption_questiondt = '".$question['questiondt']."' ORDER BY questionoption_order ASC";
         $dataOption = $go_ncadb->ncaretrieve($sql, "question");
-        $data       = $this->ncaArrayConverter($dataOption);
+        $data       = $dataOption;
 
         $sqlOptionType  = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
         $arr_OptionType = $go_ncadb->ncaretrieve($sqlOptionType, "question");
-        $arr_OptionType = $this->ncaArrayConverter($arr_OptionType);
+        $arr_OptionType = $arr_OptionType;
         $arrOptionType  = array();
         
         foreach ($arr_OptionType as $key => $value) {
@@ -1018,11 +1018,11 @@ class question
             $order      = ($key + 1);
             $sql_parent = "SELECT * FROM tb_questiondt WHERE questiondt_parent = '".$dataParent['questiondt']."' AND questiondt_after = '".$order."' AND questiondt_active = 1";
             $dp         = $go_ncadb->ncaretrieve($sql_parent, "question");
-            $dataP      = $this->ncaArrayConverter($dp);
+            $dataP      = $dp;
         
             $sqlmistakelevele  = "SELECT *  FROM tb_mistakelevel WHERE mistakelevel_active = '1'";
             $arr_mistakelevele = $go_ncadb->ncaretrieve($sqlmistakelevele, "question");
-            $arrmistakelevele = $this->ncaArrayConverter($arr_mistakelevele);
+            $arrmistakelevele = $arr_mistakelevele;
             $htmlmistakelevele = '<option value="0">เลือกน้ำหนักความผิด</option>';
             if(count($arrmistakelevele) > 0){
                 foreach ($arrmistakelevele as $keymis => $valuemis) {
@@ -1101,11 +1101,11 @@ class question
 
         $sql        = "SELECT * FROM tb_questionoption WHERE questionoption_questiondt = '".$question['questiondt']."' ORDER BY questionoption_order ASC";
         $dataOption = $go_ncadb->ncaretrieve($sql, "question");
-        $data       = $this->ncaArrayConverter($dataOption);
+        $data       = $dataOption;
 
         $sqlOptionType  = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
         $arr_OptionType = $go_ncadb->ncaretrieve($sqlOptionType, "question");
-        $arr_OptionType = $this->ncaArrayConverter($arr_OptionType);
+        $arr_OptionType = $arr_OptionType;
         $arrOptionType  = array();
         
         foreach ($arr_OptionType as $key => $value) {
@@ -1118,11 +1118,11 @@ class question
             $order      = ($key + 1);
             $sql_parent = "SELECT * FROM tb_questiondt WHERE questiondt_parent = '".$dataParent['questiondt']."' AND questiondt_after = '".$order."' AND questiondt_active = 1";
             $dp         = $go_ncadb->ncaretrieve($sql_parent, "question");
-            $dataP      = $this->ncaArrayConverter($dp);
+            $dataP      = $dp;
         
             $sqlmistakelevele  = "SELECT *  FROM tb_mistakelevel WHERE mistakelevel_active = '1'";
             $arr_mistakelevele = $go_ncadb->ncaretrieve($sqlmistakelevele, "question");
-            $arrmistakelevele = $this->ncaArrayConverter($arr_mistakelevele);
+            $arrmistakelevele = $arr_mistakelevele;
             $htmlmistakelevele = '<option value="0">เลือกน้ำหนักความผิด</option>';
             if(count($arrmistakelevele) > 0){
                 foreach ($arrmistakelevele as $keymis => $valuemis) {
@@ -1216,7 +1216,7 @@ class question
         }
         $sqlOptionType  = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ".$where;
         $arr_OptionType = $go_ncadb->ncaretrieve($sqlOptionType, "question");
-        $arr_OptionType = $this->ncaArrayConverter($arr_OptionType);
+        $arr_OptionType = $arr_OptionType;
         
         if(trim($field) && trim($data)){
             return $arr_OptionType[0];
@@ -1281,7 +1281,7 @@ class question
             $sqlObj = null;
 
             if($post['editmnamechange'][$key] > 0){
-                $sqlObj[$ii++] = new TField("questioncategories_name", iconv('utf-8', 'tis-620', $value), "string");
+                $sqlObj[$ii++] = new TField("questioncategories_name", $value, "string");
             }
             $sqlObj[$ii++] = new TField("questioncategories_hidden", ($post['mtypename'][$key] > 0 ? "1" : "0"), "string");
             $sqlObj[$ii++] = new TField("questioncategories_modispid", $_SESSION['userData']['stf'], "string");
@@ -1373,7 +1373,7 @@ class question
 
         $sqlmquestiontype  = "SELECT * FROM tb_questioncategories WHERE questioncategories_compfunc = '".$mstaffcompfunc."' OR questioncategories_default = 1";
         $arr_mquestiontype = $go_ncadb->ncaretrieve($sqlmquestiontype, "question");
-        $arrmquestiontype  = $this->ncaArrayConverter($arr_mquestiontype);
+        $arrmquestiontype  = $arr_mquestiontype;
         $data['array'] = $arrmquestiontype;
 
         $html  = '<select class="form-select" name="mquestiontype" id="mquestiontype" onchange="changemquestiontype()">';
@@ -1451,7 +1451,7 @@ class question
 
         $sqlquestiongroup  = "SELECT * FROM tb_questiongroup WHERE questiongroup_questioncategories = '".$cateid."' AND questiongroup_active = 1 ";
         $arr_questiongroup = $go_ncadb->ncaretrieve($sqlquestiongroup, "question");
-        $arrquestiongroup = $this->ncaArrayConverter($arr_questiongroup);
+        $arrquestiongroup = $arr_questiongroup;
 
         $html  = '<select class="form-select" name="questiongroup" id="questiongroup" required="">';
         $html .= '<option value="0">เลือกกลุ่ม</option>';
@@ -1549,5 +1549,36 @@ class question
         $exc = json_decode($this->curlGetNcaData($endpoint),true);
         return $exc;
     }
+
+    function getEmp($par_func,$par_dep,$par_sec){ // พนักงานในแผนกนั้น
+        $par_ram = "?method=getemp&par_func=".$par_func."&par_dep=$par_dep"."&par_sec=$par_sec";
+        $endpoint = "http://61.91.248.20/ncaprj/nca_project/nca_project/leave/api/ncaorg.inc.service.php".$par_ram;
+        $exc = json_decode($this->curlGetNcaData($endpoint),true);
+        return $exc;
+    }
+
+    function getoutlet(){
+        $endpoint = "http://61.91.248.20/ncaprj/nca_project/nca_project/leave/api/ncaorg.inc.service.php?method=getoutlet";
+        $exc = json_decode($this->curlGetNcaData($endpoint),true);
+        return $exc;
+    }
+
+    function getEmpCode($par_empcode){
+        $endpoint = "http://61.91.248.20/ncaprj/nca_project/nca_project/leave/api/ncaorg.inc.service.php?method=getempcode&par_textsearch=$par_empcode";
+        $exc = curlGetNca($endpoint);
+        return $exc;
+    }
+
+    function getSectionById($id){
+        $endpoint = "http://61.91.248.20/ncaprj/nca_project/nca_project/leave/api/ncaorg.inc.service.php?method=getsection&par_departmentid=";
+        $exc = curlGetNca($endpoint);
+        $sec_list = json_decode($exc, true);
+        foreach ($sec_list["data"] as $key => $value) {
+            if($value["section_id"] == $id){
+                return $value;
+            }
+        }
+    }
+
 
 }

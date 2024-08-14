@@ -266,8 +266,8 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
                         isDisabled = "";
 
                         return `<div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-warning `+(row.questioncategories_default == 1 ? "disabled" : "")+`" onclick="callQuestionCate('editquestioncategories','${row.questioncategories}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
-                                    <button type="button" class="btn btn-danger `+(row.questioncategories_default == 1 ? "disabled" : "")+`" onclick="callQuestionCate('delete','${row.questioncategories}','${row.questioncategories_name}')"><i class="bi bi-trash3"></i> ลบ</button>
+                                    <button type="button" class="btn btn-warning `+(row.questioncategories_default == 1 ? "" : "")+`" onclick="callQuestionCate('editquestioncategories','${row.questioncategories}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
+                                    <button type="button" class="btn btn-danger `+(row.questioncategories_default == 1 ? "" : "")+`" onclick="callQuestionCate('delete','${row.questioncategories}','${row.questioncategories_name}')"><i class="bi bi-trash3"></i> ลบ</button>
                                 </div>`;
                     },
                 },

@@ -15,7 +15,7 @@
             
             <!-- <a class="list-group-item list-group-item-action text-left pe-none"></a> -->
             <a class="list-group-item list-group-item-action p-3 text-left" href="addquestionCustom.php" id="listquestion"><b><i class="bi bi-arrow-right-circle"></i></b> เพิ่มชุดคำถาม </a>
-            <a class="list-group-item list-group-item-action p-3 text-left" href="list_questionCustom.php" id="listquestion"><b><i class="bi bi-arrow-right-circle"></i></b> รายการชุดคำถาม </a>
+            <a class="list-group-item list-group-item-action p-3 text-left" href="list_questionbygroup.php" id="listquestion"><b><i class="bi bi-arrow-right-circle"></i></b> รายการชุดคำถาม </a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_questioncat.php" id="listquestioncat"><b><i class="bi bi-arrow-right-circle"></i></b> หมวดคำถาม </a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_questiongroup.php" id="listquestiongroup"><b><i class="bi bi-arrow-right-circle"></i></b> กลุ่มคำถาม </a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_questionmode.php" id="listquestionmode"><b><i class="bi bi-arrow-right-circle"></i></b> ประเภทคำถาม </a>

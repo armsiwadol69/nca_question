@@ -31,7 +31,7 @@ if ($debug) {
 
 if($ar_prm["method"] == "getlist"){
 
-    $sql = "SELECT *  FROM tb_questioncategories WHERE (questioncategories_active = '1' AND questioncategories_compfunc = '".$ar_prm['staffcompfunc']."' ) OR questioncategories_default = 1";
+    $sql = "SELECT *  FROM tb_questioncategories ";
 
     $result = $go_ncadb->ncaretrieve($sql, "question");
     $data = array();
@@ -75,7 +75,7 @@ if($ar_prm["method"] == "getlist"){
             $data[] = $value;
         }
 
-        echo json_encode($ncaquestion->ncaArrayConverter($data));
+        echo json_encode($data);
 
     } else if (empty($data)) {
 
@@ -92,7 +92,7 @@ if($ar_prm["method"] == "getlistquestioncategories"){
     $data = array();
     if(count($result) > 0){
 
-        echo json_encode($ncaquestion->ncaArrayConverter($result));
+        echo json_encode($result);
 
     } else if (empty($data)) {
 
@@ -112,11 +112,11 @@ if($ar_prm["method"] == "editquestioncategories" || $ar_prm["method"] == "addque
     $questionIddt = 0;
     $ii = 0;
     $sqlObj = null;
-    $sqlObj[$ii++] = new TField("questioncategories_compfunc", iconv('utf-8', 'tis-620', $ar_prm['questioncategories_compfunc']), "string");
-    $sqlObj[$ii++] = new TField("questioncategories_compfuncdep", iconv('utf-8', 'tis-620', $ar_prm['questioncategories_compfuncdep']), "string");
-    $sqlObj[$ii++] = new TField("questioncategories_name", iconv('utf-8', 'tis-620', $ar_prm['questioncategories_name']), "string");
+    $sqlObj[$ii++] = new TField("questioncategories_compfunc", $ar_prm['questioncategories_compfunc'], "string");
+    $sqlObj[$ii++] = new TField("questioncategories_compfuncdep", $ar_prm['questioncategories_compfuncdep'], "string");
+    $sqlObj[$ii++] = new TField("questioncategories_name", $ar_prm['questioncategories_name'], "string");
     $sqlObj[$ii++] = new TField("questioncategories_hidden", $ar_prm['questioncategories_hidden'], "string");
-    $sqlObj[$ii++] = new TField("questioncategories_description", iconv('utf-8', 'tis-620', $ar_prm['questioncategories_description']), "string");
+    $sqlObj[$ii++] = new TField("questioncategories_description", $ar_prm['questioncategories_description'], "string");
 
     if($ar_prm['questioncategories'] > 0){
 
