@@ -17,7 +17,7 @@ table.dataTable tbody tr {
     background-color: transparent;
 }
 .dt-hasChild {
-    background: #e5e5e5 !important;
+    background: #f7d4d4 !important;
 }
 .shown .details-btn::before {
     /* content: "-"; */
@@ -48,11 +48,11 @@ table.dataTable tbody tr {
                     <tr>
                         <td width="100px;">ลำดับ</td>
                         <td >หมวด</td>
-                        <td >ประเภท</td>
+                        <!-- <td >ประเภท</td> -->
                         <td >สายงาน</td>
                         <td >ฝ่าย</td>
                         <td >แผนก</td>
-                        <td width="250px;">Detail</td>
+                        <td width="250px;"></td>
                     </tr>
                     <!-- <tr>
                         <td width="50px;">ลำดับ</td>
@@ -79,6 +79,7 @@ table.dataTable tbody tr {
 ?>
 <script>
     var questionListTable;
+
     $(function() {
         initListTable();
 
@@ -112,9 +113,7 @@ table.dataTable tbody tr {
                 });
             }
         });
-    })
 
-    function initListTable() {
         questionListTable = $("#questionListTable").DataTable({
             serverSide: true,
             processing: true,
@@ -155,12 +154,12 @@ table.dataTable tbody tr {
                         return `${data}`;
                     },
                 },
-                {
+                /* {
                     data: "questionmode_name",
                     render: function (data, type, row, meta) {
                         return `${data}`;
                     },
-                },
+                }, */
                 {
                     data: "question_compfuncname",
                     render: function (data, type, row, meta) {
@@ -183,7 +182,7 @@ table.dataTable tbody tr {
                     data: "giftdetail",
                     render: function (data, type, row) {
                         return `<div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-warning" onclick="callActionCustom('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไขทั้งหมด</button>
+                                    <button type="button" class="btn btn-warning" onclick="callActionCustom('edit','${row.question_questioncategories}')"><i class="bi bi-pencil-square"></i> แก้ไขทั้งหมด</button>
                                     <a href="`+linkUrlCustom +`?id=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
                                 </div>`;
                         /* return `<div class="btn-group" role="group">
@@ -291,6 +290,185 @@ table.dataTable tbody tr {
                 });
             }
         });
+    })
+
+    function initListTable() {
+        // questionListTable = $("#questionListTable").DataTable({
+        //     serverSide: true,
+        //     processing: true,
+        //     aLengthMenu: [
+        //         [1,5, 10, 25, 50, 100, 200],
+        //         [1,5, 10, 25, 50, 100, 200],
+        //     ],
+        //     iDisplayLength: 25,
+        //     ordering: false,
+        //     language: dataTableSettings,
+        //     dom: tableDom,
+        //     // buttons: ["copy", "excel", "print"],
+        //     buttons: [],
+        //     scrollY: ($('#page-content-wrapper').height() - 300),
+        //     scrollCollapse: true,
+        //     searchDelay: 1500,
+        //     pagingType: 'simple_numbers',
+        //     ajax: {
+        //         url: `../phpfunc/questiondatacustom.php?method=getQuestionList`,
+        //         type: "POST",
+        //         data: function (d) {
+
+        //         },
+        //         dataSrc: function (json) {
+        //             handleScriptLoad();
+        //             return json.data;
+        //         },
+        //     },
+        //     columns: [
+        //         {
+        //             render: function (data, type, row, meta) {
+        //                 return meta.row + meta.settings._iDisplayStart + 1;
+        //             },
+        //         },
+        //         {
+        //             data: "questioncategories_name",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         },
+        //         /* {
+        //             data: "questionmode_name",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         }, */
+        //         {
+        //             data: "question_compfuncname",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         },
+        //         {
+        //             data: "question_compfuncdepname",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         },
+        //         {
+        //             data: "question_compfuncdepsecname",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         },
+        //         {
+        //             data: "giftdetail",
+        //             render: function (data, type, row) {
+        //                 return `<div class="btn-group" role="group">
+        //                             <button type="button" class="btn btn-warning" onclick="callActionCustom('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไขทั้งหมด</button>
+        //                             <a href="`+linkUrlCustom +`?id=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
+        //                         </div>`;
+        //                 /* return `<div class="btn-group" role="group">
+        //                             <button type="button" class="btn btn-warning" onclick="callActionCustom('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
+        //                             <button class='details-btn btn btn-secondary'></button>
+        //                             <a href="`+linkUrlCustom +`?id=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
+        //                         </div>`; */
+        //             },
+                
+        //         }/*,
+        //         {
+        //             "data": null,
+        //             "defaultContent": "<button class='details-btn btn btn-secondary'></button>"
+        //         }*/
+        //         /* {
+        //             render: function (data, type, row, meta) {
+        //                 return meta.row + meta.settings._iDisplayStart + 1;
+        //             },
+        //         },
+        //         {
+        //             data: "question_compfuncname",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         },
+        //         {
+        //             data: "question_compfuncdepname",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         },
+        //         {
+        //             data: "question_compfuncdepsecname",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         },
+        //         {
+        //             data: "questioncategories_name",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         },
+        //         {
+        //             data: "question_name",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         },
+        //         {
+        //             data: "questionmode_name",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         },
+        //         {
+        //             data: "question_recname",
+        //             render: function (data, type, row, meta) {
+        //                 return `${data}`;
+        //             },
+        //         },
+        //         {
+        //             data: "question_recdatetime",
+        //             render: function (data, type, row) {
+        //                 return (
+        //                     dayjs(data, "YYYY-MM-DD hh:mm").format("DD/MM/BBBB HH:mm")
+        //                 );
+        //             },
+        //         },
+        //         {
+        //             data: "giftdetail",
+        //             render: function (data, type, row) {
+        //                 return `<div class="btn-group" role="group">
+        //                             <button type="button" class="btn btn-warning" onclick="callActionCustom('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
+        //                             <button type="button" class="btn btn-secondary" onclick="callActionCustom('copy','${row.question}')"><i class="bi bi-copy"></i> Copy</button>
+        //                             <button type="button" class="btn btn-danger  onclick="callActionCustom('delete','${row.question}','${escapeHtml(row.question_name)}','${row.currrent_user}')"><i class="bi bi-trash3"></i> ลบ</button>
+        //                             <a href="`+linkUrlCustom +`?id=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
+        //                         </div>`;
+        //             },
+        //         }, */
+        //     ],
+        //     "drawCallback": function() {
+        //         var api = this.api();
+        //         // console.log(api.rows());
+        //         api.rows().every(function() {
+        //             var row = this;
+        //             var parentId = row.data().question_questioncategories;
+        //             $.ajax({
+        //                 // url: `https://yourserver.com/api/children/${parentId}`,  // Replace with your actual API endpoint
+        //                 url: `../phpfunc/questiondatacustom.php`,  // Replace with your actual API endpoint
+        //                 data : {
+        //                     "parent_id" : (parentId ? parentId : "999"),
+        //                     "method" : "getQuestionList",
+        //                 },
+        //                 success: function(info) {
+        //                     let data = info.data;
+        //                     if (data.length > 0) {
+        //                         if (!row.child.isShown()) {
+        //                             row.child(format(data)).show();
+        //                         }
+        //                         $(row.node()).addClass('shown');
+        //                     }
+        //                 }
+        //             });
+        //         });
+        //     }
+        // });
     }
 
     async function getQuestionListDataFromAPI() {
@@ -311,9 +489,9 @@ table.dataTable tbody tr {
         }
     }
 
-    function escapeHtml(unsafe)
+    function escapeHtml(str)
     {
-        return unsafe
+        return str
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
@@ -321,10 +499,10 @@ table.dataTable tbody tr {
             .replace(/'/g, "&#039;");
     }
 
-    function callActionCustom(action, id, name, currentUserId=0) {
+    function callActionCustom(action, id, name, currentUserId=0, mode="") {
         if (action == "edit") {
 
-            window.location.href = `addquestionCustom.php?id=${id}`;
+            window.location.href = `addquestionCustom.php?cateid=${id}`;
 
         } else if (action == "delete") {
 
@@ -359,15 +537,13 @@ table.dataTable tbody tr {
                             url: urlendpoint,
                             type: "POST",
                             // contentType: "application/json",
-                            // dataType: 'JSON',
+                            dataType: 'JSON',
                             data: {
                                 mode : 'del',
                                 id : id,
                                 currentUserId : currentUserId,
                             },
                             success: function(data) {
-
-                                console.log(data);
                                 if(data.success > 0){
                                     Swal.fire({
                                         icon: "success",
@@ -378,9 +554,7 @@ table.dataTable tbody tr {
                                         }).then(() => {
                                         // getItemListDataFromAPI(par_id);
                                         setTimeout(() => {
-                                            getQuestionListDataFromAPI().then(() => {
-                                                handleScriptLoad();
-                                            });
+                                            $('#questionListTable').DataTable().ajax.reload();
                                         }, 100);
                                     });
                                 }
@@ -448,28 +622,29 @@ table.dataTable tbody tr {
         let html =  `<table id="`+iddt+`" class="table table-bordered table-striped shadow-sm w-100">
                         <thead style="background-color: #b2d1fa;">
                             <tr>
-                                <th class="text-center" width="100px;">ลำดับ</th>
-                                <!--<th class="text-center">Child ID</th>-->
-                                <th class="text-center">ชื่อชุดคำถาม</th>
-                                <th class="text-center">หมวด</th>
+                                <th class="text-center" width="10%">ลำดับ</th>
+                                <th class="text-center" width="30%">ชื่อชุดคำถาม</th>
+                                <th class="text-center" width="25%">หมวด</th>
+                                <th class="text-center" width="25%">ประเภท</th>
+                                <th class="text-center" width="10%"></th>
                             </tr>
                         </thead>
                         <tbody>`;
                    
         for (i = 0; i < data.length; ++i) {
-            // console.log("data i ",data[i])
             html += ` <tr>`;
             html += `     <td>`+(i+1)+`</td>`;
-            // html += `     <td>${data[i].question}</td>`;
             html += `     <td>${data[i].question_name}</td>`;
             html += `     <td>${data[i].question_questioncategoriesname}</td>`;
+            html += `     <td>${data[i].questionmode_name}</td>`;
+            html += `     <td><button type="button" class="btn btn-danger"  onclick="callActionCustom('delete','${data[i].question}','${escapeHtml(data[i].question_name)}','${data[i].currrent_user}')"><i class="bi bi-trash3"></i> ลบ</button></td>`;
             html += ` </tr>`;
         }
          
         html += `</tbody>
             </table>
         `;
-        var table = new DataTable('#'+iddt);
+        //var table = new DataTable('#'+iddt);
 
         return html;
     }

@@ -151,88 +151,198 @@ $ncaquestion = new question();
 
 if($methodRequest == "addQuestion") {
     
-    /* echo "<pre>";
-    print_r($_POST);
-    die(); */
+    // echo "<pre>";
+    // print_r($_POST);
+    // echo "<br>--------question------";
+    // print_r($_POST['question']);
+    // echo "--------question------<br>";
+
+    
 
     $data = array();
     $questiondata = array();
     $questionmaindata = array();
 
-    $array_info = array(
-        "par_questioninfoid"  => $_POST['questioninfoid'],
-        "par_qname"           => $_POST['par_qname'],
-        "par_qdatail"         => $_POST['par_qdatail'],
-        "par_userid"          => $_POST['par_userId'],
-        "oldquestion"         => $_POST['oldquestion'],
-        "questionid"          => $_POST['questionid'],
-        "staffcompfunc"       => $_POST['staffcompfunc'],
-        "staffcompfuncdep"    => $_POST['staffcompfuncdep'],
-        "staffcompfuncdepsec" => $_POST['staffcompfuncdepsec'],
-        "mquestiontype"       => $_POST['mquestiontype'],
-        "questiongroup"       => $_POST['questiongroup'],
-        "questionmode"        => $_POST['questionmode'],
-        "departmentid"        => $_POST['question_departmentid'],
-        "offensegroupid"      => $_POST['question_offensegroupid'],
-        "mquestiontypecheck"  => $_POST['mquestiontypecheck'],
-        "mquestiontype_name"  => $_POST['mquestiontype_name'],
-        "questiongroupcheck"  => $_POST['questiongroupcheck'],
-        "questiongroup_name"  => $_POST['questiongroup_name'],
-        "questioncopy"        => $_POST['questioncopy'],
-    );
+    if($_POST['catemode'] > 0){
+
+        foreach (array_unique($_POST['question']) as $k => $v) {
+            
+            // print_r($v);
+            // echo "VVVVVVVVVVVVVVV => ".$v."<br>";
+
+            $array_info[$value] = array(
+                "par_questioninfoid"  => $_POST['questioninfoid'],
+                "par_qname"           => $_POST['par_qname'],
+                "par_qdatail"         => $_POST['par_qdatail'],
+                "par_userid"          => $_POST['par_userId'],
+                "oldquestion"         => $_POST['oldquestion'],
+                // "questionid"          => $_POST['questionid'],
+                "questionid"          => $v,
+                "staffcompfunc"       => $_POST['staffcompfunc'],
+                "staffcompfuncdep"    => $_POST['staffcompfuncdep'],
+                "staffcompfuncdepsec" => $_POST['staffcompfuncdepsec'],
+                "mquestiontype"       => $_POST['mquestiontype'],
+                "questiongroup"       => $_POST['questiongroup'],
+                "questionmode"        => $_POST['questionmode'],
+                "departmentid"        => $_POST['question_departmentid'],
+                "offensegroupid"      => $_POST['question_offensegroupid'],
+                "mquestiontypecheck"  => $_POST['mquestiontypecheck'],
+                "mquestiontype_name"  => $_POST['mquestiontype_name'],
+                "questiongroupcheck"  => $_POST['questiongroupcheck'],
+                "questiongroup_name"  => $_POST['questiongroup_name'],
+                "questioncopy"        => $_POST['questioncopy'],
+                "question"            => array_unique($_POST['question']),
+            );
 
 
-    foreach ($_POST['questionismainname'] as $key => $value) {
+            foreach ($_POST['questionparent'][$v] as $key => $value) {
 
-        if($value){
-            $dataM['mainkey']         = $key;
-            $dataM['maintext']        = $_POST['questiontext'][$key];
-            $dataM['mainparent']      = $_POST['questionnameinputparent'][$key];
-            $dataM['main']            = $_POST['questionismain'][$key];
-            $option                   = "option".$key;
-            $optionval                = "optionvalue".$key;
-            $dataM['mainoptiontype']  = $_POST['questionnameinput'][$key];
-            $dataM['mainoption']      = $_POST[$option];
-            $dataM['mainoptionvalue'] = $_POST[$optionval];
-            $dataM['mainafteroption'] = $_POST['questionnameinputafteroptoion'][$key];
-            $questiontype             = $ncaquestion->getInpustType("questiontype_type",$_POST['questionnameinput'][$key]);
-            $dataM['maininputtype']   = $questiontype['questiontype'];
-            array_push($questionmaindata,$dataM);
+                if($value){
+                    $dataM['question']        = $value;
+                    $dataM['mainkey']         = $key;
+                    $dataM['maintext']        = $_POST['questiontext'][$key];
+                    $dataM['mainparent']      = $_POST['questionnameinputparent'][$key];
+                    $dataM['main']            = $_POST['questionismain'][$key];
+                    $option                   = "option".$key;
+                    $optionval                = "optionvalue".$key;
+                    $dataM['mainoptiontype']  = $_POST['questionnameinput'][$key];
+                    $dataM['mainoption']      = $_POST[$option];
+                    $dataM['mainoptionvalue'] = $_POST[$optionval];
+                    $dataM['mainafteroption'] = $_POST['questionnameinputafteroptoion'][$key];
+                    $questiontype             = $ncaquestion->getInpustType("questiontype_type",$_POST['questionnameinput'][$key]);
+                    $dataM['maininputtype']   = $questiontype['questiontype'];
+                    array_push($questionmaindata,$dataM);
+                    
+                }
+                
+            }
+
+            foreach ($_POST['questionparent'][$v] as $key => $value) {
+
+                $data['mainkey']                  = $_POST['questionnameinputafter'][$value];
+                $data['questiondt']               = $_POST['questiondt'][$value];
+                $data['datakey']                  = $value;
+                $data['dataparent']               = $_POST['questionnameinputparent'][$value];
+                $data['datatext']                 = $_POST['questiontext'][$value];
+                $data['datamain']                 = $_POST['questionismain'][$value];
+                $option                           = "option".$value;
+                $data['optionnm']                 = "option".$_POST['questionnameinputafter'][$value];
+                $optionval                        = "optionvalue".$value;
+                $data['dataoptiontype']           = $_POST['questionnameinput'][$value];
+                $data['dataactivities']           = $_POST['questionactivities'][$value];
+                $data['questiondtdeleted']        = $_POST['questiondtdeleted'][$value];
+                $optionid                         = "optionid".$value;
+                $data['questionoption']           = $_POST[$optionid];
+                $data['dataoption']               = $_POST[$option];
+                $data['dataoptionvalue']          = $_POST[$optionval];
+                $data['dataafteroption']          = $_POST['questionnameinputafteroptoion'][$value];
+                $optionkey                        = $_POST[$optionid][$key];
+                $data['optionimages']             = $_POST["questionoption_images"][$value];
+                $data['optionmistakelevel']       = $_POST["questionoption_mistakelevel"][$value];
+                $questiontype                     = $ncaquestion->getInpustType("questiontype_type",$_POST['questionnameinput'][$value]);
+                $data['datainputtype']            = $questiontype['questiontype'];
+                $data['dataoffense']              = $_POST['dataoffense'][$value];
+                $questiondata[$v][$value]         = $data;
+
+            }
+
+            // echo "==================================================================================<br>";
+        }
+        // echo "-----------array_info-------------";
+        // print_r($array_info);
+        // echo "-----------questiondata-------------";
+        // print_r($questiondata);
+        // die();
+
+        // print_r($array_info);
+        // echo "-----------questiondata-------------";
+        // print_r($questiondata);
+
+        
+
+        $data = $ncaquestion->manageDataQuestion($questiondata);
+
+
+    }else{
+        
+        $array_info = array(
+            "par_questioninfoid"  => $_POST['questioninfoid'],
+            "par_qname"           => $_POST['par_qname'],
+            "par_qdatail"         => $_POST['par_qdatail'],
+            "par_userid"          => $_POST['par_userId'],
+            "oldquestion"         => $_POST['oldquestion'],
+            "questionid"          => $_POST['questionid'],
+            "staffcompfunc"       => $_POST['staffcompfunc'],
+            "staffcompfuncdep"    => $_POST['staffcompfuncdep'],
+            "staffcompfuncdepsec" => $_POST['staffcompfuncdepsec'],
+            "mquestiontype"       => $_POST['mquestiontype'],
+            "questiongroup"       => $_POST['questiongroup'],
+            "questionmode"        => $_POST['questionmode'],
+            "departmentid"        => $_POST['question_departmentid'],
+            "offensegroupid"      => $_POST['question_offensegroupid'],
+            "mquestiontypecheck"  => $_POST['mquestiontypecheck'],
+            "mquestiontype_name"  => $_POST['mquestiontype_name'],
+            "questiongroupcheck"  => $_POST['questiongroupcheck'],
+            "questiongroup_name"  => $_POST['questiongroup_name'],
+            "questioncopy"        => $_POST['questioncopy'],
+        );
+    
+    
+        foreach ($_POST['questionismainname'] as $key => $value) {
+    
+            if($value){
+                $dataM['mainkey']         = $key;
+                $dataM['maintext']        = $_POST['questiontext'][$key];
+                $dataM['mainparent']      = $_POST['questionnameinputparent'][$key];
+                $dataM['main']            = $_POST['questionismain'][$key];
+                $option                   = "option".$key;
+                $optionval                = "optionvalue".$key;
+                $dataM['mainoptiontype']  = $_POST['questionnameinput'][$key];
+                $dataM['mainoption']      = $_POST[$option];
+                $dataM['mainoptionvalue'] = $_POST[$optionval];
+                $dataM['mainafteroption'] = $_POST['questionnameinputafteroptoion'][$key];
+                $questiontype             = $ncaquestion->getInpustType("questiontype_type",$_POST['questionnameinput'][$key]);
+                $dataM['maininputtype']   = $questiontype['questiontype'];
+                array_push($questionmaindata,$dataM);
+                
+            }
             
         }
-        
+    
+        foreach ($_POST['questionname'] as $key => $value) {
+    
+            $data['mainkey']                  = $_POST['questionnameinputafter'][$value];
+            $data['questiondt']               = $_POST['questiondt'][$value];
+            $data['datakey']                  = $value;
+            $data['dataparent']               = $_POST['questionnameinputparent'][$value];
+            $data['datatext']                 = $_POST['questiontext'][$value];
+            $data['datamain']                 = $_POST['questionismain'][$value];
+            $option                           = "option".$value;
+            $data['optionnm']                 = "option".$_POST['questionnameinputafter'][$value];
+            $optionval                        = "optionvalue".$value;
+            $data['dataoptiontype']           = $_POST['questionnameinput'][$value];
+            $data['dataactivities']           = $_POST['questionactivities'][$value];
+            $data['questiondtdeleted']        = $_POST['questiondtdeleted'][$value];
+            $optionid                         = "optionid".$value;
+            $data['questionoption']           = $_POST[$optionid];
+            $data['dataoption']               = $_POST[$option];
+            $data['dataoptionvalue']          = $_POST[$optionval];
+            $data['dataafteroption']          = $_POST['questionnameinputafteroptoion'][$value];
+            $optionkey                        = $_POST[$optionid][$key];
+            $data['optionimages']             = $_POST["questionoption_images"][$value];
+            $data['optionmistakelevel']       = $_POST["questionoption_mistakelevel"][$value];
+            $questiontype                     = $ncaquestion->getInpustType("questiontype_type",$_POST['questionnameinput'][$value]);
+            $data['datainputtype']            = $questiontype['questiontype'];
+            $data['dataoffense']              = $_POST['dataoffense'][$value];
+            $questiondata[$value]             = $data;
+    
+        }
+    
+        $data = $ncaquestion->addNewQuestionCustom($array_info,$questionmaindata,$questiondata);
     }
 
-    foreach ($_POST['questionname'] as $key => $value) {
 
-        $data['mainkey']                  = $_POST['questionnameinputafter'][$value];
-        $data['questiondt']               = $_POST['questiondt'][$value];
-        $data['datakey']                  = $value;
-        $data['dataparent']               = $_POST['questionnameinputparent'][$value];
-        $data['datatext']                 = $_POST['questiontext'][$value];
-        $data['datamain']                 = $_POST['questionismain'][$value];
-        $option                           = "option".$value;
-        $data['optionnm']                 = "option".$_POST['questionnameinputafter'][$value];
-        $optionval                        = "optionvalue".$value;
-        $data['dataoptiontype']           = $_POST['questionnameinput'][$value];
-        $data['dataactivities']           = $_POST['questionactivities'][$value];
-        $data['questiondtdeleted']        = $_POST['questiondtdeleted'][$value];
-        $optionid                         = "optionid".$value;
-        $data['questionoption']           = $_POST[$optionid];
-        $data['dataoption']               = $_POST[$option];
-        $data['dataoptionvalue']          = $_POST[$optionval];
-        $data['dataafteroption']          = $_POST['questionnameinputafteroptoion'][$value];
-        $optionkey                        = $_POST[$optionid][$key];
-        $data['optionimages']             = $_POST["questionoption_images"][$value];
-        $data['optionmistakelevel']       = $_POST["questionoption_mistakelevel"][$value];
-        $questiontype                     = $ncaquestion->getInpustType("questiontype_type",$_POST['questionnameinput'][$value]);
-        $data['datainputtype']            = $questiontype['questiontype'];
-        $data['dataoffense']              = $_POST['dataoffense'][$value];
-        $questiondata[$value]             = $data;
 
-    }
-
-    $data = $ncaquestion->addNewQuestionCustom($array_info,$questionmaindata,$questiondata);
     echo json_encode(array("data"=>$data));
 
 } else if($methodRequest == "del") {
