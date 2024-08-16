@@ -57,7 +57,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Question List</title>
+    <title>แบบบันทึกและลงสถิติ</title>
     <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/sidebarComponents/sidebar.css">
     <link rel="stylesheet" href="../assets/css/main.css">
@@ -101,6 +101,14 @@
         background: linear-gradient(180deg, rgba(36, 37, 82, 1) 0%, rgba(74, 87, 163, 1) 100%);
         background-size: 100% 100%;
     }
+
+    .float-btn-bottom {
+    --left-offset: 5.5rem;
+    position: fixed;
+    bottom: 0;
+    /* left: calc(var(--left-offset)); */
+    margin: 0 auto;
+}
     </style>
 </head>
 
@@ -161,8 +169,6 @@
                 </div>
             </div>
             <div class="col-12">
-                <button type="button" id="btn_submit" class="btn btn-primary rounded-0 w-100 position-absolute bottom-0 start-50 translate-middle-x" onclick="submitForm();"
-                    disabled>บันทึก</button></button>
             </div>
         </div>
         <form action="" id="frm_main">
@@ -172,6 +178,9 @@
         </form>
     </div>
     </div>
+    <div class="w-100" style="margin-top: 30px"></div>
+    <button type="button" id="btn_submit" class="btn btn-primary rounded-0 w-100 float-btn-bottom" onclick="submitForm();"
+                    disabled>บันทึก</button></button>
     <script>
 
     let q_category = "0";
@@ -374,7 +383,7 @@
                         <!-- Question Nawae -->
                         <!-- <h5 class="question_1 fw-bold mb-0 ms-4" id="question_${ele.questiondt}">${qNum}. ${ele.questiondt_title}</h5>  -->
                             <div class="ms-4">
-                                <div class="form-check mt-3 d-flex align-items-center">
+                                <div class="form-check my-4 d-flex align-items-center">
                                 <input class="form-check-input me-2" type="checkbox" id="check_${ele.questiondt}" style="margin-bottom: 5px;" onchange="toggleInput(this)">
                                 <label class="form-check-label fw-bold me-2" for="check_${ele.questiondt}">
                                     ${ele.questiondt_title}
