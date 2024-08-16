@@ -347,7 +347,7 @@
         sec_cate.focus();
 
         $("#par_qset").val("0");
-        
+
         genareateQuestionFormHTMLElement([]);
     }
 
@@ -393,7 +393,7 @@
                                     ${ele.questiondt_title}
                                 </label>
                                 <span>จำนวน</span>
-                                <input type="number" class="mx-2 form-control form-control-sm" style="width: 60px" id="input_${ele.questiondt}" name="q[answer][${ele.questiondt_question}][${ele.questiondt}]" value="" min="1" max="99" disabled>
+                                <input type="number" class="mx-2 form-control form-control-sm" style="width: 45px" id="input_${ele.questiondt}" name="q[answer][${ele.questiondt_question}][${ele.questiondt}]" value="" min="1" max="99" disabled>
                                 <span>ครั้ง</span>
                             </div>
                         </div>`;
@@ -402,6 +402,12 @@
             htmlContent += `<hr>`;
             htmlContent += `</div>`;
         });
+
+        if(dataObj <= 0){
+            htmlContent += `<div class="w-100 text-center d-flex justify-content-center align-items-center">
+                                <p class="text-muted">ไม่พบข้อมูล</p>
+                            </div>`;
+        }
 
         div.html(htmlContent);
     }
