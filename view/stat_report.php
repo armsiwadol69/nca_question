@@ -21,11 +21,23 @@ include_once 'v_sidebar_start.php';
             <div class="col-12 col-lg-12 col-md-12 col-sm-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        รายงานสถิติโดยรวม
+                        รายงานสถิติโดยรวม 4 อันดับแรกของแต่ละหน่วยงาน
                     </div>
                     <div class="card-body">
                         <div>
                             <canvas id="chart_overall" style="max-height: 30dvh;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>     
+            <div class="col-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        จำนวนปัญหาแยกตามหน่วยงาน (เรียงจากมากไปน้อย)
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <canvas id="chart_totalByDepSec" style="max-height: 30dvh;"></canvas>
                         </div>
                     </div>
                 </div>
@@ -59,18 +71,6 @@ include_once 'v_sidebar_start.php';
                         <hr>
                         <div>
                             <canvas id="chart_bydepsec" style="max-height: 30dvh;"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-lg-12 col-md-12 col-sm-12">
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        จำนวนปัญหาแยกตามหน่วยงาน (เรียงจากมากไปน้อย)
-                    </div>
-                    <div class="card-body">
-                        <div>
-                            <canvas id="chart_totalByDepSec" style="max-height: 30dvh;"></canvas>
                         </div>
                     </div>
                 </div>

@@ -3,7 +3,7 @@ function getRandomColor() {
   const r = Math.floor(Math.random() * 255);
   const g = Math.floor(Math.random() * 255);
   const b = Math.floor(Math.random() * 255);
-  return `rgba(${r}, ${g}, ${b}, 0.2)`;
+  return `rgba(${r}, ${g}, ${b}, 0.4)`;
 }
 
 let startDate = moment().startOf("day").format("YYYY-MM-DD");
@@ -22,6 +22,7 @@ let chartTotalByDepSec;
 let chartTotalByDepSecData = { labels: [], datasets: [] };
 
 function initializeReportChart() {
+  Chart.register(ChartDataLabels);
   const ctx1 = document.getElementById("chart_overall").getContext("2d");
   chartOverall = new Chart(ctx1, {
     type: "bar",
@@ -49,6 +50,33 @@ function initializeReportChart() {
         tooltip: {
           mode: "index",
           intersect: false,
+          callbacks: {
+            label: function (tooltipItem) {
+              const value = tooltipItem.raw; // Get the value for the current label
+              if (value === 0) {
+                return null; // Return null to hide the label if value is 0
+              }
+              return `${tooltipItem.dataset.label}: ${value}`; // Display the label with its value
+            },
+          },
+        },
+        datalabels: {
+          formatter: (value, context) => {
+            let sum = context.dataset.data.reduce((a, b) => a + b, 0);
+            let percentage = ((value * 100) / sum).toFixed(2) + "%";
+            // return `${percentage}\n(${value})`;
+            // ${context.chart.data.labels[context.dataIndex]}\n${percentage}\n(${value})
+            return context.dataset.data[context.dataIndex] !== 0
+              ? `${context.chart.data.labels[context.dataIndex]}\n (${value})`
+              : "";
+          },
+          color: "#000",
+          font: {
+            family: "Prompt",
+            weight: "normal",
+            titlesize: 10,
+          },
+          textAlign: "center",
         },
       },
     },
@@ -82,6 +110,24 @@ function initializeReportChart() {
           mode: "index",
           intersect: false,
         },
+        datalabels: {
+          formatter: (value, context) => {
+            let sum = context.dataset.data.reduce((a, b) => a + b, 0);
+            let percentage = ((value * 100) / sum).toFixed(2) + "%";
+            // return `${percentage}\n(${value})`;
+            // ${context.chart.data.labels[context.dataIndex]}\n${percentage}\n(${value})
+            return context.dataset.data[context.dataIndex] !== 0
+              ? `${context.chart.data.labels[context.dataIndex]}\n${percentage} (${value})`
+              : "";
+          },
+          color: "#000",
+          font: {
+            family: "Prompt",
+            weight: "normal",
+            titlesize: 10,
+          },
+          textAlign: "center",
+        },
       },
     },
   });
@@ -113,6 +159,24 @@ function initializeReportChart() {
         tooltip: {
           mode: "index",
           intersect: false,
+        },
+        datalabels: {
+          formatter: (value, context) => {
+            let sum = context.dataset.data.reduce((a, b) => a + b, 0);
+            let percentage = ((value * 100) / sum).toFixed(2) + "%";
+            // return `${percentage}\n(${value})`;
+            // ${context.chart.data.labels[context.dataIndex]}\n${percentage}\n(${value})
+            return context.dataset.data[context.dataIndex] !== 0
+              ? `${context.chart.data.labels[context.dataIndex]}\n${percentage} (${value})`
+              : "";
+          },
+          color: "#000",
+          font: {
+            family: "Prompt",
+            weight: "normal",
+            size: 10,
+          },
+          textAlign: "center",
         },
       },
     },
@@ -196,23 +260,23 @@ async function fetchChartDataDepSec() {
 }
 
 async function fetchChartDataTotalByDepSec() {
-    try {
-      const data = await new Promise((resolve, reject) => {
-        $.post("../class/apiform.php", {
-          method: "generateCountSumByDepSec",
-          startDate: startDate,
-          endDate: endDate,
-        })
-          .done((response) => resolve(response))
-          .fail((jqXHR, textStatus, errorThrown) =>
-            reject(new Error(`Request failed: ${textStatus}, ${errorThrown}`))
-          );
-      });
-      return data;
-    } catch (error) {
-      console.error("Failed to fetch chart data:", error);
-      throw error; // Optionally rethrow the error if you want it to be handled further up the call stack
-    }
+  try {
+    const data = await new Promise((resolve, reject) => {
+      $.post("../class/apiform.php", {
+        method: "generateCountSumByDepSec",
+        startDate: startDate,
+        endDate: endDate,
+      })
+        .done((response) => resolve(response))
+        .fail((jqXHR, textStatus, errorThrown) =>
+          reject(new Error(`Request failed: ${textStatus}, ${errorThrown}`))
+        );
+    });
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch chart data:", error);
+    throw error; // Optionally rethrow the error if you want it to be handled further up the call stack
+  }
 }
 
 async function updateChartByDateChange() {
@@ -286,7 +350,7 @@ function initializeDateRange() {
   });
 }
 
-function convertToChartDepSecData (jsonData) {
+function convertToChartDepSecData(jsonData) {
   // Initialize the chart data structure
   let chartDepSecData = {
     labels: [], // For labels (x-axis)
@@ -330,32 +394,37 @@ function convertToChartDepSecData (jsonData) {
 }
 
 function convertToChartTotalDepSecData(jsonData) {
-  console.log(jsonData);
-
   let chartToData = {
-      labels: [], // For depsec_name (x-axis)
-      datasets: [{ // Single dataset for aggregated counts
-          label: "จำนวนปัญหาที่พบ",
-          data: [], // Counts corresponding to depsec_name
-          backgroundColor: getRandomColor(), // Function to generate random colors
-          borderColor: getRandomColor(),
-          borderWidth: 1
-      }]
+    labels: [], // For depsec_name (x-axis)
+    datasets: [
+      {
+        // Single dataset for aggregated counts
+        label: "จำนวนครั้งที่พบ",
+        data: [], // Counts corresponding to depsec_name
+        backgroundColor: [], // Array for colors
+        borderColor: [], // Array for border colors
+        borderWidth: 1,
+      },
+    ],
   };
 
   // Aggregate counts by depsec_name
   const countMap = {};
 
-  jsonData.forEach(el => {
-      if (!countMap[el.depsec_name]) {
-          countMap[el.depsec_name] = 0;
-      }
-      countMap[el.depsec_name] += parseInt(el.COUNT, 10); // Aggregate counts
+  jsonData.forEach((el) => {
+    if (!countMap[el.depsec_name]) {
+      countMap[el.depsec_name] = 0;
+    }
+    countMap[el.depsec_name] += parseInt(el.COUNT, 10); // Aggregate counts
   });
 
   // Set labels and data
   chartToData.labels = Object.keys(countMap);
   chartToData.datasets[0].data = Object.values(countMap);
+
+  // Generate unique colors for each bar
+  chartToData.datasets[0].backgroundColor = chartToData.labels.map(() => getRandomColor());
+  chartToData.datasets[0].borderColor = chartToData.datasets[0].backgroundColor;
 
   return chartToData;
 }

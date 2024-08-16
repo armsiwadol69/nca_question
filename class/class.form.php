@@ -50,8 +50,10 @@ class NcaQuestionForm {
                 QCG.questioncategories_name AS 'c_name'
                 FROM tb_questioncategories AS QCG
                 WHERE
-                QCG.questioncategories_active = '1' AND
-                QCG.questioncategories_compfuncdepsec = '".$depSec."'";
+                QCG.questioncategories_active = '1' 
+                -- AND
+                -- QCG.questioncategories_compfuncdepsec = '".$depSec."'
+                ";
 
         $arr = $go_ncadb->ncaretrieve($sql, "question");
 
