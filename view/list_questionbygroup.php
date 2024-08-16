@@ -13,6 +13,24 @@ td{
 .textcenterd{
     text-align: center;
 }
+table.dataTable tbody tr {
+    background-color: transparent;
+}
+.dt-hasChild {
+    background: #e5e5e5 !important;
+}
+.shown .details-btn::before {
+    /* content: "-"; */
+    content: "ซ่อน";
+    font-weight: bold;
+    margin-right: 5px;
+}
+.details-btn::before {
+    /* content: "+"; */
+    content: "แสดง";
+    font-weight: bold;
+    margin-right: 5px;
+}
 </style>
 
 <div class="row">
@@ -28,6 +46,15 @@ td{
             <table id="questionListTable" class="table table-bordered table-striped shadow-sm w-100">
                 <thead class="text-bg-primary" style="vertical-align: middle;">
                     <tr>
+                        <td width="100px;">ลำดับ</td>
+                        <td >หมวด</td>
+                        <td >ประเภท</td>
+                        <td >สายงาน</td>
+                        <td >ฝ่าย</td>
+                        <td >แผนก</td>
+                        <td width="250px;">Detail</td>
+                    </tr>
+                    <!-- <tr>
                         <td width="50px;">ลำดับ</td>
                         <td >สายงาน</td>
                         <td >ฝ่าย</td>
@@ -38,7 +65,7 @@ td{
                         <td >ผู้บันทึก</td>
                         <td >วันที่บันทึก</td>
                         <td width="200px;"></td>
-                    </tr>
+                    </tr> -->
                 </thead>
                 <tbody class="align-middle text-start"></tbody>
             </table>
@@ -51,8 +78,40 @@ td{
     include_once 'v_footer.php';
 ?>
 <script>
+    var questionListTable;
     $(function() {
         initListTable();
+
+        $('#questionListTable').on('click', 'button.details-btn', function() {
+            var tr = $(this).closest('tr');
+            // console.log("tr click ",tr);
+            var row = questionListTable.row(tr);
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                // Open this row
+                var parentId = row.data().question;
+                $.ajax({
+                    url: `../phpfunc/questiondatacustom.php`,  // Replace with your actual API endpoint
+                    type: "POST",
+                    data : {
+                        "parent_id" : (parentId ? parentId : "999"),
+                        "method" : "getQuestionList",
+                    },
+                    success: function(info) {
+                        let data = info.data;
+                        if (data.length > 0) {
+                            if (!row.child.isShown()) {
+                                row.child(format(data)).show();
+                            }
+                            $(row.node()).addClass('shown');
+                        }
+                    }
+                });
+            }
+        });
     })
 
     function initListTable() {
@@ -86,6 +145,60 @@ td{
             },
             columns: [
                 {
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+                },
+                {
+                    data: "questioncategories_name",
+                    render: function (data, type, row, meta) {
+                        return `${data}`;
+                    },
+                },
+                {
+                    data: "questionmode_name",
+                    render: function (data, type, row, meta) {
+                        return `${data}`;
+                    },
+                },
+                {
+                    data: "question_compfuncname",
+                    render: function (data, type, row, meta) {
+                        return `${data}`;
+                    },
+                },
+                {
+                    data: "question_compfuncdepname",
+                    render: function (data, type, row, meta) {
+                        return `${data}`;
+                    },
+                },
+                {
+                    data: "question_compfuncdepsecname",
+                    render: function (data, type, row, meta) {
+                        return `${data}`;
+                    },
+                },
+                {
+                    data: "giftdetail",
+                    render: function (data, type, row) {
+                        return `<div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-warning" onclick="callActionCustom('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไขทั้งหมด</button>
+                                    <a href="`+linkUrlCustom +`?id=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
+                                </div>`;
+                        /* return `<div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-warning" onclick="callActionCustom('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
+                                    <button class='details-btn btn btn-secondary'></button>
+                                    <a href="`+linkUrlCustom +`?id=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
+                                </div>`; */
+                    },
+                
+                }/*,
+                {
+                    "data": null,
+                    "defaultContent": "<button class='details-btn btn btn-secondary'></button>"
+                }*/
+                /* {
                     render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     },
@@ -150,8 +263,33 @@ td{
                                     <a href="`+linkUrlCustom +`?id=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
                                 </div>`;
                     },
-                },
+                }, */
             ],
+            "drawCallback": function() {
+                var api = this.api();
+                // console.log(api.rows());
+                api.rows().every(function() {
+                    var row = this;
+                    var parentId = row.data().question_questioncategories;
+                    $.ajax({
+                        // url: `https://yourserver.com/api/children/${parentId}`,  // Replace with your actual API endpoint
+                        url: `../phpfunc/questiondatacustom.php`,  // Replace with your actual API endpoint
+                        data : {
+                            "parent_id" : (parentId ? parentId : "999"),
+                            "method" : "getQuestionList",
+                        },
+                        success: function(info) {
+                            let data = info.data;
+                            if (data.length > 0) {
+                                if (!row.child.isShown()) {
+                                    row.child(format(data)).show();
+                                }
+                                $(row.node()).addClass('shown');
+                            }
+                        }
+                    });
+                });
+            }
         });
     }
 
@@ -274,5 +412,65 @@ td{
             });
 
         }
+    }
+
+    function format(data) {
+
+        // console.log("dtata",data);
+        for (i = 0; i < data.length; ++i) {
+            // console.log("data i ",data[i])
+
+        //     return `
+        //     <table class="child-table">
+        //         <thead>
+        //             <tr>
+        //                 <th class"text-center">ID</th>
+        //                 <th class"text-center">Child ID</th>
+        //                 <th class"text-center">Child Name</th>
+        //                 <th class"text-center">Description</th>
+        //             </tr>
+        //         </thead>
+        //         <tbody>
+        //             ${data.map(child => `
+        //                 <tr>
+        //                     <td>${child.child}</td>
+        //                     <td>${child.question}</td>
+        //                     <td>${child.question_name}</td>
+        //                     <td>${child.question_questioncategoriesname}</td>
+        //                 </tr>
+        //             `).join('')}
+                    
+        //         </tbody>
+        //     </table>
+        // `;
+        }
+        let iddt = "id" + Math.random().toString(16).slice(2);
+        let html =  `<table id="`+iddt+`" class="table table-bordered table-striped shadow-sm w-100">
+                        <thead style="background-color: #b2d1fa;">
+                            <tr>
+                                <th class="text-center" width="100px;">ลำดับ</th>
+                                <!--<th class="text-center">Child ID</th>-->
+                                <th class="text-center">ชื่อชุดคำถาม</th>
+                                <th class="text-center">หมวด</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                   
+        for (i = 0; i < data.length; ++i) {
+            // console.log("data i ",data[i])
+            html += ` <tr>`;
+            html += `     <td>`+(i+1)+`</td>`;
+            // html += `     <td>${data[i].question}</td>`;
+            html += `     <td>${data[i].question_name}</td>`;
+            html += `     <td>${data[i].question_questioncategoriesname}</td>`;
+            html += ` </tr>`;
+        }
+         
+        html += `</tbody>
+            </table>
+        `;
+        var table = new DataTable('#'+iddt);
+
+        return html;
     }
 </script>

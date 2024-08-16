@@ -51,43 +51,33 @@ if($_GET['id']){
 // Get questiontype
 $sqlOptionType  = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
 $arr_OptionType = $go_ncadb->ncaretrieve($sqlOptionType, "question");
-$arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType);
-
-// Get ฝ่าย
-$sqlmcompfunc  = "SELECT * FROM m_compfunc WHERE m_compfunc_active = 1 ";
-$arr_mcompfunc = $go_ncadb->ncaretrieve($sqlmcompfunc, "icms");
-$arrmcompfunc  = $ncaquestion->ncaArrayConverter($arr_mcompfunc);
-
-// Get แผนก
-$sqlmcompfuncdep  = "SELECT * FROM m_compfuncdep WHERE m_compfuncdep_active = 1 ";
-$arr_mcompfuncdep = $go_ncadb->ncaretrieve($sqlmcompfuncdep, "icms");
-$arrmcompfuncdep  = $ncaquestion->ncaArrayConverter($arr_mcompfuncdep);
+// $arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType);
 
 // Get หมวด
 // $sqlmquestiontype  = "SELECT * FROM tb_questioncategories WHERE questioncategories_compfunc = '".$_SESSION['userData']['staffcompfunc']."' OR questioncategories_default = 1 AND questioncategories_active = 1 ";
 $sqlmquestiontype  = "SELECT * FROM tb_questioncategories ";
-$arr_mquestiontype = $go_ncadb->ncaretrieve($sqlmquestiontype, "question");
-$arrmquestiontype  = $ncaquestion->ncaArrayConverter($arr_mquestiontype);
+$arrmquestiontype = $go_ncadb->ncaretrieve($sqlmquestiontype, "question");
+// $arrmquestiontype  = $ncaquestion->ncaArrayConverter($arr_mquestiontype);
 
 // Get กลุ่ม
 $sqlquestiongroup  = "SELECT * FROM tb_questiongroup WHERE questiongroup_active = 1";
-$arr_questiongroup = $go_ncadb->ncaretrieve($sqlquestiongroup, "question");
-$arrquestiongroup  = $ncaquestion->ncaArrayConverter($arr_questiongroup);
+$arrquestiongroup = $go_ncadb->ncaretrieve($sqlquestiongroup, "question");
+// $arrquestiongroup  = $ncaquestion->ncaArrayConverter($arr_questiongroup);
 
 // Get ประเภทของคำถาม
 $sqlquestionmode  = "SELECT * FROM tb_questionmode WHERE questionmode_active = 1";
-$arr_questionmode = $go_ncadb->ncaretrieve($sqlquestionmode, "question");
-$arrquestionmode  = $ncaquestion->ncaArrayConverter($arr_questionmode);
+$arrquestionmode = $go_ncadb->ncaretrieve($sqlquestionmode, "question");
+// $arrquestionmode  = $ncaquestion->ncaArrayConverter($arr_questionmode);
 
 // Get activities
 $sqlactivities  = "SELECT * FROM tb_activities WHERE activities_active = 1";
-$arractivities  = $go_ncadb->ncaretrieve($sqlactivities, "question");
-$arr_activities = $ncaquestion->ncaArrayConverter($arractivities);
+$arr_activities  = $go_ncadb->ncaretrieve($sqlactivities, "question");
+// $arr_activities = $ncaquestion->ncaArrayConverter($arractivities);
 
 //
 $sqlmistakelevele  = "SELECT *  FROM tb_mistakelevel WHERE mistakelevel_active = '1'";
-$arr_mistakelevele = $go_ncadb->ncaretrieve($sqlmistakelevele, "question");
-$arrmistakelevele  = $ncaquestion->ncaArrayConverter($arr_mistakelevele);
+$arrmistakelevele = $go_ncadb->ncaretrieve($sqlmistakelevele, "question");
+// $arrmistakelevele  = $ncaquestion->ncaArrayConverter($arr_mistakelevele);
 
 
 if($_GET['id'] > 0){
@@ -108,7 +98,7 @@ if($_GET['id'] > 0){
     }else{
         $texttitle =  " แก้ไขชุดคำถาม";
     }
-}else{ 
+}else{
     $texttitle =  " เพิ่มข้อมูลชุดคำถามใหม่"; 
 } 
 
@@ -284,8 +274,6 @@ if($_GET['id'] > 0){
                                         <?php
                                             foreach ($arrquestionmode as $key => $value) {
                                                 $selected = "";
-                                                //if($value['questioncategories_compfunc'] == $staffcompfunc && $value['questioncategories_compfuncdep'] == $staffcompfuncdep){
-
                                                 if($value['questionmode'] == $questionmode){
                                                     $selected = "selected";
                                                 }
@@ -1144,44 +1132,6 @@ include_once 'v_footer.php';
         return validate;
         
     }
-
-    // function changestaffcompfunc(){
-    //     let staffcompfunc = $("#staffcompfunc").val();
-    //     let html = ``; 
-    //     console.log(arrmcompfuncdep);
-    //     html += `<select class="form-select" name="staffcompfuncdep" id="staffcompfuncdep" onchange="changestaffcompfuncdep()">
-    //                     <option value="0">เลือกแผนก</option>`;
-       
-    //     arrmcompfuncdep.forEach(element => {
-    //         if(staffcompfunc > 0){
-    //             if(element.m_compfuncdep_compfunc == staffcompfunc){
-    //                 html += `<option value="` + element.m_compfuncdep + `">` + element.m_compfuncdep_name_th + `</option>`;
-    //             }
-    //         }/*else{
-    //             html += `<option value="` + element.m_compfuncdep + `">` + element.m_compfuncdep_name_th + `</option>`;
-    //         }*/
-    //     });
-    //     html += `</select>`;
-
-    //     $("#staffcompfuncdep").html(html);
-
-    // }    
-    
-    // function changestaffcompfuncdep(){
-    //     let compfunc = $("#staffcompfunc").val();
-    //     let compfuncdep = $("#staffcompfuncdep").val();
-    //     let html_mquestiontype = '<select class="form-select" name="mquestiontype" id="mquestiontype" onchange="changemquestiontype()" required>';
-    //     html_mquestiontype += '<option value="0">เลือกหมวด</option>';
-    //     arr_mquestiontype.forEach(element => {
-    //         //if(compfunc == element.questioncategories_compfunc && compfuncdep == element.questioncategories_compfuncdep && element.questioncategories_active == 1 || element.questioncategories_default == 1 ){
-    //             html_mquestiontype += '<option value="'+element.questioncategories+'" > '+element.questioncategories_name+' </option>';
-    //         //}
-    //     });
-    //     html_mquestiontype += '</select>';
-
-    //     $("#mquestiontype").html(html_mquestiontype);
-        
-    // }   
 
     function changemquestiontype(){
 

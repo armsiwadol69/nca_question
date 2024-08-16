@@ -66,7 +66,7 @@ if($ar_prm["method"] == "getlist"){
             $data[] = $value;
         }
 
-        echo json_encode($ncaquestion->ncaArrayConverter($data));
+        echo json_encode($data);
 
     } else if (empty($data)) {
 
@@ -84,7 +84,7 @@ if($ar_prm["method"] == "getlistquestiongroup"){
     $data = array();
     if(count($result) > 0){
 
-        echo json_encode($ncaquestion->ncaArrayConverter($result));
+        echo json_encode($result);
 
     } else if (empty($data)) {
 
@@ -105,10 +105,10 @@ if($ar_prm["method"] == "editquestionegroup" || $ar_prm["method"] == "addquestio
     $ii = 0;
     $sqlObj = null;
 
-    $sqlObj[$ii++] = new TField("questiongroup_name", iconv('utf-8', 'tis-620', $ar_prm['questiongroup_name']), "string");
-    $sqlObj[$ii++] = new TField("questiongroup_description", iconv('utf-8', 'tis-620', $ar_prm['questiongroup_description']), "string");
-    $sqlObj[$ii++] = new TField("questiongroup_questioncategories", iconv('utf-8', 'tis-620', $ar_prm['questiongroup_questioncategories']), "string");
-    $sqlObj[$ii++] = new TField("questiongroup_hidden", iconv('utf-8', 'tis-620', $ar_prm['questiongroup_hidden']), "string");
+    $sqlObj[$ii++] = new TField("questiongroup_name", $ar_prm['questiongroup_name'], "string");
+    $sqlObj[$ii++] = new TField("questiongroup_description", $ar_prm['questiongroup_description'], "string");
+    $sqlObj[$ii++] = new TField("questiongroup_questioncategories", $ar_prm['questiongroup_questioncategories'], "string");
+    $sqlObj[$ii++] = new TField("questiongroup_hidden", $ar_prm['questiongroup_hidden'], "string");
 
     if($ar_prm['questiongroup'] > 0){
 

@@ -57,7 +57,7 @@ if($ar_prm["method"] == "getlist"){
             $data[] = $value;
         }
 
-        echo json_encode($ncaquestion->ncaArrayConverter($data));
+        echo json_encode($data);
 
     } else if (empty($data)) {
 
@@ -75,7 +75,7 @@ if($ar_prm["method"] == "getlistactivities"){
     $data = array();
     if(count($result) > 0){
 
-        echo json_encode($ncaquestion->ncaArrayConverter($result));
+        echo json_encode($result);
 
     } else if (empty($data)) {
 
@@ -96,8 +96,8 @@ if($ar_prm["method"] == "editquestionctivities" || $ar_prm["method"] == "addques
     $ii = 0;
     $sqlObj = null;
 
-    $sqlObj[$ii++] = new TField("activities_name", iconv('utf-8', 'tis-620', $ar_prm['activities_name']), "string");
-    $sqlObj[$ii++] = new TField("activities_description", iconv('utf-8', 'tis-620', $ar_prm['activities_description']), "string");
+    $sqlObj[$ii++] = new TField("activities_name", $ar_prm['activities_name'], "string");
+    $sqlObj[$ii++] = new TField("activities_description", $ar_prm['activities_description'], "string");
 
     if($ar_prm['activities'] > 0){
 

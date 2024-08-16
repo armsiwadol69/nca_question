@@ -147,7 +147,7 @@ td{
                                     <button type="button" class="btn btn-warning" onclick="callAction('edit','${row.question}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
                                     <button type="button" class="btn btn-secondary" onclick="callAction('copy','${row.question}')"><i class="bi bi-copy"></i> Copy</button>
                                     <button type="button" class="btn btn-danger  onclick="callAction('delete','${row.question}','${escapeHtml(row.question_name)}','${row.currrent_user}')"><i class="bi bi-trash3"></i> ลบ</button>
-                                    <a href="`+linkUrl +`?formId=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
+                                    <a href="`+linkUrl +`?d=`+row.question+`" target="_blank" class="btn btn-info"><i class="bi bi-menu-button-wide"></i>Link</a>
                                 </div>`;
                     },
                 },
