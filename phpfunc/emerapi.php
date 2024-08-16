@@ -34,6 +34,24 @@ function ncaArrayConverter($par_array){
     return $ar;
 }
 
+function ArrayKeyRemover($par_array){
+    if (empty($par_array)) {
+        return array();
+    }
+    $ar = array();
+    foreach ($par_array as $key => $value) {
+        $xx = array();
+        foreach ($par_array[$key] as $k => $v) {
+            if (is_int($k)) {
+                continue;
+            }
+            $xx[$k] = $v;
+        }
+        $ar[$key] = $xx;
+    }
+    return $ar;
+}
+
 $selectDepartment = $ar_prm["selectDepartment"];
 $selectCategory = $ar_prm["selectCategory"];
 $selectFormType = $ar_prm["selectFormType"];
