@@ -21,7 +21,7 @@ include_once 'v_sidebar_start.php';
             <div class="col-12 col-lg-12 col-md-12 col-sm-12">
                 <div class="card shadow-sm">
                     <div class="card-header">
-                        รายงานสถิติโดยรวม
+                        รายงานสถิติโดยรวม 4 อันดับแรกของแต่ละหน่วยงาน
                     </div>
                     <div class="card-body">
                         <div>
