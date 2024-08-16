@@ -151,9 +151,9 @@ $ncaquestion = new question();
 
 if($methodRequest == "addQuestion") {
     
-    /* echo "<pre>";
+    echo "<pre>";
     print_r($_POST);
-    die(); */
+    die();
 
     $data = array();
     $questiondata = array();
@@ -245,7 +245,7 @@ if($methodRequest == "addQuestion") {
     echo json_encode(array("data"=>$data));
 
 } else if($methodRequest == "del") {
-
+    
     $data = $ncaquestion->deleteMainQuestion($id,$currentUserId);
     echo json_encode($data);
 

@@ -43,29 +43,9 @@ if($_GET['id']){
         
     }
 
-}else if($_GET['cateid']){
-
-    $arr_question = $ncaquestion->getDataQuestionidByCategory($_GET['cateid']);
-
-    $htmlQuestion  = "";
-    $cateName = $arr_question[0]['questioncategories_name'];
-    foreach($arr_question AS $k => $val){
-        $ncaquestion->setQuestionId($val['question']);
-        $questioninfo = $ncaquestion->getDataQuestion();
-        $arr_parent = array();
-        $htmlQuestion  .= '<br><br><div class="nestedQuestionContent'.($k+1).' row" class="list-group col"><div class="w-100 d-flex mt-2"><h4 class="me-auto mt-1">ชื่อชุดคำถาม : '.$val['question_name'].'</h4></div>';
-        foreach($questioninfo AS $key => $value){
-            $htmlQuestion  .= $ncaquestion->generateIsParentQuestionCustom("questiondt",$value['questiondt'],0,$arr_parent);
-        }
-
-        $htmlQuestion  .= '</div>';
-        $htmlQuestion  .=  '<div class="col-lg-12 center">
-                                <span  class="btn btn-primary mt-3 mb-5 w-100" id="addQue" style="display: block;" onclick="$(`#nestedQuestionContentCate`).val(`nestedQuestionContent'.($k+1).'`); setQuestionmodal(`question`,`mainQuestionContinue`,``,``,``,`'.$val['question'].'`);">
-                                    <i class="bi bi-file-plus"></i> เพิ่มคำถาม
-                                </span>
-                            </div>';
-    }
-
+    /* echo "<pre>";
+    print_r($questioninfo);
+ */
 }
 
 // Get questiontype
@@ -120,7 +100,7 @@ if($_GET['id'] > 0){
     }
 }else{
     $texttitle =  " เพิ่มข้อมูลชุดคำถามใหม่"; 
-}
+} 
 
 ?>
 
@@ -132,189 +112,183 @@ if($_GET['id'] > 0){
         
             <div class="row">
                     
-                <div class="gy-3">
+                <div class="row gy-3">
+                    
+                    <div class="col-lg-12 col-md-12">
 
-                    <?php if(!$_GET['cateid']){ ?>
+                        <div class="col-lg-12">
 
-                        <div class="col-lg-12 col-md-12">
+                            <div class="w-100 d-flex mt-2">
 
-                            <div class="col-lg-12">
-
-                                <div class="w-100 d-flex mt-2">
-
-                                    <h4 class="me-auto">
-                                        <?php echo $texttitle; ?>
-                                    
-                                    </h4>
-
-                                </div>
+                                <h4 class="me-auto">
+                                    <?php echo $texttitle; ?>
                                 
-                                <hr>
+                                </h4>
+
+                            </div>
+                            
+                            <hr>
+
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 mt-2">
+
+                            <div class="col-lg-12 col-md-12 mt-2">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
+
+                                        <label for="par_staffcompfunc" class="form-label">ฝ่าย <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="staffcompfunc" id="staffcompfunc" onchange="getDepartment();">
+                                            <option value="0">เลือกสายงาน</option>
+                                        </select>
+                                    
+                                    </div>
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
+
+                                        <label for="par_staffcompfuncdep" class="form-label">ฝ่าย <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="staffcompfuncdep" id="staffcompfuncdep" onchange="getSection();">
+                                            <option value="0">เลือกฝ่าย</option>
+                                        </select>
+                                    
+                                    </div>
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
+
+                                        <label for="par_staffcompfuncdepsec" class="form-label">แผนก <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="staffcompfuncdepsec" id="staffcompfuncdepsec" onchange="changestaffcompfuncdep()">
+                                            <option value="0">เลือกแผนก</option>
+                                        </select>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-12 col-md-12 mt-2">
+                                
+                                <div class="row">
+                                    
+                                    <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
+
+                                        <label for="par_mquestiontype" class="form-label">หมวด <span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input class="form-check-input" type="checkbox" value="1" name="mquestiontypecheck" id="mquestiontypecheck">
+                                        <label class="form-check-label" for="mquestiontypecheck">
+                                            ต้องการเพิ่มหมวดใหม่?
+                                        </label>
+                                        
+                                        <span title="แก้ไข" onclick="editMquestiontype()" style="cursor: pointer;">
+                                            <i class="bi bi-gear"></i> ซ่อน
+                                        </span>
+                                        
+                                        <div id="mquestiontypeselect">
+                                            <select class="form-select" name="mquestiontype" id="mquestiontype" onchange="changemquestiontype()" required>
+                                                <option value="0">เลือกหมวด</option>
+                                                <?php
+                                                    
+                                                    foreach ($arrmquestiontype as $key => $value) {
+                                                        $selected = "";
+                                                        /* if(
+                                                            ($value['questioncategories_compfunc'] == $staffcompfunc && 
+                                                            $value['questioncategories_compfuncdep'] == $staffcompfuncdep && 
+                                                            $value['questioncategories_active'] == 1 &&
+                                                            $value['questioncategories_hidden'] == 0) ||
+                                                            ($value['questioncategories_default'] == 1)
+                                                        ){ */
+                                                        if($value['questioncategories_active'] == 1){
+
+                                                            if($value['questioncategories'] == $mquestiontype){
+                                                                $selected = "selected";
+                                                            }
+                                                            echo '<option value="'.$value['questioncategories'].'" '.$selected.'> '.$value['questioncategories_name'].' </option>';
+                                                        }
+                                                    }
+                                                   
+                                                ?>
+                                            </select>
+                                        </div>
+                                        <div id="mquestiontypeinput" style="display: none;">
+                                            <input type="text" id="mquestiontype_name" name="mquestiontype_name" class="form-control" value="" placeholder="เพิ่มประเภทใหม่">
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+
+                                        <label for="par_mquestiongroup" class="form-label">กลุ่ม <span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input class="form-check-input" type="checkbox" value="1" name="questiongroupcheck" id="questiongroupcheck">
+                                        <label class="form-check-label" for="questiongroupcheck">
+                                            ต้องการเพิ่มกลุ่มใหม่?
+                                        </label>
+                                        <span title="แก้ไข" onclick="editquestiontGroup()" style="cursor: pointer;">
+
+                                            <i class="bi bi-gear"></i> ซ่อน
+                                        </span>
+                                        <div id="mquestiongroupselect">
+                                            <select class="form-select" name="questiongroup" id="questiongroup" required>
+                                                <option value="0">เลือกกลุ่ม</option>
+                                                <?php
+                                                    if($_GET['id'] > 0){
+                                                        foreach ($arrquestiongroup as $key => $value) {
+                                                            if($value['questiongroup_questioncategories'] == $mquestiontype && $value['questiongroup_hidden'] == 0){
+                                                                $selected = "";
+
+                                                                if($value['questiongroup'] == $questiongroup){
+                                                                    $selected = "selected";
+                                                                }
+                                                                echo '<option value="'.$value['questiongroup'].'" '.$selected.'> '.$value['questiongroup_name'].' </option>';
+                                                            }
+                                                        }
+                                                    }
+                                                ?>
+                                            </select>
+                                        </div>
+                                        <div id="questiongroupinput" style="display: none;">
+                                            <input type="text" id="questiongroup_name" name="questiongroup_name" class="form-control" value="" placeholder="เพิ่มกลุ่มใหม่">
+                                        </div>
+                                    </div> -->
+                                    
+                                </div>
+                            </div>
+                            
+                           
+
+                            <div class="col-lg-12 col-md-12 mt-2">
+
+                                <label for="par_qname" class="form-label">ชื่อกลุ่มคำถาม <span class="text-danger">*</span></label>
+                                <input type="text" id="par_qname" name="par_qname" class="form-control" required value="<?php echo $questioninfo[0]['question_name']; ?>">
 
                             </div>
 
                             <div class="col-lg-12 col-md-12 mt-2">
 
-                                <div class="col-lg-12 col-md-12 mt-2">
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
-
-                                            <label for="par_staffcompfunc" class="form-label">ฝ่าย <span class="text-danger">*</span></label>
-                                            <select class="form-select" name="staffcompfunc" id="staffcompfunc" onchange="getDepartment();">
-                                                <option value="0">เลือกสายงาน</option>
-                                            </select>
-                                        
-                                        </div>
-
-                                        <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
-
-                                            <label for="par_staffcompfuncdep" class="form-label">ฝ่าย <span class="text-danger">*</span></label>
-                                            <select class="form-select" name="staffcompfuncdep" id="staffcompfuncdep" onchange="getSection();">
-                                                <option value="0">เลือกฝ่าย</option>
-                                            </select>
-                                        
-                                        </div>
-
-                                        <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
-
-                                            <label for="par_staffcompfuncdepsec" class="form-label">แผนก <span class="text-danger">*</span></label>
-                                            <select class="form-select" name="staffcompfuncdepsec" id="staffcompfuncdepsec" onchange="changestaffcompfuncdep()">
-                                                <option value="0">เลือกแผนก</option>
-                                            </select>
-                                        
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-lg-12 col-md-12 mt-2">
-                                    
-                                    <div class="row">
-                                        
-                                        <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
-
-                                            <label for="par_mquestiontype" class="form-label">หมวด <span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <input class="form-check-input" type="checkbox" value="1" name="mquestiontypecheck" id="mquestiontypecheck">
-                                            <label class="form-check-label" for="mquestiontypecheck">
-                                                ต้องการเพิ่มหมวดใหม่?
-                                            </label>
-                                            
-                                            <span title="แก้ไข" onclick="editMquestiontype()" style="cursor: pointer;">
-                                                <i class="bi bi-gear"></i> ซ่อน
-                                            </span>
-                                            
-                                            <div id="mquestiontypeselect">
-                                                <select class="form-select" name="mquestiontype" id="mquestiontype" onchange="changemquestiontype()" required>
-                                                    <option value="0">เลือกหมวด</option>
-                                                    <?php
-                                                        
-                                                        foreach ($arrmquestiontype as $key => $value) {
-                                                            $selected = "";
-                                                            /* if(
-                                                                ($value['questioncategories_compfunc'] == $staffcompfunc && 
-                                                                $value['questioncategories_compfuncdep'] == $staffcompfuncdep && 
-                                                                $value['questioncategories_active'] == 1 &&
-                                                                $value['questioncategories_hidden'] == 0) ||
-                                                                ($value['questioncategories_default'] == 1)
-                                                            ){ */
-                                                            if($value['questioncategories_active'] == 1){
-
-                                                                if($value['questioncategories'] == $mquestiontype){
-                                                                    $selected = "selected";
-                                                                }
-                                                                echo '<option value="'.$value['questioncategories'].'" '.$selected.'> '.$value['questioncategories_name'].' </option>';
-                                                            }
-                                                        }
-                                                    
-                                                    ?>
-                                                </select>
-                                            </div>
-                                            <div id="mquestiontypeinput" style="display: none;">
-                                                <input type="text" id="mquestiontype_name" name="mquestiontype_name" class="form-control" value="" placeholder="เพิ่มประเภทใหม่">
-                                            </div>
-                                        </div>
-
-                                        <!-- <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
-
-                                            <label for="par_mquestiongroup" class="form-label">กลุ่ม <span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp;
-                                            <input class="form-check-input" type="checkbox" value="1" name="questiongroupcheck" id="questiongroupcheck">
-                                            <label class="form-check-label" for="questiongroupcheck">
-                                                ต้องการเพิ่มกลุ่มใหม่?
-                                            </label>
-                                            <span title="แก้ไข" onclick="editquestiontGroup()" style="cursor: pointer;">
-
-                                                <i class="bi bi-gear"></i> ซ่อน
-                                            </span>
-                                            <div id="mquestiongroupselect">
-                                                <select class="form-select" name="questiongroup" id="questiongroup" required>
-                                                    <option value="0">เลือกกลุ่ม</option>
-                                                    <?php
-                                                        if($_GET['id'] > 0){
-                                                            foreach ($arrquestiongroup as $key => $value) {
-                                                                if($value['questiongroup_questioncategories'] == $mquestiontype && $value['questiongroup_hidden'] == 0){
-                                                                    $selected = "";
-
-                                                                    if($value['questiongroup'] == $questiongroup){
-                                                                        $selected = "selected";
-                                                                    }
-                                                                    echo '<option value="'.$value['questiongroup'].'" '.$selected.'> '.$value['questiongroup_name'].' </option>';
-                                                                }
-                                                            }
-                                                        }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                            <div id="questiongroupinput" style="display: none;">
-                                                <input type="text" id="questiongroup_name" name="questiongroup_name" class="form-control" value="" placeholder="เพิ่มกลุ่มใหม่">
-                                            </div>
-                                        </div> -->
-                                        
-                                    </div>
-                                </div>
-                                
-                            
-
-                                <div class="col-lg-12 col-md-12 mt-2">
-
-                                    <label for="par_qname" class="form-label">ชื่อกลุ่มคำถาม <span class="text-danger">*</span></label>
-                                    <input type="text" id="par_qname" name="par_qname" class="form-control" required value="<?php echo $questioninfo[0]['question_name']; ?>">
-
-                                </div>
-
-                                <div class="col-lg-12 col-md-12 mt-2">
-
-                                    <!-- <label for="par_mquestionmode" class="form-label">ประเภท <span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp; -->
-                                    <!-- <input class="form-check-input" type="checkbox" value="1" name="mquestiontypecheck" id="mquestiontypecheck">
-                                    <label class="form-check-label" for="flexCheckDefault">
-                                        ต้องการเพิ่มประเภทใหม่?
-                                    </label>
-                                    <span title="แก้ไข" onclick="editMquestiontype()" style="cursor: pointer;">
-                                        <i class="bi bi-gear"></i> แก้ไข
-                                    </span> -->
-
-                                    <input type="hidden" name="questionmode" id="questionmode" value="1">
-                                    <!-- <div id="mquestiontypeselect">
-                                        <select class="form-select" name="questionmode" id="questionmode" required  <?php if($_GET['id'] > 0){ echo 'style="pointer-events: none;"'; } else{ echo ""; } ?> >
-                                            <option value="0">เลือกประเภท</option>
-                                            <?php
-                                                foreach ($arrquestionmode as $key => $value) {
-                                                    $selected = "";
-                                                    if($value['questionmode'] == $questionmode){
-                                                        $selected = "selected";
-                                                    }
-                                                    echo '<option value="'.$value['questionmode'].'" '.$selected.'> '.$value['questionmode_name'].' </option>';
-                                                    
+                                <label for="par_mquestionmode" class="form-label">ประเภท <span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <!-- <input class="form-check-input" type="checkbox" value="1" name="mquestiontypecheck" id="mquestiontypecheck">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                    ต้องการเพิ่มประเภทใหม่?
+                                </label>
+                                <span title="แก้ไข" onclick="editMquestiontype()" style="cursor: pointer;">
+                                    <i class="bi bi-gear"></i> แก้ไข
+                                </span> -->
+                                <div id="mquestiontypeselect">
+                                    <select class="form-select" name="questionmode" id="questionmode" required  <?php if($_GET['id'] > 0){ echo 'style="pointer-events: none;"'; } else{ echo ""; } ?> >
+                                        <option value="0">เลือกประเภท</option>
+                                        <?php
+                                            foreach ($arrquestionmode as $key => $value) {
+                                                $selected = "";
+                                                if($value['questionmode'] == $questionmode){
+                                                    $selected = "selected";
                                                 }
-                                            ?>
-                                        </select>
-                                    </div> -->
-
+                                                echo '<option value="'.$value['questionmode'].'" '.$selected.'> '.$value['questionmode_name'].' </option>';
+                                                
+                                            }
+                                        ?>
+                                    </select>
                                 </div>
 
                             </div>
 
                         </div>
-                    
-                    <?php } ?>
+
+                    </div>
 
                     <div class="col-lg-12 col-md-12">
 
@@ -322,17 +296,7 @@ if($_GET['id'] > 0){
 
                             <div class="w-100 d-flex mt-2">
 
-                               
-                                <?php if(!$_GET['cateid']){ ?>
-
-                                    <h4 class="me-auto mt-1">ส่วนคำถาม</h4>
-
-                                <?php }else{ ?>
-
-                                    <h4 class="me-auto mt-1">หมวดคำถาม : <?php echo $cateName; ?></h4>
-
-                                <?php } ?>
-
+                                <h4 class="me-auto mt-1">ส่วนคำถาม</h4>
 
                             </div>
                             <hr>
@@ -355,26 +319,16 @@ if($_GET['id'] > 0){
                                         <? } ?>
 
                                         <div id="nestedQuestion" >
-
-                                            <?php if(!$_GET['cateid']){ ?>
-                                                <div class="nestedQuestionContent row" class="list-group col">
-                                                    <? echo $htmlQuestion; ?>
-                                                </div>
-                                            <?php }else{ ?>
-
+                                            <div class="nestedQuestionContent" class="list-group col">
                                                 <? echo $htmlQuestion; ?>
-                                                <input type="hidden" name="catemode" id="catemode" value="1">
-
-                                            <?php } ?>
+                                            </div>
                                         </div>
 
-                                        <?php if(!$_GET['cateid']){ ?>
-                                            <div class="col-lg-12 center">
-                                                <span  class="btn btn-primary mt-3 mb-5 w-100" id="addQue" <? if($ncaquestion->id){ echo 'style="display: block;"'; }else{ echo 'style="display: none;"'; } ?> onclick="setQuestionmodal('question','mainQuestionContinue');">
-                                                    <i class="bi bi-file-plus"></i> เพิ่มคำถาม
-                                                </span>
-                                            </div>
-                                            <?php } ?>
+                                        <div class="col-lg-12 center">
+                                            <span  class="btn btn-primary mt-3 mb-5 w-100" id="addQue" <? if($ncaquestion->id){ echo 'style="display: block;"'; }else{ echo 'style="display: none;"'; } ?> onclick="setQuestionmodal('question','mainQuestionContinue');">
+                                                <i class="bi bi-file-plus"></i> เพิ่มคำถาม
+                                            </span>
+                                        </div>
                                         
                                     </div>
 
@@ -383,7 +337,6 @@ if($_GET['id'] > 0){
                             </div>
 
                         </div>
-                        
                     </div>
 
                 </div>
@@ -403,86 +356,84 @@ if($_GET['id'] > 0){
         </div>
 
         <div class="col-lg-6 col-md-6 col-sm-6">
-            <a href="list_questionbygroup.php" class="btn btn-secondary w-100 mt-2"><i class="bi bi-back"></i> ย้อนกลับหน้ารายการ </a>
+            <a href="list_question.php" class="btn btn-secondary w-100 mt-2"><i class="bi bi-back"></i> ย้อนกลับหน้ารายการ </a>
         </div>
 
     </div>
     
 </form>
 
-<!-- Modal generate input box -->
+    <!-- Modal generate input box -->
 
-<div class="modal fade" id="generateinputbox" tabindex="-1" aria-labelledby="createBatch" aria-hidden="true" >
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5">สร้างคำถาม</h1>
-                <span class="btn-close" data-bs-dismiss="modal" aria-label="Close"></span>
-            </div>
-            <div class="modal-body">
+    <div class="modal fade" id="generateinputbox" tabindex="-1" aria-labelledby="createBatch" aria-hidden="true" >
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">สร้างคำถาม</h1>
+                    <span class="btn-close" data-bs-dismiss="modal" aria-label="Close"></span>
+                </div>
+                <div class="modal-body">
 
-                <!-- <form action="javascript:void(0);" id="frm_category"> -->
+                    <!-- <form action="javascript:void(0);" id="frm_category"> -->
 
-                    <div class="row gy-3">
-                        
-                        <div class="col-12">
-                            <label class="form-label" for="option">คำถาม<span class="text-danger">*</span></label>
-                            <input class="form-control" type="text" name="optiontquestion" id="optiontquestion" required>
-                        </div>
-
-                        <!-- <div class="col-12">
-                            <label class="form-label" for="par_icon">ลักษณะของการตรวจ<span class="text-danger">*</span></label>
-                            <select class="form-select" name="activities" id="activities" aria-label="isshowing">
-                                <option value="0">เลือกลักษณะของการตรวจ</option>
-                                <?php    
-                                    foreach ($arr_activities as $key => $value) {
-                                        echo '<option value="'.$value['activities'].'">'.$value['activities_name'].'</option>';
-                                    }
-                                ?>
-                            </select>
-                        </div> -->
-
-                        <div class="col-12" id="normal_type">
-                            <label class="form-label" for="par_icon">ประเภทคำตอบ<span class="text-danger">*</span></label>
-                            <select class="form-select" name="optiontype" id="optiontype" aria-label="isshowing">
-                                <option value="0">เลือกประเภทคำตอบ</option>
-                                <?php    
-                                    foreach ($arr_OptionType as $key => $value) {
-                                        echo '<option value="'.$value['questiontype'].'">'.$value['questiontype_name'].'</option>';
-                                    }
-                                ?>
-                            </select>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label" for="option">จำนวน<span class="text-danger">*</span></label>
-                            <input class="form-control" type="number" name="optiontnumber" id="optiontnumber" min="1" required>
+                        <div class="row gy-3">
                             
-                            <input type="hidden" name="qmode" id="qmode" value="">
-                            <input type="hidden" name="qtype" id="qtype" value="">
-                            <input type="hidden" name="qinpname" id="qinpname" value="">
-                            <input type="hidden" name="qinpclass" id="qinpclass" value="">
-                            <input type="hidden" name="qafter" id="qafter" value="">
-                            <input type="hidden" name="qafteroption" id="qafteroption" value="">
-                            <input type="hidden" name="questionid" id="questionid" value="">
-                            <input type="hidden" name="nestedQuestionContentCate" id="nestedQuestionContentCate" value="">
-    
-                        </div>
-                        
-                        <div class="col-12">
-                            <span id="createOption" class="btn btn-primary w-100" >สร้าง</span>
-                        </div>
-                    </div>
+                            <div class="col-12">
+                                <label class="form-label" for="option">คำถาม<span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" name="optiontquestion" id="optiontquestion" required>
+                            </div>
 
-                <!-- </form> -->
-                
+                            <!-- <div class="col-12">
+                                <label class="form-label" for="par_icon">ลักษณะของการตรวจ<span class="text-danger">*</span></label>
+                                <select class="form-select" name="activities" id="activities" aria-label="isshowing">
+                                    <option value="0">เลือกลักษณะของการตรวจ</option>
+                                    <?php    
+                                        foreach ($arr_activities as $key => $value) {
+                                            echo '<option value="'.$value['activities'].'">'.$value['activities_name'].'</option>';
+                                        }
+                                    ?>
+                                </select>
+                            </div> -->
+
+                            <div class="col-12" id="normal_type">
+                                <label class="form-label" for="par_icon">ประเภทคำตอบ<span class="text-danger">*</span></label>
+                                <select class="form-select" name="optiontype" id="optiontype" aria-label="isshowing">
+                                    <option value="0">เลือกประเภทคำตอบ</option>
+                                    <?php    
+                                        foreach ($arr_OptionType as $key => $value) {
+                                            echo '<option value="'.$value['questiontype'].'">'.$value['questiontype_name'].'</option>';
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label" for="option">จำนวน<span class="text-danger">*</span></label>
+                                <input class="form-control" type="number" name="optiontnumber" id="optiontnumber" min="1" required>
+                                
+                                <input type="hidden" name="qmode" id="qmode" value="">
+                                <input type="hidden" name="qtype" id="qtype" value="">
+                                <input type="hidden" name="qinpname" id="qinpname" value="">
+                                <input type="hidden" name="qinpclass" id="qinpclass" value="">
+                                <input type="hidden" name="qafter" id="qafter" value="">
+                                <input type="hidden" name="qafteroption" id="qafteroption" value="">
+       
+                            </div>
+                            
+                            <div class="col-12">
+                                <span id="createOption" class="btn btn-primary w-100" >สร้าง</span>
+                            </div>
+                        </div>
+
+                    <!-- </form> -->
+                    
+                </div>
+
             </div>
 
         </div>
 
     </div>
-
-</div>
 
 <!-- </main> -->
 
@@ -578,7 +529,6 @@ if($_GET['id'] > 0){
                             <input type="hidden" name="groupcurrentcate" id="groupcurrentcate" value="<?php echo $mquestiontype;?>">
                             <span id="createOption" class="btn btn-primary w-100" onclick="submitFromGroup()"><i class="bi bi-save"></i> บันทึกข้อมูล</span>
                         </div>
-
                     </div>
 
                 </form>
@@ -667,7 +617,6 @@ include_once 'v_footer.php';
             let qtype                 = $("#qtype").val();
             let qafter                = $("#qafter").val();
             let qafteroption          = $("#qafteroption").val();
-            let questionid            = $("#questionรid").val();
             data['optiontype']        = $("#optiontype").val();
             data['optiontquestion']   = $("#optiontquestion").val();
             data['optiontnumber']     = $("#optiontnumber").val();
@@ -677,7 +626,6 @@ include_once 'v_footer.php';
             data['qtype']             = $("#qtype").val();
             data['qafter']            = $("#qafter").val();
             data['qafteroption']      = $("#qafteroption").val();
-            data['questionid']        = $("#questionid").val();
             // data['optiontactivities'] = $("#activities").val();
 
             if(optiontquestion == ""){
@@ -725,14 +673,7 @@ include_once 'v_footer.php';
                 }else{  
                     
                     if(qtype == "mainQuestionContinue"){
-                       
-                        let nestedQuestionContentCatedata = $("#nestedQuestionContentCate").val();
-                        if(nestedQuestionContentCatedata != ""){
-                            $("."+nestedQuestionContentCatedata).append(html);
-                        }else{
-                            $(".nestedQuestionContent").append(html);
-
-                        }
+                        $(".nestedQuestionContent").append(html);
                     }else{
                         $(".nestedQuestionContent").html(html);
                     }
@@ -742,7 +683,6 @@ include_once 'v_footer.php';
 
                 html = createGroupquestion(data);
                 $(".nestedQuestionContent").append(html);
-
             }
             
             if($("#questionmode").val() > 0){
@@ -847,7 +787,7 @@ include_once 'v_footer.php';
     }
 
     function generateInput(data) {
-        console.log(data);
+
         let type         = data['optiontype'];
         let opques       = data['optiontquestion'];
         let number       = data['optiontnumber'];
@@ -858,7 +798,6 @@ include_once 'v_footer.php';
         let qtype        = data['qtype'];  
         let qafter       = data['qafter'];  
         let qafteroption = data['qafteroption'];  
-        let questionid   = data['questionid'];  
         let inputType    = parseInt(parseInt(type) - 1);
         let html         = '';
         let questionmode = $("#questionmode").val();
@@ -870,17 +809,13 @@ include_once 'v_footer.php';
 
         mainname = makeid(15);
         var bgColor = 'rgb(' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ')';
-        html += `<div class="content`+name+` col-md-6" id="`+mainname+`" >`;
+        html += `<div class="content`+name+`" id="`+mainname+`" >`;
         html += `   <input type="hidden" name="mainname[]" value="`+mainname+`" >`;
-        html += `   <div class="list-group-item nested-3 question mb-4" id="`+name+`" data-id="`+name+`" style="background-color :`+bgColor+`">`;
+        html += `   <div class="list-group-item nested-3 question" id="`+name+`" data-id="`+name+`" style="background-color :`+bgColor+`">`;
         // html += `      <span class="btn btn-primary " id="delQuestion" style="position: absolute;right: 8px;" onclick="if(confirm('ยืนยันลบคำถามชุดนี้?')) { $('#`+name+`').remove(); }">ลบ</span>`;
         let listquest = $("input[name='questionnameinfrom["+qafter+"]']").length
-        // html += `      <div class="form-group row"><div class="col-lg-12">`;
-        // html += `      <span class="btn btn-danger " id="delQuestion`+name+`" style="position: absolute;right: 8px;" onclick="deleteQuestionoption('`+name+`','`+qafter+`','question`+name+`',0);">ลบ</span>`;
-        // html += `      </div></div>`;
-
-        html += `       <input type="hidden" name="questionparent[`+questionid+`][]" value="`+name+`" />`;
-        html += `       <input type="hidden" name="question[`+questionid+`]" value="`+questionid+`" />`;
+        html += `      <span class="btn btn-primary " id="delQuestion`+name+`" style="position: absolute;right: 8px;" onclick="deleteQuestionoption('`+name+`','`+qafter+`','question`+name+`',0);">ลบ</span>`;
+        // html += `   <input type="hidden" name="questionname[`+name+`]" value="`+name+`" >`;
         html += `       <input type="hidden" name="questionname[]" value="`+name+`" >`;
         html += `       <input type="hidden" name="datainputtype[]" value="`+type+`" >`;
         html += `       <input type="hidden" name="questionnameinput[`+name+`]" value="`+inptype+`" >`;
@@ -894,46 +829,41 @@ include_once 'v_footer.php';
         }
         html += `       <input type="hidden" name="questionnameinputafteroptoion[`+name+`]" value="`+qafteroption+`" >`;
 
+        // html += `           <div class="col-lg-12">`;
+        // html += `               คำถาม : <input class="form-control-50 col-lg-5" type="text" name="questiontext[`+name+`]" required="" value="`+opques+`">`;
+        // html += `           </div>`;
+
         html += `<div class="form-group row">`;
-        html += `    <div class="col-lg-12">`;
-        html += `        คำถาม : <input class="form-control" type="text" name="questiontext[`+name+`]" required="" value="`+opques+`">`;
+        html += `    <div class="col-lg-6">`;
+        html += `        คำถาม : <input class="form-control-50 col-lg-10" type="text" name="questiontext[`+name+`]" required="" value="`+opques+`">`;
         html += `    </div>`;
-       
+        html += `    <span style="float: left; width: unset; line-height: 37px;">เลือกลักษณะของการตรวจ : </span>`;
+        html += `    <div class="col-sm-3">`;
 
-        if(questionmode == 2){
+        html += `    <select class="form-select-40" name="questionactivities[`+name+`] id="questionactivities_`+name+`" aria-label="isshowing" required>`;
+        arr_activities.forEach(element => {
+            let selected = "";
+            if(opactivities == element.activities){
+                selected = "selected";
+            }
+            html += `<option value="`+element.activities+`" `+selected+`> `+element.activities_name+` </option>`;
+        });
 
-            html += `    <span style="float: left; width: unset; line-height: 37px;">เลือกลักษณะของการตรวจ : </span>`;
-            html += `    <div class="col-md-12">`;
-
-            html += `    <select class="form-select" name="questionactivities[`+name+`] id="questionactivities_`+name+`" aria-label="isshowing" required>`;
-            arr_activities.forEach(element => {
-                let selected = "";
-                if(opactivities == element.activities){
-                    selected = "selected";
-                }
-                html += `<option value="`+element.activities+`" `+selected+`> `+element.activities_name+` </option>`;
-            });
-
-            html += `    </select>`;
-            html += `    </div>`;
-            html += `</div>`;
-            
-            html += `           <div class="list-group nested-sortable">`;
-
-            let htmlmistakelevele = `    <option value="0">เลือกน้ำหนักความผิด</option>`;         
-            arr_mistakelevele.forEach(element => {
-                htmlmistakelevele += `<option value="`+element.mistakelevel+`" >`+element.mistakelevel_shortname+`(`+element.mistakelevel_value+`) </option>`;
-            });
-
-        }else{
-            html += `    </div>`;
-        }
-            
+        html += `    </select>`;
+        html += `    </div>`;
+        html += `</div>`;
         
-        $order = 1;
+        html += `           <div class="list-group nested-sortable">`;
+
+        let htmlmistakelevele = `    <option value="0">เลือกน้ำหนักความผิด</option>`;         
+        arr_mistakelevele.forEach(element => {
+            htmlmistakelevele += `<option value="`+element.mistakelevel+`" >`+element.mistakelevel_shortname+`(`+element.mistakelevel_value+`) </option>`;
+        });
+        
+        $order = 1
         for (let index = 0; index < number; index++) {
 
-            html += `<div class="nested-2 answer questionquestion border-none" data-id="`+name+index+`" style="">`;
+            html += `<div class="list-group-item nested-2 answer questionquestion border-none ms-4" data-id="`+name+index+`" style="">`;
             let formctr = '';
             $readonly = "";
             if(inputType  < 2 ){
@@ -943,43 +873,39 @@ include_once 'v_footer.php';
             let optionname = makeid(3);
 
             let inp = `<input type="hidden" name="`+name+index+`" value="`+inptype+`" >`;
-            inp += inptypename+` `+$order+` : <input class="form-control" type="text" name="option`+name+`[]" id="option`+name+index+`" `+(parseInt(inputType) < 3 ? `readonly="readonly" ` : ` required `)+`>`;
-            // if(parseInt(inputType) > 2){
-            //     inp += ` คะเเนน : <input class="form-control-custom col-lg-1 changevaluemistake" type="number" name="optionvalue`+name+`[]" id="optionvalue`+name+index+`" >`;
-            // }
+            inp += inptypename+` `+$order+` : <input class="form-control-40" type="text" name="option`+name+`[]" id="option`+name+index+`" `+(parseInt(inputType) < 3 ? `readonly="readonly" ` : ` required `)+`>`;
+            if(parseInt(inputType) > 2){
+                inp += ` คะเเนน : <input class="form-control-custom col-lg-1 changevaluemistake" type="number" name="optionvalue`+name+`[]" id="optionvalue`+name+index+`" >`;
+            }
 
-            // inp += `<div id="questionoption_mistakelevel`+name+index+`" style="display: none;">`;
-            // inp += `                    <select class="form-select-40 ms-1 selectmistakeoption" id="questionoption_mistakelevel_`+name+index+`" name="questionoption_mistakelevel[`+name+`][`+index+`]" >`;
-            // inp +=                         htmlmistakelevele;
-            // inp += `                    </select>`;
-            // inp += `                </div>`;
+            inp += `<div id="questionoption_mistakelevel`+name+index+`" style="display: none;">`;
+            inp += `                    <select class="form-select-40 ms-1 selectmistakeoption" id="questionoption_mistakelevel_`+name+index+`" name="questionoption_mistakelevel[`+name+`][`+index+`]" >`;
+            inp +=                         htmlmistakelevele;
+            inp += `                    </select>`;
+            inp += `                </div>`;
 
 
-            // inp += `<label class="form-check-label" for="questionoption_images_`+optionname+`">`;
-            // inp += `&nbsp;ต้องการให้เเนบรูปหรือไม่ :&nbsp;`;
-            // inp += `</label>`;
-            // inp += `<input class="form-check-input" type="checkbox" style="vertical-align: middle;" value="1" id="questionoption_images_`+optionname+`" name="questionoption_images[`+name+`][`+index+`]">`;
+            inp += `<label class="form-check-label" for="questionoption_images_`+optionname+`">`;
+            inp += `&nbsp;ต้องการให้เเนบรูปหรือไม่ :&nbsp;`;
+            inp += `</label>`;
+            inp += `<input class="form-check-input" type="checkbox" style="vertical-align: middle;" value="1" id="questionoption_images_`+optionname+`" name="questionoption_images[`+name+`][`+index+`]">`;
 
             inp += `<input type="hidden" name="optionid`+name+index+`[]" id="optionid`+name+index+`" value="`+index+`" >`;
 
             inp += `<input type="hidden" name="questionoption[`+name+`][]" id="questionoption`+name+index+`" value="`+optionname+`" >`;
 
-            // inp += `<div class="list-group-item nested-3 hide question`+name+index+` `+(opques ? 'ms-3 mt-3 mb-3 ' : '')+`" >`;
-            // inp += `</div>`;
+            inp += `<div class="list-group-item nested-3 hide question`+name+index+` `+(opques ? 'ms-3 mt-3 mb-3 ' : '')+`" >`;
+            inp += `</div>`;
            
-            // if(questionmode != 2){
-            //     inp += `<span class="btn btn-primary ms-3" id="addquestion`+name+index+`" style="" onclick="setQuestionmodal('question','af','question`+name+index+`','`+name+`' ,'option`+name+index+`');">สร้างคำถาม</span>`;
-            // }
+            if(questionmode != 2){
+                inp += `<span class="btn btn-primary ms-3" id="addquestion`+name+index+`" style="" onclick="setQuestionmodal('question','af','question`+name+index+`','`+name+`' ,'option`+name+index+`');">สร้างคำถาม</span>`;
+            }
 
             html += inp;
             html += `</div>`;
 
             $order++;
         }
-
-        html += `      <div class="form-group row"><div class="col-lg-12">`;
-        html += `      <span class="btn btn-danger mt-3" id="delQuestion`+name+`" style="/*position: absolute;*/ right: 8px; float: right;" onclick="deleteQuestionoption('`+name+`','`+qafter+`','question`+name+`',0);">ลบ</span>`;
-        html += `      </div></div>`;
                 
         html += `       </div>`;
         html += `   </div>`;
@@ -988,7 +914,7 @@ include_once 'v_footer.php';
         
         if(opname && qtype != 'after'){
             html += `<div class="col-lg-12">`;
-                html += `<span class=btn btn-danger mt-3"  onclick="setQuestionmodal('question','after','content`+name+`','`+qafter+`','`+qafteroption+`' );"><i class="bi bi-file-plus"></i> เพิ่มคำถาม</span>`;
+                html += `<span class="btn btn-primary mt-3"  onclick="setQuestionmodal('question','after','content`+name+`','`+qafter+`','`+qafteroption+`' );"><i class="bi bi-file-plus"></i> เพิ่มคำถาม</span>`;
             html += `</div>`;
         }
 
@@ -1006,7 +932,7 @@ include_once 'v_footer.php';
         $("#deleteQuestionList").append(html);
     }
 
-    function setQuestionmodal(qmode,qtype,qname,after,afteroption,questionid){
+    function setQuestionmodal(qmode,qtype,qname,after,afteroption){
 
         if($("#questionmode").val() == 0){
             fireSwalOnErrorCustom("กรุณาเลือกประเภท ด้วยค่ะ");
@@ -1034,7 +960,7 @@ include_once 'v_footer.php';
 
             arr_OptionType.forEach(element => {
                 html_questiontype += '<option value="'+element.questiontype+'" > '+element.questiontype_name+' </option>';
-            });.0
+            });
             html_questiontype += '</select>';
 
             $("#optiontype").html(html_questiontype);
@@ -1045,7 +971,6 @@ include_once 'v_footer.php';
         $('#qtype').val(qtype);
         $('#qafter').val(after);
         $('#qafteroption').val(afteroption);
-        $('#questionid').val(questionid);
         $('#generateinputbox').modal('show');
 
     }
@@ -1073,51 +998,48 @@ include_once 'v_footer.php';
         $("#qtype").val('');
         $("#qafter").val('');
         $("#qafteroption").val('');
-        $("#questionid").val('');
     }
 
     function submitFrom(){
         let validateSelect = true;
-        <?php if(!$_GET['cateid']){ ?>
-            let staffcompfunc = ($("#staffcompfunc").val() ? $("#staffcompfunc").val() : 0);
-            if(staffcompfunc == "0"){
-                fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุฝ่าย ด้วยค่ะ");
+        let staffcompfunc = ($("#staffcompfunc").val() ? $("#staffcompfunc").val() : 0);
+        if(staffcompfunc == "0"){
+            fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุฝ่าย ด้วยค่ะ");
+            return false;
+        }
+        
+        let staffcompfuncdep = ($("#staffcompfuncdep").val() ? $("#staffcompfuncdep").val() : 0);
+        if(staffcompfuncdep == "0"){
+            fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุแผนก ด้วยค่ะ");
+            return false;
+        }
+
+        let mquestiontype = ($("#mquestiontype").val() ? $("#mquestiontype").val() : 0);
+        if(mquestiontype == "0"){
+            
+            if($("#mquestiontype_name").val() == ""){
+                fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุหมวด ด้วยค่ะ");
                 return false;
             }
-            
-            let staffcompfuncdep = ($("#staffcompfuncdep").val() ? $("#staffcompfuncdep").val() : 0);
-            if(staffcompfuncdep == "0"){
-                fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุแผนก ด้วยค่ะ");
+        }
+
+        let questiongroup = ($("#questiongroup").val() ? $("#questiongroup").val() : 0);
+        if(questiongroup == "0"){
+            if($("#questiongroup_name").val() == ""){
+                fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุกลุ่ม ด้วยค่ะ");
                 return false;
             }
-
-            let mquestiontype = ($("#mquestiontype").val() ? $("#mquestiontype").val() : 0);
-            if(mquestiontype == "0"){
-                
-                if($("#mquestiontype_name").val() == ""){
-                    fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุหมวด ด้วยค่ะ");
-                    return false;
-                }
-            }
-
-            let questiongroup = ($("#questiongroup").val() ? $("#questiongroup").val() : 0);
-            if(questiongroup == "0"){
-                if($("#questiongroup_name").val() == ""){
-                    fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุกลุ่ม ด้วยค่ะ");
-                    return false;
-                }
-            }
-            
-            // if($("#questiongroupcheck").is(":checked")){
-            //     let questionmode = ($("#questiongroup_name").val() == "" ? 0 : 1);
-            // }else{
-            //     let questionmode = ($("#questionmode").val() ? $("#questionmode").val() : 0);
-            // }
-            // if(questionmode == "0"){
-            //     fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุประเภท ด้วยค่ะ");
-            //     return false;
-            // }
-        <?php } ?>
+        }
+        
+        if($("#questiongroupcheck").is(":checked")){
+            let questionmode = ($("#questiongroup_name").val() == "" ? 0 : 1);
+        }else{
+            let questionmode = ($("#questionmode").val() ? $("#questionmode").val() : 0);
+        }
+        if(questionmode == "0"){
+            fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุประเภท ด้วยค่ะ");
+            return false;
+        }
 
         let validate = validateForm();
         if(validate == true){
@@ -1316,7 +1238,6 @@ include_once 'v_footer.php';
 				    $('#'+name).css("display","none");
                 }else{
 				    $('#'+name).remove();
-                    $('.content'+name).remove();
                 }
                 $('#questiondtdeleted_'+name).val(1);
                 let countquest = $("input[name='questionnameinfrom["+main+"]']").length

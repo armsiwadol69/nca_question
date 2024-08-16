@@ -1,8 +1,10 @@
 <?php
 session_start();
 $gb_notlogin = true;
-require "../include.inc.php";
-require "customfunction.php";
+require_once "../include.inc.php";
+require_once "customfunction.php";
+require_once ("../class/class.question.php");
+header('Content-type: text/plain; charset=utf-8');
 
 if (is_array($_GET)) {
     foreach ($_GET as $k => $v) {
@@ -18,44 +20,34 @@ if (is_array($_POST)) {
 $debug = 0;
 
 $go_ncadb = new ncadb();
+$ncaquestion = new question();
 
-$get_username = ncaencode(ncaiconvutf8($par_username, "de"), "en");
-$get_password = ncaencode(ncaiconvutf8($par_password, "de"), "en");
+$get_username = $par_username;
+$get_password = $par_password;
+$userLogin = $ncaquestion->checkUserLogin($get_username, $get_password);
 
-$sql = "SELECT U.*,  S.staff_comp, S.staff_compfunc, S.staff_compfuncdep, S.staff_compfuncdepsec
-        FROM usr AS U 
-            LEFT JOIN staff AS S 
-                ON (S.staff=U.stf)
-        WHERE usr_username = '$get_username' AND
-        usr_password = '$get_password';";
+if ($userLogin['resCode'] == "1") {
 
-$user_infomation = $go_ncadb->ncaretrieve($sql, "icms");
+    $userInfo = $userLogin['ncaData'];
+    $info = $ncaquestion->getEmpCode($userInfo['usr_stfcd']);
+    if($info['respCode'] == '1'){
+        $userInfo['m_compfunc']       = $info['data'][0]['emp_func'];
+        $userInfo['m_compfuncdep']    = $info['data'][0]['emp_dep'];
+        $userInfo['m_compfuncdepsec'] = $info['data'][0]['emp_sec'];
+    }
 
-if (!empty($user_infomation)) {
-    $userInfo = convertArrayToUtf8($user_infomation[0]);
     $_SESSION['userData'] = array(
-        'stf' => $userInfo['stf'],
-        'staffId' => $userInfo['usr_stfcd'],
+        'stf' => $userInfo['usr'],
+        'staffId' => $userInfo['usr'],
         'userdspms' => $userInfo['usr_stfdspnm'],
-        'active' => $userInfo['usr_active'],
         'loginTime' => time(),
-        'staffcomp' => $userInfo['staff_comp'],
-        'staffcompfunc' => $userInfo['staff_compfunc'],
-        'staffcompfuncdep' => $userInfo['staff_compfuncdep'],
-        'staffcompfuncdepsec' => $userInfo['staff_compfuncdepsec'],
+        'staffcomp' => "1",
+        'staffcompfunc' => $userInfo['m_compfunc'],
+        'staffcompfuncdep' => $userInfo['m_compfuncdep'],
+        'staffcompfuncdepsec' => $userInfo['m_compfuncdepsec'],
     );
 
-    if ($debug) {
-        print_r($_SESSION['userData']);
-    }
-    // header('location: ../view/v_summary.php');
-    header('location: ../view/list_question.php');
+    header('location: ../view/list_questionbygroup.php');
 } else {
     header('location: ../view/v_login.php?loginrtn=1');
 }
-
-// echo "<pre>";
-// echo print_r($user_infomation[0]);
-// echo '----------------------------------------------------------------';
-// print_r(convertArrayToUtf8($user_infomation[0]));
-// echo "</pre>";

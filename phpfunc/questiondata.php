@@ -95,7 +95,7 @@ class ncaapicalling
                 LEFT JOIN tb_questiongroup AS QG ON (QG.questiongroup=Q.question_questioncategroup)
                 WHERE 
                     Q.question_active = '1' 
-                    -- AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
+                    AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
                     ".$serach."
                 ORDER BY Q.question_name ASC";
         $resultCount = $go_ncadb->ncaretrieve($sqlCount, "question");
@@ -107,9 +107,8 @@ class ncaapicalling
                 LEFT JOIN tb_questiongroup AS QG ON (QG.questiongroup=Q.question_questioncategroup)
                 WHERE 
                     Q.question_active = '1' 
-                    -- AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
+                    AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
                     ".$serach."
-  
                 ORDER BY Q.question_name ASC LIMIT ".$post['start'].",".$post['length'];
 
        
