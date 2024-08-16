@@ -52,6 +52,9 @@
         font-family: "Prompt", sans-serif;
         font-weight: 400;
         font-style: normal;
+        background: rgb(36,37,82) !important;
+        background: linear-gradient(180deg, rgba(36,37,82,1) 0%, rgba(74,87,163,1) 100%) !important;
+        background-size: cover;
     }
 
     .main-panel-bg-blur {
@@ -72,13 +75,16 @@
 </head>
 
 <body>
-    <div class="container-fluid p-0 d-flex justify-content-center align-items-center" style="height: 100dvh">
+    <div class="container-fluid d-flex justify-content-center align-items-center" style="height: 100dvh">
         <div class="col-lg-4 col-md-8 col-ms-12">
-            <div class="card shadow-sm rounded-0">
+            <div class="card shadow rounded-0 p-sm-5" style="backdrop-filter: blur(10px);background-color: rgba(255, 255, 255, 0.88);">
                 <div class="card-body">
                     <form action="auth.php" method="post">
                         <input type="hidden" name="method" value="login">
-                        <div class="row g-3">
+                        <div class="row g-2">
+                            <div class="col-12 text-center">
+                                <h1 class="fw-bold">ระบบบันทึกสถิติ</h1>
+                            </div>
                             <div class="col-12">
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="par_username" name="par_username" placeholder="ชื่อผู้ใช้" required>
@@ -92,14 +98,14 @@
                                 </div>
                             </div>
                             <div class="col-12">
-                                <button class="btn btn-primary w-100" type="submit">เข้าสู่ระบบ</button>
+                                <button class="btn btn-primary my-3 w-100" type="submit"><i class="bi bi-key-fill"></i> เข้าสู่ระบบ</button>
                             </div>
 
                             <?
                                 if($ar_prm["rtn"] == "1"){
                                     echo "
                                         <div class=\"col-12 mt-5\">
-                                            <div class=\"alert alert-warning w-100 text-center fw-bold\" role=\"alert\">
+                                            <div class=\"alert alert-warning w-100 text-center fw-bold shadow-sm\" role=\"alert\">
                                                 ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง
                                             </div>
                                         </div>
