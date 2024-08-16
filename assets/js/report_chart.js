@@ -117,7 +117,7 @@ function initializeReportChart() {
             // return `${percentage}\n(${value})`;
             // ${context.chart.data.labels[context.dataIndex]}\n${percentage}\n(${value})
             return context.dataset.data[context.dataIndex] !== 0
-              ? `${context.chart.data.labels[context.dataIndex]}\n${percentage} (${value})`
+              ? `${value} (${percentage})`
               : "";
           },
           color: "#000",
