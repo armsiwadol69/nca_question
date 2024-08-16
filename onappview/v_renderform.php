@@ -383,7 +383,7 @@
                         <!-- Question Nawae -->
                         <!-- <h5 class="question_1 fw-bold mb-0 ms-4" id="question_${ele.questiondt}">${qNum}. ${ele.questiondt_title}</h5>  -->
                             <div class="ms-4">
-                                <div class="form-check mt-3 d-flex align-items-center">
+                                <div class="form-check my-4 d-flex align-items-center">
                                 <input class="form-check-input me-2" type="checkbox" id="check_${ele.questiondt}" style="margin-bottom: 5px;" onchange="toggleInput(this)">
                                 <label class="form-check-label fw-bold me-2" for="check_${ele.questiondt}">
                                     ${ele.questiondt_title}
