@@ -345,6 +345,10 @@
         sec_cate.html(html);
 
         sec_cate.focus();
+
+        $("#par_qset").val("0");
+        
+        genareateQuestionFormHTMLElement([]);
     }
 
 
