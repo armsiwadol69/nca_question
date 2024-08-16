@@ -341,8 +341,6 @@ if($methodRequest == "addQuestion") {
         $data = $ncaquestion->addNewQuestionCustom($array_info,$questionmaindata,$questiondata);
     }
 
-
-
     echo json_encode(array("data"=>$data));
 
 } else if($methodRequest == "del") {

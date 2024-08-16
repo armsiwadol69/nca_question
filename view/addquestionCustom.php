@@ -53,7 +53,7 @@ if($_GET['id']){
         $ncaquestion->setQuestionId($val['question']);
         $questioninfo = $ncaquestion->getDataQuestion();
         $arr_parent = array();
-        $htmlQuestion  .= '<br><br><div class="nestedQuestionContent'.($k+1).'" class="list-group col"><div class="w-100 d-flex mt-2"><h4 class="me-auto mt-1">ชื่อชุดคำถาม : '.$val['question_name'].'</h4></div>';
+        $htmlQuestion  .= '<br><br><div class="nestedQuestionContent'.($k+1).' row" class="list-group col"><div class="w-100 d-flex mt-2"><h4 class="me-auto mt-1">ชื่อชุดคำถาม : '.$val['question_name'].'</h4></div>';
         foreach($questioninfo AS $key => $value){
             $htmlQuestion  .= $ncaquestion->generateIsParentQuestionCustom("questiondt",$value['questiondt'],0,$arr_parent);
         }
@@ -132,7 +132,7 @@ if($_GET['id'] > 0){
         
             <div class="row">
                     
-                <div class="row gy-3">
+                <div class="gy-3">
 
                     <?php if(!$_GET['cateid']){ ?>
 
@@ -282,7 +282,7 @@ if($_GET['id'] > 0){
 
                                 <div class="col-lg-12 col-md-12 mt-2">
 
-                                    <label for="par_mquestionmode" class="form-label">ประเภท <span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <!-- <label for="par_mquestionmode" class="form-label">ประเภท <span class="text-danger">*</span></label>&nbsp;&nbsp;&nbsp;&nbsp; -->
                                     <!-- <input class="form-check-input" type="checkbox" value="1" name="mquestiontypecheck" id="mquestiontypecheck">
                                     <label class="form-check-label" for="flexCheckDefault">
                                         ต้องการเพิ่มประเภทใหม่?
@@ -290,7 +290,9 @@ if($_GET['id'] > 0){
                                     <span title="แก้ไข" onclick="editMquestiontype()" style="cursor: pointer;">
                                         <i class="bi bi-gear"></i> แก้ไข
                                     </span> -->
-                                    <div id="mquestiontypeselect">
+
+                                    <input type="hidden" name="questionmode" id="questionmode" value="1">
+                                    <!-- <div id="mquestiontypeselect">
                                         <select class="form-select" name="questionmode" id="questionmode" required  <?php if($_GET['id'] > 0){ echo 'style="pointer-events: none;"'; } else{ echo ""; } ?> >
                                             <option value="0">เลือกประเภท</option>
                                             <?php
@@ -304,7 +306,7 @@ if($_GET['id'] > 0){
                                                 }
                                             ?>
                                         </select>
-                                    </div>
+                                    </div> -->
 
                                 </div>
 
@@ -355,7 +357,7 @@ if($_GET['id'] > 0){
                                         <div id="nestedQuestion" >
 
                                             <?php if(!$_GET['cateid']){ ?>
-                                                <div class="nestedQuestionContent" class="list-group col">
+                                                <div class="nestedQuestionContent row" class="list-group col">
                                                     <? echo $htmlQuestion; ?>
                                                 </div>
                                             <?php }else{ ?>
@@ -401,7 +403,7 @@ if($_GET['id'] > 0){
         </div>
 
         <div class="col-lg-6 col-md-6 col-sm-6">
-            <a href="list_question.php" class="btn btn-secondary w-100 mt-2"><i class="bi bi-back"></i> ย้อนกลับหน้ารายการ </a>
+            <a href="list_questionbygroup.php" class="btn btn-secondary w-100 mt-2"><i class="bi bi-back"></i> ย้อนกลับหน้ารายการ </a>
         </div>
 
     </div>
@@ -868,13 +870,15 @@ include_once 'v_footer.php';
 
         mainname = makeid(15);
         var bgColor = 'rgb(' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ',' + (Math.floor((256-199)*Math.random()) + 200) + ')';
-        html += `<div class="content`+name+`" id="`+mainname+`" >`;
+        html += `<div class="content`+name+` col-md-6" id="`+mainname+`" >`;
         html += `   <input type="hidden" name="mainname[]" value="`+mainname+`" >`;
-        html += `   <div class="list-group-item nested-3 question" id="`+name+`" data-id="`+name+`" style="background-color :`+bgColor+`">`;
+        html += `   <div class="list-group-item nested-3 question mb-4" id="`+name+`" data-id="`+name+`" style="background-color :`+bgColor+`">`;
         // html += `      <span class="btn btn-primary " id="delQuestion" style="position: absolute;right: 8px;" onclick="if(confirm('ยืนยันลบคำถามชุดนี้?')) { $('#`+name+`').remove(); }">ลบ</span>`;
         let listquest = $("input[name='questionnameinfrom["+qafter+"]']").length
-        html += `      <span class="btn btn-danger " id="delQuestion`+name+`" style="position: absolute;right: 8px;" onclick="deleteQuestionoption('`+name+`','`+qafter+`','question`+name+`',0);">ลบ</span>`;
-        // html += `   <input type="hidden" name="questionname[`+name+`]" value="`+name+`" >`;
+        // html += `      <div class="form-group row"><div class="col-lg-12">`;
+        // html += `      <span class="btn btn-danger " id="delQuestion`+name+`" style="position: absolute;right: 8px;" onclick="deleteQuestionoption('`+name+`','`+qafter+`','question`+name+`',0);">ลบ</span>`;
+        // html += `      </div></div>`;
+
         html += `       <input type="hidden" name="questionparent[`+questionid+`][]" value="`+name+`" />`;
         html += `       <input type="hidden" name="question[`+questionid+`]" value="`+questionid+`" />`;
         html += `       <input type="hidden" name="questionname[]" value="`+name+`" >`;
@@ -890,41 +894,46 @@ include_once 'v_footer.php';
         }
         html += `       <input type="hidden" name="questionnameinputafteroptoion[`+name+`]" value="`+qafteroption+`" >`;
 
-        // html += `           <div class="col-lg-12">`;
-        // html += `               คำถาม : <input class="form-control-50 col-lg-5" type="text" name="questiontext[`+name+`]" required="" value="`+opques+`">`;
-        // html += `           </div>`;
-
         html += `<div class="form-group row">`;
         html += `    <div class="col-lg-12">`;
-        html += `        คำถาม : <input class="form-control-50 col-lg-10" type="text" name="questiontext[`+name+`]" required="" value="`+opques+`">`;
+        html += `        คำถาม : <input class="form-control" type="text" name="questiontext[`+name+`]" required="" value="`+opques+`">`;
         html += `    </div>`;
-        // html += `    <span style="float: left; width: unset; line-height: 37px;">เลือกลักษณะของการตรวจ : </span>`;
-        // html += `    <div class="col-sm-3">`;
+       
 
-        // html += `    <select class="form-select-40" name="questionactivities[`+name+`] id="questionactivities_`+name+`" aria-label="isshowing" required>`;
-        // arr_activities.forEach(element => {
-        //     let selected = "";
-        //     if(opactivities == element.activities){
-        //         selected = "selected";
-        //     }
-        //     html += `<option value="`+element.activities+`" `+selected+`> `+element.activities_name+` </option>`;
-        // });
+        if(questionmode == 2){
 
-        // html += `    </select>`;
-        // html += `    </div>`;
-        // html += `</div>`;
-        
-        // html += `           <div class="list-group nested-sortable">`;
+            html += `    <span style="float: left; width: unset; line-height: 37px;">เลือกลักษณะของการตรวจ : </span>`;
+            html += `    <div class="col-md-12">`;
 
-        // let htmlmistakelevele = `    <option value="0">เลือกน้ำหนักความผิด</option>`;         
-        // arr_mistakelevele.forEach(element => {
-        //     htmlmistakelevele += `<option value="`+element.mistakelevel+`" >`+element.mistakelevel_shortname+`(`+element.mistakelevel_value+`) </option>`;
-        // });
+            html += `    <select class="form-select" name="questionactivities[`+name+`] id="questionactivities_`+name+`" aria-label="isshowing" required>`;
+            arr_activities.forEach(element => {
+                let selected = "";
+                if(opactivities == element.activities){
+                    selected = "selected";
+                }
+                html += `<option value="`+element.activities+`" `+selected+`> `+element.activities_name+` </option>`;
+            });
+
+            html += `    </select>`;
+            html += `    </div>`;
+            html += `</div>`;
+            
+            html += `           <div class="list-group nested-sortable">`;
+
+            let htmlmistakelevele = `    <option value="0">เลือกน้ำหนักความผิด</option>`;         
+            arr_mistakelevele.forEach(element => {
+                htmlmistakelevele += `<option value="`+element.mistakelevel+`" >`+element.mistakelevel_shortname+`(`+element.mistakelevel_value+`) </option>`;
+            });
+
+        }else{
+            html += `    </div>`;
+        }
+            
         
         $order = 1;
         for (let index = 0; index < number; index++) {
 
-            html += `<div class="list-group-item nested-2 answer questionquestion border-none ms-4" data-id="`+name+index+`" style="">`;
+            html += `<div class="nested-2 answer questionquestion border-none" data-id="`+name+index+`" style="">`;
             let formctr = '';
             $readonly = "";
             if(inputType  < 2 ){
@@ -934,7 +943,7 @@ include_once 'v_footer.php';
             let optionname = makeid(3);
 
             let inp = `<input type="hidden" name="`+name+index+`" value="`+inptype+`" >`;
-            inp += inptypename+` `+$order+` : <input class="form-control-40" type="text" name="option`+name+`[]" id="option`+name+index+`" `+(parseInt(inputType) < 3 ? `readonly="readonly" ` : ` required `)+`>`;
+            inp += inptypename+` `+$order+` : <input class="form-control" type="text" name="option`+name+`[]" id="option`+name+index+`" `+(parseInt(inputType) < 3 ? `readonly="readonly" ` : ` required `)+`>`;
             // if(parseInt(inputType) > 2){
             //     inp += ` คะเเนน : <input class="form-control-custom col-lg-1 changevaluemistake" type="number" name="optionvalue`+name+`[]" id="optionvalue`+name+index+`" >`;
             // }
@@ -967,6 +976,10 @@ include_once 'v_footer.php';
 
             $order++;
         }
+
+        html += `      <div class="form-group row"><div class="col-lg-12">`;
+        html += `      <span class="btn btn-danger mt-3" id="delQuestion`+name+`" style="/*position: absolute;*/ right: 8px; float: right;" onclick="deleteQuestionoption('`+name+`','`+qafter+`','question`+name+`',0);">ลบ</span>`;
+        html += `      </div></div>`;
                 
         html += `       </div>`;
         html += `   </div>`;
@@ -975,7 +988,7 @@ include_once 'v_footer.php';
         
         if(opname && qtype != 'after'){
             html += `<div class="col-lg-12">`;
-                html += `<span class="btn btn-primary mt-3"  onclick="setQuestionmodal('question','after','content`+name+`','`+qafter+`','`+qafteroption+`' );"><i class="bi bi-file-plus"></i> เพิ่มคำถาม</span>`;
+                html += `<span class=btn btn-danger mt-3"  onclick="setQuestionmodal('question','after','content`+name+`','`+qafter+`','`+qafteroption+`' );"><i class="bi bi-file-plus"></i> เพิ่มคำถาม</span>`;
             html += `</div>`;
         }
 
@@ -1095,15 +1108,15 @@ include_once 'v_footer.php';
                 }
             }
             
-            if($("#questiongroupcheck").is(":checked")){
-                let questionmode = ($("#questiongroup_name").val() == "" ? 0 : 1);
-            }else{
-                let questionmode = ($("#questionmode").val() ? $("#questionmode").val() : 0);
-            }
-            if(questionmode == "0"){
-                fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุประเภท ด้วยค่ะ");
-                return false;
-            }
+            // if($("#questiongroupcheck").is(":checked")){
+            //     let questionmode = ($("#questiongroup_name").val() == "" ? 0 : 1);
+            // }else{
+            //     let questionmode = ($("#questionmode").val() ? $("#questionmode").val() : 0);
+            // }
+            // if(questionmode == "0"){
+            //     fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุประเภท ด้วยค่ะ");
+            //     return false;
+            // }
         <?php } ?>
 
         let validate = validateForm();
@@ -1303,6 +1316,7 @@ include_once 'v_footer.php';
 				    $('#'+name).css("display","none");
                 }else{
 				    $('#'+name).remove();
+                    $('.content'+name).remove();
                 }
                 $('#questiondtdeleted_'+name).val(1);
                 let countquest = $("input[name='questionnameinfrom["+main+"]']").length

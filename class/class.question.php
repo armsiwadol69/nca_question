@@ -1124,37 +1124,46 @@ class question
                         }
                         $htmlActivities .=  '<option value="'.$v_activities['activities'].'" '.$selected.'> '.$v_activities['activities_name'].' </option>';
                     }
-                    $html .= '  <div class="bgcontentcolor content'.$value['questiondt'].'" id="'.$pid.'">
+                    $html .= ' 
+                                <div class="bgcontentcolor col-md-6 content'.$value['questiondt'].'" id="'.$pid.'">
                                     <input type="hidden" name="mainname[]" value="'.$pid.'" />
                                     <input type="hidden" name="oldquestion[]" value="'.$value['questiondt'].'" />
-                                    <div class="list-group-item nested-3 question" id="'.$value['questiondt'].'" data-id="'.$value['questiondt'].'">
-                                        <span class="btn btn-danger" id="delQuestion'.$value['questiondt'].'" style="position: absolute; right: 8px;" onclick="deleteQuestionoption(`'.$value['questiondt'].'`,`'.$mainfrom.'`,`questionquestion'.$mainfrom.'`,`1`);">
-                                            ลบ
-                                        </span>
+                                    <div class="list-group-item nested-3 question mb-4" id="'.$value['questiondt'].'" data-id="'.$value['questiondt'].'">
+                                        
+                                        <!-- Hidden Zone -->
+                                            <input type="hidden" name="question[]" value="'.$value['question'].'" />
+                                            <input type="hidden" name="questionparent['.$value['question'].'][]" value="'.$value['questiondt'].'" />
+                                            <input type="hidden" name="questiondt['.$value['questiondt'].']" value="'.$value['questiondt'].'" />
+                                            <input type="hidden" name="questionid[]" value="'.$value['questiondt'].'" />
+                                            <input type="hidden" name="questionname[]" value="'.$value['questiondt'].'" />
+                                            <input type="hidden" name="datainputtype[]" value="'.$value['questiondt_questiontype'].'" />
+                                            <input type="hidden" name="questionnameinput['.$value['questiondt'].']" value="'.$inputTypeName['questiontype_type'].'" />
+                                            <input type="hidden" name="questionismain['.$value['questiondt'].']" value="'.($value['questiondt_parent'] > 0 ? '' : '1').'" />
+                                            <input type="hidden" name="questionismainname['.$value['question'].']['.$value['questiondt'].']" value="'.$parentdeata['questiondt'].'" /> 
+                                            <input type="hidden" name="questionnameinputafter['.$value['questiondt'].']" value="'.$parentdeata['questionoption_questiondt'].'" />
+                                            <input type="hidden" name="questionnameinfrom['.$mainfrom.']" value="'.$mainfrom.'" />
+                                            <!--<input type="hidden" name="questionactivities['.$value['questiondt'].']" value="'.$value['questiondt_activities'].'" />-->
+                                            <input type="hidden" name="questionnameinputparent['.$parentdeata['questiondt'].']" value="'.$parentdeata['questiondt'].'" />
+                                            <input type="hidden" name="questionnameinputafteroptoion['.$value['questiondt'].']" value="'.($value['questiondt_after'] ? 'option'.$parentdeata['questionoption_questiondt'].($parentdeata['questionoption_order'] - 1) : '' ).'" />
+                                            <input type="hidden" id="questiondtdeleted_'.$value['questiondt'].'" name="questiondtdeleted['.$value['questiondt'].']" value="" />
+                                        <!-- Hidden Zone -->
 
-                                        <input type="hidden" name="question[]" value="'.$value['question'].'" />
-                                        <input type="hidden" name="questionparent['.$value['question'].'][]" value="'.$value['questiondt'].'" />
+                                        
 
-                                        <input type="hidden" name="questiondt['.$value['questiondt'].']" value="'.$value['questiondt'].'" />
-                                        <input type="hidden" name="questionid[]" value="'.$value['questiondt'].'" />
-                                        <input type="hidden" name="questionname[]" value="'.$value['questiondt'].'" />
-                                        <input type="hidden" name="datainputtype[]" value="'.$value['questiondt_questiontype'].'" />
-                                        <input type="hidden" name="questionnameinput['.$value['questiondt'].']" value="'.$inputTypeName['questiontype_type'].'" />
-                                        <input type="hidden" name="questionismain['.$value['questiondt'].']" value="'.($value['questiondt_parent'] > 0 ? '' : '1').'" />
-                                        <input type="hidden" name="questionismainname['.$value['question'].']['.$value['questiondt'].']" value="'.$parentdeata['questiondt'].'" /> 
-                                        <input type="hidden" name="questionnameinputafter['.$value['questiondt'].']" value="'.$parentdeata['questionoption_questiondt'].'" />
-                                        <input type="hidden" name="questionnameinfrom['.$mainfrom.']" value="'.$mainfrom.'" />
-                                        <!--<input type="hidden" name="questionactivities['.$value['questiondt'].']" value="'.$value['questiondt_activities'].'" />-->
-                                        <input type="hidden" name="questionnameinputparent['.$parentdeata['questiondt'].']" value="'.$parentdeata['questiondt'].'" />
-                                        <input type="hidden" name="questionnameinputafteroptoion['.$value['questiondt'].']" value="'.($value['questiondt_after'] ? 'option'.$parentdeata['questionoption_questiondt'].($parentdeata['questionoption_order'] - 1) : '' ).'" />
-                                        <input type="hidden" id="questiondtdeleted_'.$value['questiondt'].'" name="questiondtdeleted['.$value['questiondt'].']" value="" />
                                         <div class="form-group row">
                                             <div class="col-lg-12">
-                                                คำถาม : <input class="form-control-50 col-lg-10" type="text" name="questiontext['.$value['questiondt'].']" required="" value="'.$value['questiondt_title'].'" />
+                                                คำถาม : <input class="form-control" type="text" name="questiontext['.$value['questiondt'].']" required="" value="'.$value['questiondt_title'].'" />
                                             </div>
                                         </div>
                                         <div class="list-group nested-sortable">
                                             '.$this->getDataOptionCustom($value,$pid,$value,$questionArray).'
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-lg-12">
+                                                <span class="btn btn-danger mt-3" id="delQuestion'.$value['questiondt'].'" style="/*position: absolute;*/ right: 8px; float: right;" onclick="deleteQuestionoption(`'.$value['questiondt'].'`,`'.$mainfrom.'`,`questionquestion'.$mainfrom.'`,`1`);">
+                                                    ลบ
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>';
                         $html .= '</div>
@@ -1165,6 +1174,7 @@ class question
                     }
 
                     $html .= '<input type="hidden" name="allquestionName[]" id="allquestionName_'.$value['questiondt'].'" value="'.$value['questiondt'].'" />';
+                    $html .= '';
                     
                 }
                        
@@ -1330,7 +1340,7 @@ class question
                 $mistakedisplay = " display: none;";
             }
 
-            $html .= '  <div class="list-group-item nested-2 answer border-none ms-4" data-id="question'.$value['questionoption_questiondt'].$key.'" style >
+            $html .= '  <div class="nested-2 answer border-none" data-id="question'.$value['questionoption_questiondt'].$key.'" style >
                             <input type="hidden" name="questionoption_questiondt_'.$value['questionoption_questiondt'].'" value="'.($copy > 0 ? "" : $value['questionoption_questiondt']).'" />
                             <input type="hidden" name="'.$value['questionoption_questiondt'].$key.'" value="'.$inputTypeName['questiontype_type'].'" />
 
@@ -1716,7 +1726,7 @@ class question
 
     function getEmpCode($par_empcode){
         $endpoint = "http://61.91.248.20/ncaprj/nca_project/nca_project/leave/api/ncaorg.inc.service.php?method=getempcode&par_textsearch=$par_empcode";
-        $exc = curlGetNca($endpoint);
+        $exc = json_decode($this->curlGetNcaData($endpoint),true);
         return $exc;
     }
 
@@ -1729,6 +1739,13 @@ class question
                 return $value;
             }
         }
+    }
+
+    function checkUserLogin($user,$pass){
+        $endpoint = "http://61.91.248.21/nca_project/app_webservice/ncadriverdidntsleep.checkusr.json.php";
+        $data = array('username' => $user, 'password' => $pass);
+        $exc = json_decode($this->curlPostNcaData($endpoint,$data),true);
+        return $exc;
     }
 
     function getDataQuestionidByCategory($category){
