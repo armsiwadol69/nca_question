@@ -26,6 +26,7 @@ function initializeReportChart() {
     type: "bar",
     data: chartOverallData,
     options: {
+      responsesive: true,
       scales: {
         x: {
           beginAtZero: false,
@@ -88,6 +89,7 @@ function initializeReportChart() {
     type: "bar",
     data: chartDepSecData,
     options: {
+      responsesive: true,
       scales: {
         x: {
           stacked: false,
@@ -136,6 +138,7 @@ function initializeReportChart() {
     type: "bar",
     data: chartDepSecData,
     options: {
+      responsesive: true,
       scales: {
         x: {
           stacked: false,
@@ -431,6 +434,7 @@ function convertToChartTotalDepSecData(jsonData) {
 $(document).ready(function () {
   initializeDateRange();
   initializeReportChart();
+  checkForWindowResize();
 });
 
 $("#daterange").bind("change", function () {
@@ -508,4 +512,11 @@ const barWidth = {
   },
 };
 
+function checkForWindowResize(){
+  window.addEventListener('resize', () => {
+    chartOverall.resize();
+    chartDepSec.resize();
+    chartTotalByDepSec.resize();
+  });
+}
 
