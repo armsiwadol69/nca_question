@@ -3,14 +3,11 @@ function getRandomColor() {
   const r = Math.floor(Math.random() * 255);
   const g = Math.floor(Math.random() * 255);
   const b = Math.floor(Math.random() * 255);
-  return `rgba(${r}, ${g}, ${b}, 0.4)`;
+  return `rgba(${r}, ${g}, ${b}, 0.69)`;
 }
 
 let startDate = moment().startOf("day").format("YYYY-MM-DD");
 let endDate = moment().endOf("day").format("YYYY-MM-DD");
-
-console.log(startDate);
-console.log(endDate);
 
 let chartOverall;
 let chartOverallData = { labels: [], datasets: [] };
@@ -22,6 +19,7 @@ let chartTotalByDepSec;
 let chartTotalByDepSecData = { labels: [], datasets: [] };
 
 function initializeReportChart() {
+  // Chart.register(barWidth);  
   Chart.register(ChartDataLabels);
   const ctx1 = document.getElementById("chart_overall").getContext("2d");
   chartOverall = new Chart(ctx1, {
@@ -30,9 +28,12 @@ function initializeReportChart() {
     options: {
       scales: {
         x: {
-          stacked: false,
+          beginAtZero: false,
           grid: {
-            display: false,
+            display: true, // Hide grid lines if not needed
+          },
+          ticks : {
+            padding : 0
           },
         },
         y: {
@@ -44,8 +45,10 @@ function initializeReportChart() {
         },
       },
       plugins: {
+        // barWidth,
         legend: {
           position: "top",
+          display: false,
         },
         tooltip: {
           mode: "index",
@@ -66,9 +69,7 @@ function initializeReportChart() {
             let percentage = ((value * 100) / sum).toFixed(2) + "%";
             // return `${percentage}\n(${value})`;
             // ${context.chart.data.labels[context.dataIndex]}\n${percentage}\n(${value})
-            return context.dataset.data[context.dataIndex] !== 0
-              ? `${value}`
-              : "";
+            return context.dataset.data[context.dataIndex] !== 0 ? `${value}` : "";
           },
           color: "#000",
           font: {
@@ -76,7 +77,7 @@ function initializeReportChart() {
             weight: "normal",
             titlesize: 10,
           },
-          textAlign: "center",
+          textAlign: "top",
         },
       },
     },
@@ -116,9 +117,7 @@ function initializeReportChart() {
             let percentage = ((value * 100) / sum).toFixed(2) + "%";
             // return `${percentage}\n(${value})`;
             // ${context.chart.data.labels[context.dataIndex]}\n${percentage}\n(${value})
-            return context.dataset.data[context.dataIndex] !== 0
-              ? `${value} (${percentage})`
-              : "";
+            return context.dataset.data[context.dataIndex] !== 0 ? `${value} (${percentage})` : "";
           },
           color: "#000",
           font: {
@@ -281,7 +280,7 @@ async function fetchChartDataTotalByDepSec() {
 
 async function updateChartByDateChange() {
   overallData = await fetchChartDataOverAll();
-  chartOverall.data = generateChartData(overallData);
+  chartOverall.data = convertJsonToChartTop4(overallData);
   chartOverall.update();
 }
 
@@ -294,7 +293,6 @@ async function updateChartByDepSecChange() {
 async function updateChartByTotalDepSecChange() {
   chartTotalByDepSecData = await fetchChartDataTotalByDepSec();
   chartTotalByDepSec.data = convertToChartTotalDepSecData(chartTotalByDepSecData);
-  console.log(chartTotalByDepSec.data);
   chartTotalByDepSec.update();
 }
 
@@ -444,3 +442,70 @@ $("#daterange").bind("change", function () {
 $("#par_depsec").bind("change", function () {
   updateChartByDepSecChange();
 });
+
+function convertJsonToChartTop4(jsonData) {
+  const labels = [];
+  const datasets = [];
+
+  jsonData.forEach((section, index) => {
+    const sec = section.section_name;
+    labels.push(sec);
+
+    section.most_happening.forEach((event, eventIndex) => {
+      const eventTitle = event.title;
+      const eventCount = (parseInt(event.COUNT) > 0) ? parseInt(event.COUNT) : null;
+
+      let dataset = datasets.find((ds) => ds.label === eventTitle);
+      if (!dataset) {
+        dataset = {
+          label: eventTitle,
+          data: new Array(jsonData.length).fill(0), // Initialize with 0s
+          backgroundColor: getRandomColor(),
+        };
+        datasets.push(dataset);
+      }
+
+      dataset.data[index] = eventCount;
+    });
+  });
+
+  // console.log({ labels, datasets });
+  // console.log(JSON.stringify({ labels, datasets }));
+  return { labels, datasets };
+}
+
+const barWidth = {
+  id: "barWidth",
+  afterUpdate(chart, args, options) {
+    console.log("afterUpdate called");
+
+    const { data } = chart;
+
+    if (data.datasets.length === 0) {
+      console.warn("No datasets found.");
+      return;
+    }
+
+    const datasetMeta = chart.getDatasetMeta(0);
+    const barThicknessArray = datasetMeta.data.map((datapoint) => datapoint.width || 0);
+    const width = Math.min(...barThicknessArray);
+
+    console.log("Bar thickness array:", barThicknessArray);
+    console.log("Calculated bar width:", width);
+
+    data.datasets.forEach((dataset, index) => {
+      dataset.data.forEach((datapoint, dpIndex) => {
+        const meta = chart.getDatasetMeta(index);
+        const bar = meta.data[dpIndex];
+        if (bar) {
+          bar.width = width;
+        }
+      });
+    });
+
+    // Explicitly call update
+    // chart.update();
+  },
+};
+
+

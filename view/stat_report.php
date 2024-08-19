@@ -83,8 +83,8 @@ include_once 'v_sidebar_start.php';
 ?>
         <script src="../assets/momentjs/moment.js"></script>
         <script src="../assets/daterangepicker/daterangepicker.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="../assets/chartjs/chart.umd.min.js"></script>
+        <script src="../assets/chartjs/chartjs-plugin-datalabels.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"
             integrity="sha512-JPcRR8yFa8mmCsfrw4TNte1ZvF1e3+1SdGMslZvmrzDYxS69J7J49vkFL8u6u8PlPJK+H3voElBtUCzaXj+6ig==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="../assets/js/report_chart.js"></script>

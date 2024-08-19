@@ -22,7 +22,7 @@
     dayjs.locale('th');
 </script>
 <script src="../assets/DataTables/datatables.min.js?v=<?php echo $version; ?>"></script>
-<script src=../assets/js/jszip.min.js?v=<?php echo $version; ?>" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src=../assets/js/jszip.min.js?v=<?php echo $version; ?>"></script>
 <!-- <script src="../assets/datatable/buttons.bootstrap5.min.js?v=<?php echo $version; ?>"></script>
 <script src="../assets/datatable/buttons.html5.min.js?v=<?php echo $version; ?>"></script>
 <script src="../assets/datatable/buttons.print.min.js?v=<?php echo $version; ?>"></script> -->
