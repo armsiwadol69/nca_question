@@ -623,9 +623,10 @@ table.dataTable tbody tr {
                         <thead style="background-color: #b2d1fa;">
                             <tr>
                                 <th class="text-center" width="10%">ลำดับ</th>
-                                <th class="text-center" width="30%">ชื่อชุดคำถาม</th>
-                                <th class="text-center" width="25%">หมวด</th>
-                                <th class="text-center" width="25%">ประเภท</th>
+                                <th class="text-center" width="25%">ชื่อชุดคำถาม</th>
+                                <th class="text-center" width="20%">ประเภท</th>
+                                <th class="text-center" width="12%">ผู้บันทึก</th>
+                                <th class="text-center" width="12%">วันเวลาที่บันทึก</th>
                                 <th class="text-center" width="10%"></th>
                             </tr>
                         </thead>
@@ -635,8 +636,9 @@ table.dataTable tbody tr {
             html += ` <tr>`;
             html += `     <td>`+(i+1)+`</td>`;
             html += `     <td>${data[i].question_name}</td>`;
-            html += `     <td>${data[i].question_questioncategoriesname}</td>`;
             html += `     <td>${data[i].questionmode_name}</td>`;
+            html += `     <td>${data[i].question_username}</td>`;
+            html += `     <td>${dayjs(data[i].question_userdatetime, "YYYY-MM-DD hh:mm").format("DD/MM/BBBB HH:mm")}</td>`;
             html += `     <td><button type="button" class="btn btn-danger"  onclick="callActionCustom('delete','${data[i].question}','${escapeHtml(data[i].question_name)}','${data[i].currrent_user}')"><i class="bi bi-trash3"></i> ลบ</button></td>`;
             html += ` </tr>`;
         }

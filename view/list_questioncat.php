@@ -8,19 +8,36 @@ $go_ncadb = new ncadb();
 $ncaquestion = new question($_GET['id']);
 
 // Get ฝ่าย
-$sqlmcompfunc = "SELECT * FROM m_compfunc WHERE m_compfunc_active = 1 ";
-$arr_mcompfunc = $go_ncadb->ncaretrieve($sqlmcompfunc, "icms");
-$arrmcompfunc = $ncaquestion->ncaArrayConverter($arr_mcompfunc);
+// $sqlmcompfunc = "SELECT * FROM m_compfunc WHERE m_compfunc_active = 1 ";
+// $arr_mcompfunc = $go_ncadb->ncaretrieve($sqlmcompfunc, "icms");
+// $arrmcompfunc = $ncaquestion->ncaArrayConverter($arr_mcompfunc);
 
 // Get แผนก
-$sqlmcompfuncdep = "SELECT * FROM m_compfuncdep WHERE m_compfuncdep_active = 1 ";
-$arr_mcompfuncdep = $go_ncadb->ncaretrieve($sqlmcompfuncdep, "icms");
-$arrmcompfuncdep = $ncaquestion->ncaArrayConverter($arr_mcompfuncdep);
+// $sqlmcompfuncdep = "SELECT * FROM m_compfuncdep WHERE m_compfuncdep_active = 1 ";
+// $arr_mcompfuncdep = $go_ncadb->ncaretrieve($sqlmcompfuncdep, "icms");
+// $arrmcompfuncdep = $ncaquestion->ncaArrayConverter($arr_mcompfuncdep);
 
+$staffcompfuncval       = $_SESSION['userData']['staffcompfunc'];
+$staffcompfuncdepval    = $_SESSION['userData']['staffcompfuncdep'];
+$staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
+                         
+// $arrCompfunc = array();
+// $arrcompfunc = $ncaquestion->getCompfuncData();
+// if($arrcompfunc['respCode'] == "1"){
+//     $arrmcompfunc = $arrcompfunc['data'];
+// }
 
-$staffcompfunc    = $_SESSION['userData']['staffcompfunc'];
-$staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
+// $arrCompfuncdep = array();
+// $arrcompfuncdep = $ncaquestion->getDepartmentData();
+// if($arrcompfuncdep['respCode'] == "1"){
+//     $arrmcompfuncdep = $arrcompfuncdep['data'];
+// }
 
+// $arrCompfuncdepsec = array();
+// $arrcompfuncdepsec = $ncaquestion->getSectionData();
+// if($arrcompfuncdepsec['respCode'] == "1"){
+//     $staffcompfuncdepsec = $arrcompfuncdepsec['data'];
+// }
 
 ?>
 <style>
@@ -47,10 +64,11 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
                     <tr>
                         <td width="50px;">ลำดับ</td>
                         <td>หมวด</td>
-                        <td>รายละเอียด</td>
+                        <!-- <td>รายละเอียด</td> -->
+                        <td>สายงาน</td>
                         <td>ฝ่าย</td>
                         <td>แผนก</td>
-                        <td>สถานะ</td>
+                        <!-- <td>สถานะ</td> -->
                         <td width="200px;">ผู้บันทึก</td>
                         <td width="150px;">วันที่บันทึก</td>
                         <td width="150px;"></td>
@@ -77,64 +95,51 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
 
                     <div class="row gy-3">
 
-                        <div class="col-lg-12 col-md-12 mt-2">
-                            <div class="row">
-                                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                        <div id="catecomdata">
 
-                                    <label for="questioncategories_compfunc" class="form-label">ฝ่าย<span class="text-danger">*</span></label>
-                                    <select class="form-select" name="questioncategories_compfunc" id="questioncategories_compfunc" >
-                                        <!-- <option>เลือกฝ่าย</option> -->
-                                        <?php
-                                            foreach ($arrmcompfunc as $key => $value) {
-                                                $selected = "";
-                                                if($value['m_compfunc'] == $staffcompfunc){
-                                                    //$selected = "selected";
-                                                    echo '<option value="'.$value['m_compfunc'].'" '.$selected.'> '.$value['m_compfunc_name_th'].' </option>';
-                                                }
-                                            }
-                                        ?>
-                                    </select>
-                                
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                            <div class="col-md-12">
 
-                                    <label for="questioncategories_compfuncdep" class="form-label">แผนก<span class="text-danger">*</span></label>
-                                    <select class="form-select" name="questioncategories_compfuncdep" id="questioncategories_compfuncdep" onchange="changestaffcompfuncdep()">
-                                        <option value="">เลือกแผนก</option>
-                                        <?php
-
-                                            foreach ($arrmcompfuncdep as $key => $value) {
-                                                $selected = "";
-                                                // if($value['m_compfuncdep'] == $staffcompfuncdep){
-                                                //     $selected = "selected";
-                                                // }
-                                                if($value['m_compfuncdep_compfunc'] == $staffcompfunc){
-                                                    if($value['m_compfuncdep'] == $staffcompfuncdep){
-                                                        $selected = "selected";
-                                                    }
-                                                    echo '<option value="'.$value['m_compfuncdep'].'" '.$selected.'> '.$value['m_compfuncdep_name_th'].' </option>';
-                                                }
-                                            }
-                                        ?>
-                                    </select>
-                                
-                                </div>
+                                <label for="questioncategories_compfunc" class="form-label">สายงาน<span class="text-danger">*</span></label>
+                                <select class="form-select" name="questioncategories_compfunc" id="questioncategories_compfunc" onchange="getDepartment();">
+                                    <option value="0">เลือกสายงาน</option>
+                                </select>
+                            
                             </div>
+                            
+                            <div class="col-md-12">
+
+                                <label for="questioncategories_compfuncdep" class="form-label">ฝ่าย<span class="text-danger">*</span></label>
+                                <select class="form-select" name="questioncategories_compfuncdep" id="questioncategories_compfuncdep" onchange="getSection()">
+                                    <option value="0">เลือกฝ่าย</option>
+                                </select>
+                            
+                            </div>
+
+                            <div class="col-md-12">
+
+                                <label for="questioncategories_compfuncdepsec" class="form-label">แผนก<span class="text-danger">*</span></label>
+                                <select class="form-select" name="questioncategories_compfuncdepsec" id="questioncategories_compfuncdepsec" onchange="">
+                                    <option value="0">เลือกแผนก</option>
+                                </select>
+                            
+                            </div>
+                        
                         </div>
+         
                         
                         <div class="col-12">
                             <label class="form-label" for="option">ชื่อ<span class="text-danger">*</span></label>
                             <input class="form-control" type="text" name="questioncategories_name" id="questioncategories_name" required>
                         </div>
 
-                        <div class="col-12">
+                        <!-- <div class="col-12">
                             <label class="form-label" for="questioncategories_hidden">สถานะ<span class="text-danger">*</span></label>
                             <select class="form-select" name="questioncategories_hidden" id="questioncategories_hidden" aria-label="isshowing">
                                 <option value="">เลือกสถานะ</option>
                                 <option value="0">เเสดง</option>
                                 <option value="1">ซ่อน</option>
                             </select>
-                        </div>
+                        </div> -->
 
                         <div class="col-12">
                             <textarea class="form-control" id="questioncategories_description" name="questioncategories_description" rows="5" required=""></textarea>
@@ -165,10 +170,17 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
 ?>
 <script>
 
+    /* var arrmcompfunc = <?php echo json_encode($arrmcompfunc); ?>;
+    var arrmcompfuncdep = <?php echo json_encode($arrmcompfuncdep); ?>;
+    var arrmcompfuncdepsec = <?php echo json_encode($arrmcompfuncdepsec); ?>; */
+    var arrmcompfunc = [];
+    var arrmcompfuncdep = [];
+    var arrmcompfuncdepsec = [];
     $(document).ready(function(){
 
         initListTable();
         getQuestionCategories();
+        getCompfunc();
 
     });
 
@@ -211,12 +223,12 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
                         return `${data}`;
                     },
                 },
-                {
+                /* {
                     data: "questioncategories_description",
                     render: function (data, type, row, meta) {
                         return `${data}`;
                     },
-                },
+                }, */
                 {
                     data: "questioncategories_compfuncname",
                     render: function (data, type, row, meta) {
@@ -230,6 +242,12 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
                     },
                 },
                 {
+                    data: "questioncategories_compfuncdepsecname",
+                    render: function (data, type, row, meta) {
+                        return `${data}`;
+                    },
+                },
+                /* {
                     data: "questioncategories_hidden",
                     render: function (data, type, row, meta) {
                         // return `${data}`;
@@ -239,15 +257,15 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
                             return `แสดง`;
                         }
                     },
-                },
+                }, */
                 {
-                    data: "questioncategories_recname",
+                    data: "questioncategories_recanme",
                     render: function (data, type, row, meta) {
                         return `${data}`;
                     },
                 },
                 {
-                    data: "questioncategories_recdatetime",
+                    data: "questioncategories_userdatetime",
                     render: function (data, type, row) {
                         return (
                             dayjs(data, "YYYY-MM-DD hh:mm").format("DD/MM/BBBB HH:mm")
@@ -258,16 +276,16 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
                     data: "giftdetail",
                     render: function (data, type, row) {
                         let isDisabled;
-                        if (row.total_items != "0") {
+                        if (row.questioncategories_default == "1") {
                             isDisabled = "disabled";
                         } else {
                             isDisabled = "";
                         }
-                        isDisabled = "";
+                        // isDisabled = "";
 
                         return `<div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-warning `+(row.questioncategories_default == 1 ? "" : "")+`" onclick="callQuestionCate('editquestioncategories','${row.questioncategories}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
-                                    <button type="button" class="btn btn-danger `+(row.questioncategories_default == 1 ? "" : "")+`" onclick="callQuestionCate('delete','${row.questioncategories}','${row.questioncategories_name}')"><i class="bi bi-trash3"></i> ลบ</button>
+                                    <button type="button" class="btn btn-warning `+isDisabled+`" onclick="callQuestionCate('editquestioncategories','${row.questioncategories}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
+                                    <button type="button" class="btn btn-danger `+isDisabled+`" onclick="callQuestionCate('delete','${row.questioncategories}','${row.questioncategories_name}')"><i class="bi bi-trash3"></i> ลบ</button>
                                 </div>`;
                     },
                 },
@@ -295,8 +313,9 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
                     handleScriptLoad();
                     if(obj.length > 0){
                         let res = obj[0];
-                        $("#questioncategories_compfunc").val(res.questioncategories_compfunc);
-                        $("#questioncategories_compfuncdep").val(res.questioncategories_compfuncdep);
+                        $("#catecomdata").hide();
+                        // $("#questioncategories_compfunc").val(res.questioncategories_compfunc);
+                        // $("#questioncategories_compfuncdep").val(res.questioncategories_compfuncdep);
                         $("#questioncategories_name").val(res.questioncategories_name);
                         $("#questioncategories_hidden").val(res.questioncategories_hidden);
                         $("#questioncategories_description").val(res.questioncategories_description);
@@ -309,9 +328,10 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
             $("#modalquestioncate").modal("show");
 
         }else if(mode == "addquestioncategories"){
-
-            $("#questioncategories_compfunc").val(<? echo $staffcompfunc; ?>);
-            $("#questioncategories_compfuncdep").val(<? echo $staffcompfuncdep; ?>);
+            $("#catecomdata").show();
+            $("#questioncategories_compfunc").val(0);
+            $("#questioncategories_compfuncdep").val(0);
+            $("#questioncategories_compfuncdepหำแ").val(0);
             $("#questioncategories_name").val("");
             $("#questioncategories_hidden").val("");
             $("#questioncategories_description").val("");
@@ -383,18 +403,25 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
     function submitFrom(){
 
         var validate = true;
-        if($("#questioncategories_compfunc").val() == ""){
-            validate = false;
+        if($("#addquestioncategories").val() == "addquestioncategories"){
+
+            if($("#questioncategories_compfunc").val() == ""){
+                validate = false;
+            }
+            if($("#questioncategories_compfuncdep").val() == ""){
+                validate = false;
+            }
+            if($("#questioncategories_compfuncdepdec").val() == ""){
+                validate = false;
+            }
         }
-        if($("#questioncategories_compfuncdep").val() == ""){
-            validate = false;
-        }
+
         if($("#questioncategories_name").val() == ""){
             validate = false;
         }
-        if($("#questioncategories_hidden").val() == "" ){
+        /* if($("#questioncategories_hidden").val() == "" ){
             validate = false;
-        }
+        } */
 
         if(validate == true){
             var form = $("#frm_submit");
@@ -429,5 +456,179 @@ $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
             fireSwalOnError("กรุณาใส่ข้อมูลให้ครบ ด้วยค่ะ");
         }  
 
+    }
+
+    // function changeCompfunc() {
+    //     let staffcompfunc = $("#questioncategories_compfunc").val();
+    //     let html = ``;
+    //     let htmlselect = ``;
+    //     console.log("arrmcompfuncdep", arrmcompfuncdep,staffcompfunc);
+    //     html = `<option value="0">เลือกฝ่าย</option>`;
+     
+    //     arrmcompfuncdep.forEach(element => {
+    //         if (arrmcompfunc.length > 0) {
+    //             let selectted = "";
+    //             if (staffcompfunc == element.compfunc_id) {
+    //                 selectted = "selected";
+    //             }
+    //             html += `<option value="` + element.compfunc_id + `" `+selectted+`>` + element.compfunc_name + `</option>`;
+    //         }
+    //     });
+
+    //     // $("#staffcompfunc").html(html);
+    //     console.log(html); 
+
+    //     /* if(arrmcompfunc_val){
+    //         getDepartment();
+    //     } */
+
+    // }
+
+    function getCompfunc() {
+        const endpoint = "../phpfunc/proxGetData.php";
+        const params = {
+            method: 'getCompfunc',
+        };
+
+        $.ajax({
+            type: "POST",
+            url: endpoint,
+            data: params,
+            dataType: "json",
+            success: function(data) {
+                let res = data;
+                if (res.respCode == 1) {
+                    let objData = res.data;
+                    arrmcompfunc = objData;
+                    changeStaffComp();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log("An error occurred: ", status, error);
+            },
+        });
+    }
+
+    function changeStaffComp() {
+        let html = ``;
+        html = `<option value="0">เลือกสายงาน</option>`;
+        arrmcompfunc.forEach(element => {
+            if (arrmcompfunc.length > 0) {
+                let selectted = "";
+                // if (arrmcompfunc_val == element.compfunc_id) {
+                //     selectted = "selected";
+                // }
+                html += `<option value="` + element.compfunc_id + `" `+selectted+`>` + element.compfunc_name + `</option>`;
+            }
+        });
+
+        html += `</select>`;
+
+        $("#questioncategories_compfunc").html(html);
+
+        // if(arrmcompfuncdep_val){
+        //     getDepartment();
+        // }
+        
+
+    }
+
+    function getDepartment(id="") {
+        let compfunc = $("#questioncategories_compfunc").val(); 
+        
+        if(compfunc){
+            const endpoint = "../phpfunc/proxGetData.php";
+            const params = {
+                method: 'getDepartment',
+                par_compfuncid: compfunc,
+            };
+
+            $.ajax({
+                type: "POST",
+                url: endpoint,
+                data: params,
+                dataType: "json",
+                success: function(data) {
+                    let res = data;
+                    if (res.respCode == 1) {
+                        let objData = res.data;
+                        arrmcompfuncdep = objData;
+                        console.log("arrmcompfuncdep",arrmcompfuncdep);
+                        changestaffcompfunc(id);
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    console.log("An error occurred: ", status, error);
+                },
+            });
+        }
+    }
+
+    function changestaffcompfunc(id="") {
+        let html = ``;
+        html += `<option value="0">เลือกฝ่าย</option>`;
+
+        arrmcompfuncdep.forEach(element => {
+            let selectted = "";
+            // if (arrmcompfuncdep_val == element.department_id) {
+            //     selectted = "selected";
+            // }
+            html += `<option value="` + element.department_id + `" `+selectted+`>` + element.department_name + `</option>`;
+        });
+        html += `</select>`;
+
+        $("#questioncategories_compfuncdep").html(html);
+
+    }
+
+    function getSection(id="") {
+        
+        let compfuncdep = $("#questioncategories_compfuncdep").val();
+
+
+        if(compfuncdep > 0){
+        
+            const endpoint = "../phpfunc/proxGetData.php";
+            const params = {
+                method: 'getSection',
+                par_departmentid: compfuncdep,
+            };
+
+            $.ajax({
+                type: "POST",
+                url: endpoint,
+                data: params,
+                dataType: "json",
+                success: function(data) {
+                    let res = data;
+                    if (res.respCode == 1) {
+                        let objData = res.data;
+                        arrmcompfuncdepsec = objData;
+                        changestaffcompfuncsec(id);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("An error occurred: ", status, error);
+                },
+            });
+        }
+    }
+
+    function changestaffcompfuncsec(id="") {
+        let html = ``;
+        html += `<option value="0">เลือกแผนก</option>`;
+        console.log("arrmcompfuncdepsec",arrmcompfuncdepsec);
+        arrmcompfuncdepsec.forEach(element => {
+            let selectted = "";
+            // if (arrmcompfuncdep_val == element.department_id) {
+            //     selectted = "selected";
+            // }
+            html += `<option value="` + element.section_id + `" ` + selectted + `>` + element.section_name + `</option>`;
+        });
+
+        html += `</select>`;
+
+        $("#questioncategories_compfuncdepsec").html(html);
     }
 </script>

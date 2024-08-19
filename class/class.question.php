@@ -423,13 +423,14 @@ class question
                 $questionIddt = 0;
                 $ii = 0;
                 $sqlObj = null;
-                $sqlObj[$ii++] = new TField("questioncategories_compfunc", $info['staffcompfunc'], "string");
-                $sqlObj[$ii++] = new TField("questioncategories_compfuncdep", $info['staffcompfuncdep'], "string");
-                $sqlObj[$ii++] = new TField("questioncategories_compfuncdepsec", $info['staffcompfuncdepsec'], "string");
+                $sqlObj[$ii++] = new TField("questioncategories_compfunc", $_SESSION['userData']['staffcompfunc'], "string");
+                $sqlObj[$ii++] = new TField("questioncategories_compfuncdep",  $_SESSION['userData']['staffcompfuncdep'], "string");
+                $sqlObj[$ii++] = new TField("questioncategories_compfuncdepsec",  $_SESSION['userData']['staffcompfuncdepsec'], "string");
                 $sqlObj[$ii++] = new TField("questioncategories_name", $info['mquestiontype_name'], "string");
                 $sqlObj[$ii++] = new TField("questioncategories_active", '1', "string");
-                $sqlObj[$ii++] = new TField("questioncategories_hidden", '0', "string");
-                $sqlObj[$ii++] = new TField("questioncategories_recspid", $info['par_userid'], "string");
+                $sqlObj[$ii++] = new TField("questioncategories_recspid", $_SESSION['userData']['stf'], "string");
+                $sqlObj[$ii++] = new TField("questioncategories_recspcode", $_SESSION['userData']['staffcd'], "string");
+                $sqlObj[$ii++] = new TField("questioncategories_recanme", $_SESSION['userData']['userdspms'], "string");
                 $sqlObj[$ii++] = new TField("questioncategories_recdatetime", $datetime, "string");
 
                 $sqlInsertCate->SetField($sqlObj);
@@ -525,23 +526,27 @@ class question
             $sqlObj[$ii++] = new TField("question_questioncategories", $info['mquestiontype'], "string");
             $sqlObj[$ii++] = new TField("question_questioncategroup", $info['questiongroup'], "string");
             $sqlObj[$ii++] = new TField("question_questionmode", $info['questionmode'], "string");
-            $sqlObj[$ii++] = new TField("question_departmentid", $info['departmentid'], "string");
-            $sqlObj[$ii++] = new TField("question_offensegroupid", $info['offensegroupid'], "string");
+            // $sqlObj[$ii++] = new TField("question_departmentid", $info['departmentid'], "string");
+            // $sqlObj[$ii++] = new TField("question_offensegroupid", $info['offensegroupid'], "string");
             $sqlObj[$ii++] = new TField("question_active", '1', "string");
-
 
             if ($info['par_questioninfoid'] && $info['questioncopy'] == 0) {
 
                 $sqlObj[$ii++] = new TField("question_modispid", $info['par_userid'], "string");
                 $sqlObj[$ii++] = new TField("question_modidatetime", $datetime, "string");
+                $sqlObj[$ii++] = new TField("question_modispcode", $_SESSION['userData']['staffcd'], "string");
+                $sqlObj[$ii++] = new TField("question_modiname", $_SESSION['userData']['userdspms'], "string");
 
                 $sqlInsertQuestion->SetField($sqlObj);
                 $sqlInsertQuestion->SetWhereClause(" question = '" . $info['par_questioninfoid'] . "'");
                 $queryQuestion = $sqlInsertQuestion->UpdateSql();
+
             } else {
 
                 $sqlObj[$ii++] = new TField("question_recspid", $info['par_userid'], "string");
                 $sqlObj[$ii++] = new TField("question_recdatetime", $datetime, "string");
+                $sqlObj[$ii++] = new TField("question_recspcode", $_SESSION['userData']['staffcd'], "string");
+                $sqlObj[$ii++] = new TField("question_recname", $_SESSION['userData']['userdspms'], "string");
 
                 $sqlInsertQuestion->SetField($sqlObj);
                 $queryQuestion = $sqlInsertQuestion->InsertSql();
@@ -559,6 +564,7 @@ class question
                 $data['sql'] = $queryQuestion;
                 return $data;
             }
+
         }
 
         $array_insert  = array();
@@ -575,6 +581,8 @@ class question
                 $sqlObjdt[$ii++] = new TField("questiondt_active", 0, "string");
                 $sqlObjdt[$ii++] = new TField("questiondt_modispid", $info['par_userid'], "string");
                 $sqlObjdt[$ii++] = new TField("questiondt_modidatetime", $datetime, "string");
+                $sqlObjdt[$ii++] = new TField("questiondt_modispcode", $_SESSION['userData']['staffcd'], "string");
+                $sqlObjdt[$ii++] = new TField("questiondt_modiname", $_SESSION['userData']['userdspms'], "string");
 
                 $sqlInsertQuestiondt->SetField($sqlObjdt);
                 $sqlInsertQuestiondt->SetWhereClause(" questiondt = '" . $value['questiondt'] . "'");
@@ -621,6 +629,8 @@ class question
 
                         $sqlObjdt[$ii++] = new TField("questiondt_modispid", $info['par_userid'], "string");
                         $sqlObjdt[$ii++] = new TField("questiondt_modidatetime", $datetime, "string");
+                        $sqlObjdt[$ii++] = new TField("questiondt_modispcode", $_SESSION['userData']['staffcd'], "string");
+                        $sqlObjdt[$ii++] = new TField("questiondt_modiname", $_SESSION['userData']['userdspms'], "string");
                         $sqlInsertQuestiondt->SetField($sqlObjdt);
                         $sqlInsertQuestiondt->SetWhereClause(" questiondt = '" . $value['questiondt'] . "'");
                         $queryQuestiondt = $sqlInsertQuestiondt->UpdateSql();
@@ -629,6 +639,8 @@ class question
 
                     $sqlObjdt[$ii++] = new TField("questiondt_recspid", $info['par_userid'], "string");
                     $sqlObjdt[$ii++] = new TField("questiondt_recdatetime", $datetime, "string");
+                    $sqlObjdt[$ii++] = new TField("questiondt_recspcode", $_SESSION['userData']['staffcd'], "string");
+                    $sqlObjdt[$ii++] = new TField("questiondt_recname", $_SESSION['userData']['userdspms'], "string");
                     $sqlInsertQuestiondt->SetField($sqlObjdt);
                     $queryQuestiondt = $sqlInsertQuestiondt->InsertSql();
                 }
@@ -672,6 +684,8 @@ class question
 
                             $sqlObjoption[$ii++] = new TField("questionoption_modispid", $info['par_userid'], "string");
                             $sqlObjoption[$ii++] = new TField("questionoption_modidatetime", $datetime, "string");
+                            $sqlObjoption[$ii++] = new TField("questionoption_modispcode", $_SESSION['userData']['staffcd'], "string");
+                            $sqlObjoption[$ii++] = new TField("questionoption_modiname", $_SESSION['userData']['userdspms'], "string");
 
                             $sqlInsertQuestionoption->SetField($sqlObjoption);
                             $sqlInsertQuestionoption->SetWhereClause(" questionoption = '" . $value['questionoption'][$key2] . "'");
@@ -680,6 +694,8 @@ class question
 
                             $sqlObjoption[$ii++] = new TField("questionoption_recspid", $info['par_userid'], "string");
                             $sqlObjoption[$ii++] = new TField("questionoption_recdatetime", $datetime, "string");
+                            $sqlObjoption[$ii++] = new TField("questionoption_recspcode", $_SESSION['userData']['staffcd'], "string");
+                            $sqlObjoption[$ii++] = new TField("questionoption_recname", $_SESSION['userData']['userdspms'], "string");
 
                             $sqlInsertQuestionoption->SetField($sqlObjoption);
                             $queryQuestionoption = $sqlInsertQuestionoption->InsertSql();
@@ -738,6 +754,8 @@ class question
                     $sqlObjdt[$ii++] = new TField("questiondt_active", 0, "string");
                     $sqlObjdt[$ii++] = new TField("questiondt_modispid", $_SESSION['userData']['stf'], "string");
                     $sqlObjdt[$ii++] = new TField("questiondt_modidatetime", $datetime, "string");
+                    $sqlObjdt[$ii++] = new TField("questiondt_modispcode", $_SESSION['userData']['staffcd'], "string");
+                    $sqlObjdt[$ii++] = new TField("questiondt_modispcode", $_SESSION['userData']['userdspms'], "string");
 
                     $sqlInsertQuestiondt->SetField($sqlObjdt);
                     $sqlInsertQuestiondt->SetWhereClause(" questiondt = '" . $value['questiondt'] . "'");
@@ -777,6 +795,8 @@ class question
 
                             $sqlObjdt[$ii++] = new TField("questiondt_recspid", $_SESSION['userData']['stf'], "string");
                             $sqlObjdt[$ii++] = new TField("questiondt_recdatetime", $datetime, "string");
+                            $sqlObjdt[$ii++] = new TField("questiondt_recspcode", $_SESSION['userData']['staffcd'], "string");
+                            $sqlObjdt[$ii++] = new TField("questiondt_recname", $_SESSION['userData']['userdspms'], "string");
 
                             $sqlInsertQuestiondt->SetField($sqlObjdt);
                             $queryQuestiondt = $sqlInsertQuestiondt->InsertSql();
@@ -784,6 +804,8 @@ class question
 
                             $sqlObjdt[$ii++] = new TField("questiondt_modispid", $_SESSION['userData']['stf'], "string");
                             $sqlObjdt[$ii++] = new TField("questiondt_modidatetime", $datetime, "string");
+                            $sqlObjdt[$ii++] = new TField("questiondt_modispcode", $_SESSION['userData']['staffcd'], "string");
+                            $sqlObjdt[$ii++] = new TField("questiondt_modiname", $_SESSION['userData']['userdspms'], "string");
                             $sqlInsertQuestiondt->SetField($sqlObjdt);
                             $sqlInsertQuestiondt->SetWhereClause(" questiondt = '" . $value['questiondt'] . "'");
                             $queryQuestiondt = $sqlInsertQuestiondt->UpdateSql();
@@ -793,6 +815,8 @@ class question
 
                         $sqlObjdt[$ii++] = new TField("questiondt_recspid", $_SESSION['userData']['stf'], "string");
                         $sqlObjdt[$ii++] = new TField("questiondt_recdatetime", $datetime, "string");
+                        $sqlObjdt[$ii++] = new TField("questiondt_recspcode", $_SESSION['userData']['staffcd'], "string");
+                        $sqlObjdt[$ii++] = new TField("questiondt_recname", $_SESSION['userData']['userdspms'], "string");
                         $sqlInsertQuestiondt->SetField($sqlObjdt);
                         $queryQuestiondt = $sqlInsertQuestiondt->InsertSql();
                     }
@@ -832,14 +856,19 @@ class question
         
                                         $sqlObjoption[$ii++] = new TField("questionoption_modispid", $_SESSION['userData']['stf'], "string");
                                         $sqlObjoption[$ii++] = new TField("questionoption_modidatetime", $datetime, "string");
+                                        $sqlObjoption[$ii++] = new TField("questionoption_modispcode", $_SESSION['userData']['staffcd'], "string");
+                                        $sqlObjoption[$ii++] = new TField("questionoption_modiname", $_SESSION['userData']['userdspms'], "string");
         
                                         $sqlInsertQuestionoption->SetField($sqlObjoption);
                                         $sqlInsertQuestionoption->SetWhereClause(" questionoption = '" . $value['questionoption'][$key2] . "'");
                                         $queryQuestionoption = $sqlInsertQuestionoption->UpdateSql();
+
                                     } else {
         
                                         $sqlObjoption[$ii++] = new TField("questionoption_recspid", $_SESSION['userData']['stf'], "string");
                                         $sqlObjoption[$ii++] = new TField("questionoption_recdatetime", $datetime, "string");
+                                        $sqlObjoption[$ii++] = new TField("questionoption_modispcode", $_SESSION['userData']['staffcd'], "string");
+                                        $sqlObjoption[$ii++] = new TField("questionoption_modiname", $_SESSION['userData']['userdspms'], "string");
         
                                         $sqlInsertQuestionoption->SetField($sqlObjoption);
                                         $queryQuestionoption = $sqlInsertQuestionoption->InsertSql();
@@ -870,6 +899,33 @@ class question
 
                 }
 
+            }
+
+            if($k){
+                $sqlInsertQuestion = new SqlBuilder();
+                $sqlInsertQuestion->SetTableName("tb_question");
+                $questionId = 0;
+                $questionIddt = 0;
+                $ii = 0;
+                $sqlObj = null;
+
+                $sqlObj[$ii++] = new TField("question_modispid", $_SESSION['userData']['stf'], "string");
+                $sqlObj[$ii++] = new TField("question_modidatetime", $datetime, "string");
+                $sqlObj[$ii++] = new TField("question_modispcode", $_SESSION['userData']['staffcd'], "string");
+                $sqlObj[$ii++] = new TField("question_modiname", $_SESSION['userData']['userdspms'], "string");
+
+                $sqlInsertQuestion->SetField($sqlObj);
+                $sqlInsertQuestion->SetWhereClause(" question = '" . $k . "'");
+                $queryQuestion = $sqlInsertQuestion->UpdateSql();
+
+                if ($go_ncadb->ncaexec($queryQuestion, "question")) {
+
+                } else {
+                    $go_ncadb->ncarollback("question");
+                    $data['fail'] = 1;
+                    $data['sql'] = $queryQuestion;
+                    return $data;
+                }
             }
 
             $index++;
@@ -1758,6 +1814,47 @@ class question
         return $arr;
 
     }
+
+    function dateThai($strDate,$format="",$isThaiMonths=0)
+	{
+        if(!$strDate){
+            return "-";
+        }
+
+        $thaiMonths = array (
+            '01'  => 'มกราคม',
+            '02'  => 'กุมภาพันธ์',
+            '03'  => 'มีนาคม',
+            '04'  => 'เมษายน',
+            '05'  => 'พฤษภาคม',
+            '06'  => 'มิถุนายน',
+            '07'  => 'กรกฎาคม',
+            '08'  => 'สิงหาคม',
+            '09'  => 'กันยายน',
+            '10' => 'ตุลาคม',
+            '11' => 'พฤศจิกายน',
+            '12' => 'ธันวาคม',
+        );
+
+        $strDate  = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $strDate)));
+        $rtDate = "";
+        if($format != ""){
+            $rtDate = date($format, strtotime(str_replace('/', '-', $strDate)));
+        }else{
+            $strDay   = date("j",strtotime($strDate));
+            $strYear  = date("Y",strtotime($strDate))+543;
+            // $strMonth = ($isThaiMonths > 1 ?  $thaiMonths[date("n",strtotime($strDate)] : date("n",strtotime($strDate) ));
+            if($isThaiMonths > 0){
+                $strMonth = $thaiMonths[date('m',strtotime($strDate))];
+                $rtDate = $strDay." ".$strMonth." ".$strYear;
+            }else{
+                $strMonth = date("m",strtotime($strDate));
+                $rtDate = $strDay."/".$strMonth."/".$strYear;
+            }
+        }
+
+		return $rtDate;
+	}
 
 
 }

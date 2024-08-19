@@ -74,8 +74,19 @@ $arr_OptionType = $go_ncadb->ncaretrieve($sqlOptionType, "question");
 // $arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType);
 
 // Get หมวด
-// $sqlmquestiontype  = "SELECT * FROM tb_questioncategories WHERE questioncategories_compfunc = '".$_SESSION['userData']['staffcompfunc']."' OR questioncategories_default = 1 AND questioncategories_active = 1 ";
-$sqlmquestiontype  = "SELECT * FROM tb_questioncategories ";
+$sqlmquestiontype  = "  SELECT 
+                            *
+                        FROM tb_questioncategories 
+                        WHERE 
+                            ( 
+                                questioncategories_compfunc = '".$_SESSION['userData']['staffcompfunc']."' 
+                                AND questioncategories_compfuncdep = '".$_SESSION['userData']['staffcompfuncdep']."' 
+                                AND questioncategories_compfuncdepsec = '".$_SESSION['userData']['staffcompfuncdepsec']."' 
+                                AND questioncategories_active = 1 
+                            )
+                            OR questioncategories_default = 1 ";
+
+// $sqlmquestiontype  = "SELECT * FROM tb_questioncategories ";
 $arrmquestiontype = $go_ncadb->ncaretrieve($sqlmquestiontype, "question");
 // $arrmquestiontype  = $ncaquestion->ncaArrayConverter($arr_mquestiontype);
 
@@ -178,7 +189,7 @@ if($_GET['id'] > 0){
                                         <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
 
                                             <label for="par_staffcompfuncdepsec" class="form-label">แผนก <span class="text-danger">*</span></label>
-                                            <select class="form-select" name="staffcompfuncdepsec" id="staffcompfuncdepsec" onchange="changestaffcompfuncdep()">
+                                            <select class="form-select" name="staffcompfuncdepsec" id="staffcompfuncdepsec" onchange="getCateHtml($(this));">
                                                 <option value="0">เลือกแผนก</option>
                                             </select>
                                         
@@ -271,8 +282,6 @@ if($_GET['id'] > 0){
                                     </div>
                                 </div>
                                 
-                            
-
                                 <div class="col-lg-12 col-md-12 mt-2">
 
                                     <label for="par_qname" class="form-label">ชื่อกลุ่มคำถาม <span class="text-danger">*</span></label>
@@ -1163,9 +1172,15 @@ include_once 'v_footer.php';
                         alertSwalSuccess();
                         if(res.questioninfoid > 0){
                             setTimeout(() => {
+                                <?php if($_GET['cateid']){ ?>
+                                    let url_replace = "<?php echo $url_addlink;?>";
+                                <?php }else{ ?>
                                     let url_replace = "<?php echo $url_addlink;?>?id="+res.questioninfoid;
-                                    window.location.replace(url_replace);
-                                }, 1000);
+                                <?php } ?>
+                                    
+                                window.location.replace(url_replace);
+                            }, 1000);
+                            
                         }else{
                             if(questioninfoid > 0){
                                 setTimeout(() => {
@@ -1174,7 +1189,12 @@ include_once 'v_footer.php';
                             }else{
                                 
                                 setTimeout(() => {
-                                    let url_replace = "<?php echo $url_addlink;?>?id="+res.questioninfoid;
+                                    <?php if($_GET['cateid']){ ?>
+                                        let url_replace = "<?php echo $url_addlink;?>";
+                                    <?php }else{ ?>
+                                        let url_replace = "<?php echo $url_addlink;?>?id="+res.questioninfoid;
+                                    <?php } ?>
+                                    
                                     window.location.replace(url_replace);
                                 }, 1000);
                             }
@@ -1194,6 +1214,7 @@ include_once 'v_footer.php';
     }
 
     function validateForm(){
+        
         var forms = document.querySelectorAll('.needs-validation');
         var validate = ""
         Array.prototype.slice.call(forms).forEach(function(form) {
@@ -1602,6 +1623,11 @@ include_once 'v_footer.php';
         $("#staffcompfuncdepsec").html(html);
         
 
+    }
+
+    function getCateHtml(This){
+        let value = This.val();
+        console.log("getCateHtml",value,arr_mquestiontype);
     }
     
 </script>

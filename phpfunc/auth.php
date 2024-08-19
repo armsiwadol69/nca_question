@@ -19,7 +19,7 @@ if (is_array($_POST)) {
 
 $debug = 0;
 
-$go_ncadb = new ncadb();
+// $go_ncadb = new ncadb();
 $ncaquestion = new question();
 
 $get_username = $par_username;
@@ -37,15 +37,20 @@ if ($userLogin['resCode'] == "1") {
     }
 
     $_SESSION['userData'] = array(
-        'stf' => $userInfo['usr'],
-        'staffId' => $userInfo['usr'],
-        'userdspms' => $userInfo['usr_stfdspnm'],
-        'loginTime' => time(),
-        'staffcomp' => "1",
-        'staffcompfunc' => $userInfo['m_compfunc'],
-        'staffcompfuncdep' => $userInfo['m_compfuncdep'],
+        'stf'                 => $userInfo['usr'],
+        'staffId'             => $userInfo['usr'],
+        'staffcd'             => $userInfo['usr_stfcd'],
+        'userdspms'           => $userInfo['usr_stfdspnm'],
+        'loginTime'           => time(),
+        'staffcomp'           => "1",
+        'staffcompfunc'       => $userInfo['m_compfunc'],
+        'staffcompfuncdep'    => $userInfo['m_compfuncdep'],
         'staffcompfuncdepsec' => $userInfo['m_compfuncdepsec'],
     );
+
+    /* echo "<pre>";
+    print_r($_SESSION['userData']);
+    die(); */
 
     header('location: ../view/list_questionbygroup.php');
 } else {

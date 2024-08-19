@@ -31,44 +31,67 @@ if ($debug) {
 
 if($ar_prm["method"] == "getlist"){
 
-    $sql = "SELECT *  FROM tb_questioncategories ";
+    $sql = "SELECT 
+                *
+            FROM tb_questioncategories 
+            WHERE 
+                questioncategories_compfunc = '".$_SESSION['userData']['staffcompfunc']."' 
+                AND questioncategories_compfuncdep = '".$_SESSION['userData']['staffcompfuncdep']."' 
+                AND questioncategories_compfuncdepsec = '".$_SESSION['userData']['staffcompfuncdepsec']."' 
+                AND questioncategories_active = 1 
+                 ";
 
     $result = $go_ncadb->ncaretrieve($sql, "question");
     $data = array();
     if(count($result) > 0){
 
+        $arrCompfunc = array();
+        $arrcompfunc = $ncaquestion->getCompfuncData();
+        if($arrcompfunc['respCode'] == "1"){
+            $compfun = $arrcompfunc['data'];
+            foreach ($compfun as $key1 => $value1) {
+                $arrCompfunc[$value1['compfunc_id']] = $value1;
+            }
+        }
+
+        $arrCompfuncdep = array();
+        $arrcompfuncdep = $ncaquestion->getDepartmentData();
+        if($arrcompfuncdep['respCode'] == "1"){
+            $compfuncdep = $arrcompfuncdep['data'];
+            foreach ($compfuncdep as $key1 => $value1) {
+                $arrCompfuncdep[$value1['department_id']] = $value1;
+            }
+        }
+
+        $arrCompfuncdepsec = array();
+        $arrcompfuncdepsec = $ncaquestion->getSectionData();
+        if($arrcompfuncdepsec['respCode'] == "1"){
+            $compfuncdepsec = $arrcompfuncdepsec['data'];
+            foreach ($compfuncdepsec as $key1 => $value1) {
+                $arrCompfuncdepsec[$value1['section_id']] = $value1;
+            }
+        }
+
+        $arr_staff = array();
         foreach ($result as $key => $value) {
 
-            if($value['questioncategories_recspid'] > 0){
-                
-                if($value['questioncategories_modispid']){
-                    $rec_id = $value['questioncategories_recspid'];
-                }else{
-                    $rec_id = $value['questioncategories_modispid'];
-                }
-                $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$rec_id."' ";
-                $res = $go_ncadb->ncaretrieve($sql, "icms");
-                $value['questioncategories_recname'] = $res[0]['staff_dspnm'];
-            }
-            if($value['questioncategories_compfunc'] > 0){
-                $sqlmcompfunc = "SELECT m_compfunc_name_th FROM m_compfunc WHERE m_compfunc = '".$value['questioncategories_compfunc']."' ";
-                $arr_mcompfunc = $go_ncadb->ncaretrieve($sqlmcompfunc, "icms");
-                $value['questioncategories_compfuncname'] = $arr_mcompfunc[0]['m_compfunc_name_th'];
-            }
-            if($value['questioncategories_compfuncdep'] > 0){
-                $sqlmcompfuncdep = "SELECT m_compfuncdep_name_th FROM m_compfuncdep WHERE m_compfuncdep = '".$value['questioncategories_compfuncdep']."' ";
-                $arr_mcompfuncdep = $go_ncadb->ncaretrieve($sqlmcompfuncdep, "icms");
-                $value['questioncategories_compfuncdepname'] = $arr_mcompfuncdep[0]['m_compfuncdep_name_th'];
-            }
-
             if($value['questioncategories_modispid']){
-                $value['questioncategories_recdatetime'] = $value['questioncategories_modidatetime'];
+                $value['questioncategories_username'] = $value['questioncategories_modiname'];
+                $value['questioncategories_userdatetime'] = $value['questioncategories_modidatetime'];
+            }else{
+                $value['questioncategories_username'] = $value['questioncategories_recanme'];
+                $value['questioncategories_userdatetime'] = $value['questioncategories_recdatetime'];
             }
 
             if($value['questioncategories_default'] == 1){
                 $value['questioncategories_compfuncname'] = "-";
                 $value['questioncategories_compfuncdepname'] = "-";
+                $value['questioncategories_compfuncdepsecname'] = "-";
                 $value['questioncategories_recname'] = "-";
+            }else{
+                $value['questioncategories_compfuncname'] = $arrCompfunc[$value['questioncategories_compfunc']]['compfunc_name'];
+                $value['questioncategories_compfuncdepname'] =  $arrCompfuncdep[$value['questioncategories_compfuncdep']]['department_name'];
+                $value['questioncategories_compfuncdepsecname'] =  $arrCompfuncdepsec[$value['questioncategories_compfuncdepsec']]['section_name'];
             }
 
             $value['currrent_user'] = $_SESSION['userData']['stf'];
@@ -112,15 +135,21 @@ if($ar_prm["method"] == "editquestioncategories" || $ar_prm["method"] == "addque
     $questionIddt = 0;
     $ii = 0;
     $sqlObj = null;
-    $sqlObj[$ii++] = new TField("questioncategories_compfunc", $ar_prm['questioncategories_compfunc'], "string");
-    $sqlObj[$ii++] = new TField("questioncategories_compfuncdep", $ar_prm['questioncategories_compfuncdep'], "string");
+
     $sqlObj[$ii++] = new TField("questioncategories_name", $ar_prm['questioncategories_name'], "string");
-    $sqlObj[$ii++] = new TField("questioncategories_hidden", $ar_prm['questioncategories_hidden'], "string");
     $sqlObj[$ii++] = new TField("questioncategories_description", $ar_prm['questioncategories_description'], "string");
 
+    if($ar_prm["method"] == "addquestioncategories"){
+        $sqlObj[$ii++] = new TField("questioncategories_compfunc", $ar_prm['questioncategories_compfunc'], "string");
+        $sqlObj[$ii++] = new TField("questioncategories_compfuncdep", $ar_prm['questioncategories_compfuncdep'], "string");
+        $sqlObj[$ii++] = new TField("questioncategories_compfuncdepsec", $ar_prm['questioncategories_compfuncdepsec'], "string");
+    }
+    
     if($ar_prm['questioncategories'] > 0){
 
         $sqlObj[$ii++] = new TField("questioncategories_modispid", $_SESSION['userData']['stf'], "string");
+        $sqlObj[$ii++] = new TField("questioncategories_modispcode", $_SESSION['userData']['staffcd'], "string");
+        $sqlObj[$ii++] = new TField("questioncategories_modiname", $_SESSION['userData']['userdspms'], "string");
         $sqlObj[$ii++] = new TField("questioncategories_modidatetime", $datetime, "string");
 
         $sqlInsertMquestiontype->SetField($sqlObj);
@@ -130,6 +159,8 @@ if($ar_prm["method"] == "editquestioncategories" || $ar_prm["method"] == "addque
     }else{
 
         $sqlObj[$ii++] = new TField("questioncategories_recspid", $_SESSION['userData']['stf'], "string");
+        $sqlObj[$ii++] = new TField("questioncategories_recspcode", $_SESSION['userData']['staffcd'], "string");
+        $sqlObj[$ii++] = new TField("questioncategories_recanme", $_SESSION['userData']['userdspms'], "string");
         $sqlObj[$ii++] = new TField("questioncategories_recdatetime", $datetime, "string");
         $sqlObj[$ii++] = new TField("questioncategories_active", "1", "string");
 
@@ -178,6 +209,8 @@ if($ar_prm["method"] == "deletequestioncategories"){
         $sqlObj = null;
 
         $sqlObj[$ii++] = new TField("questioncategories_modispid", $_SESSION['userData']['stf'], "string");
+        $sqlObj[$ii++] = new TField("questioncategories_modispcode", $_SESSION['userData']['staffcd'], "string");
+        $sqlObj[$ii++] = new TField("questioncategories_modiname", $_SESSION['userData']['userdspms'], "string");
         $sqlObj[$ii++] = new TField("questioncategories_modidatetime", $datetime, "string");
         $sqlObj[$ii++] = new TField("questioncategories_active", "0", "string");
 
