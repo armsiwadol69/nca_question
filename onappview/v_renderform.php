@@ -320,7 +320,7 @@
             icon: 'question',
             title: 'คุณต้องการออกจากระบบหรือไม่?',
             confirmButtonText: 'ใช่, ออกจากระบบ',
-            cancelButtonText: 'ยกเลิก, ย้อยกลับ',
+            cancelButtonText: 'ไม่, ย้อนกลับ',
             showCancelButton: true,
             showConfirmButton: true
         }).then((result) => {
