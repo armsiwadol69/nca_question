@@ -31,6 +31,15 @@ if ($debug) {
 
 if($ar_prm["method"] == "getlist"){
 
+    if($ar_prm['search']['value'] != ""){
+        $textSearch = $ar_prm['search']['value'];
+        $serach = " AND questioncategories_name LIKE '%".$textSearch."%' ";
+    }
+
+    if($ar_prm['length']){
+        $limit = "LIMIT ".$ar_prm['start'].",".$ar_prm['length'];
+    }
+
     $sql = "SELECT 
                 *
             FROM tb_questioncategories 
@@ -38,10 +47,23 @@ if($ar_prm["method"] == "getlist"){
                 questioncategories_compfunc = '".$_SESSION['userData']['staffcompfunc']."' 
                 AND questioncategories_compfuncdep = '".$_SESSION['userData']['staffcompfuncdep']."' 
                 AND questioncategories_compfuncdepsec = '".$_SESSION['userData']['staffcompfuncdepsec']."' 
-                AND questioncategories_active = 1 
-                 ";
+                AND questioncategories_active = 1 ". 
+                $serach.
+                $limit;
 
     $result = $go_ncadb->ncaretrieve($sql, "question");
+
+    $sqlCount = "   SELECT 
+                        COUNT(*) AS count
+                    FROM tb_questioncategories 
+                    WHERE 
+                        questioncategories_compfunc = '".$_SESSION['userData']['staffcompfunc']."' 
+                        AND questioncategories_compfuncdep = '".$_SESSION['userData']['staffcompfuncdep']."' 
+                        AND questioncategories_compfuncdepsec = '".$_SESSION['userData']['staffcompfuncdepsec']."' 
+                        AND questioncategories_active = 1 
+                        ";
+
+    $resultCount = $go_ncadb->ncaretrieve($sqlCount, "question");
     $data = array();
     if(count($result) > 0){
 
@@ -98,7 +120,19 @@ if($ar_prm["method"] == "getlist"){
             $data[] = $value;
         }
 
-        echo json_encode($data);
+        $rtn = array(
+            "resCode" => "1",
+            "resMsg" => "Successfully",
+            "params" => $ar_prm,
+            "draw" => $ar_prm['draw'],
+            "recordsTotal" => $resultCount[0]["count"],
+            "data" => $data,
+            "recordsFiltered" => $resultCount[0]["count"],
+            "sql" => $sql,
+            "sqlCount" => $sqlCount,
+        );
+
+        echo json_encode($rtn);
 
     } else if (empty($data)) {
 
@@ -138,6 +172,7 @@ if($ar_prm["method"] == "editquestioncategories" || $ar_prm["method"] == "addque
 
     $sqlObj[$ii++] = new TField("questioncategories_name", $ar_prm['questioncategories_name'], "string");
     $sqlObj[$ii++] = new TField("questioncategories_description", $ar_prm['questioncategories_description'], "string");
+    $sqlObj[$ii++] = new TField("questioncategories_hidden", $ar_prm['questioncategories_hidden'], "string");
 
     if($ar_prm["method"] == "addquestioncategories"){
         $sqlObj[$ii++] = new TField("questioncategories_compfunc", $ar_prm['questioncategories_compfunc'], "string");
