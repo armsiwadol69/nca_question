@@ -7,38 +7,11 @@ require_once ("../class/class.question.php");
 $go_ncadb = new ncadb();
 $ncaquestion = new question($_GET['id']);
 
-// Get ฝ่าย
-// $sqlmcompfunc = "SELECT * FROM m_compfunc WHERE m_compfunc_active = 1 ";
-// $arr_mcompfunc = $go_ncadb->ncaretrieve($sqlmcompfunc, "icms");
-// $arrmcompfunc = $ncaquestion->ncaArrayConverter($arr_mcompfunc);
-
-// Get แผนก
-// $sqlmcompfuncdep = "SELECT * FROM m_compfuncdep WHERE m_compfuncdep_active = 1 ";
-// $arr_mcompfuncdep = $go_ncadb->ncaretrieve($sqlmcompfuncdep, "icms");
-// $arrmcompfuncdep = $ncaquestion->ncaArrayConverter($arr_mcompfuncdep);
 
 $staffcompfuncval       = $_SESSION['userData']['staffcompfunc'];
 $staffcompfuncdepval    = $_SESSION['userData']['staffcompfuncdep'];
 $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
                          
-// $arrCompfunc = array();
-// $arrcompfunc = $ncaquestion->getCompfuncData();
-// if($arrcompfunc['respCode'] == "1"){
-//     $arrmcompfunc = $arrcompfunc['data'];
-// }
-
-// $arrCompfuncdep = array();
-// $arrcompfuncdep = $ncaquestion->getDepartmentData();
-// if($arrcompfuncdep['respCode'] == "1"){
-//     $arrmcompfuncdep = $arrcompfuncdep['data'];
-// }
-
-// $arrCompfuncdepsec = array();
-// $arrcompfuncdepsec = $ncaquestion->getSectionData();
-// if($arrcompfuncdepsec['respCode'] == "1"){
-//     $staffcompfuncdepsec = $arrcompfuncdepsec['data'];
-// }
-
 ?>
 <style>
   .sorting_disabled{
@@ -68,9 +41,9 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
                         <td>สายงาน</td>
                         <td>ฝ่าย</td>
                         <td>แผนก</td>
-                        <!-- <td>สถานะ</td> -->
+                        <td width="70px;">สถานะ</td>
                         <td width="200px;">ผู้บันทึก</td>
-                        <td width="150px;">วันที่บันทึก</td>
+                        <td width="120px;">วันที่บันทึก</td>
                         <td width="150px;"></td>
                     </tr>
                 </thead>
@@ -126,20 +99,19 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
                         
                         </div>
          
-                        
                         <div class="col-12">
                             <label class="form-label" for="option">ชื่อ<span class="text-danger">*</span></label>
                             <input class="form-control" type="text" name="questioncategories_name" id="questioncategories_name" required>
                         </div>
 
-                        <!-- <div class="col-12">
+                        <div class="col-12">
                             <label class="form-label" for="questioncategories_hidden">สถานะ<span class="text-danger">*</span></label>
                             <select class="form-select" name="questioncategories_hidden" id="questioncategories_hidden" aria-label="isshowing">
                                 <option value="">เลือกสถานะ</option>
                                 <option value="0">เเสดง</option>
                                 <option value="1">ซ่อน</option>
                             </select>
-                        </div> -->
+                        </div>
 
                         <div class="col-12">
                             <textarea class="form-control" id="questioncategories_description" name="questioncategories_description" rows="5" required=""></textarea>
@@ -170,46 +142,41 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
 ?>
 <script>
 
-    /* var arrmcompfunc = <?php echo json_encode($arrmcompfunc); ?>;
-    var arrmcompfuncdep = <?php echo json_encode($arrmcompfuncdep); ?>;
-    var arrmcompfuncdepsec = <?php echo json_encode($arrmcompfuncdepsec); ?>; */
     var arrmcompfunc = [];
     var arrmcompfuncdep = [];
     var arrmcompfuncdepsec = [];
+    var listTable;
+
     $(document).ready(function(){
 
-        initListTable();
-        getQuestionCategories();
-        getCompfunc();
-
-    });
-
-    async function getQuestionCategories() {
-        try {
-            var endpoint = `../phpfunc/questioncategories.php?method=getlist&staffcompfunc=`+'<? echo $staffcompfunc; ?>';
-            console.log("Test",endpoint);
-            const response = await axios.get(endpoint);
-            var data = response.data;
-            rewardListTable.clear();
-            rewardListTable.rows.add(data);
-            rewardListTable.draw();
-            handleScriptLoad();
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    async function initListTable() {
-        rewardListTable = $("#list_questioncat").DataTable({
-            stateSave: false,
-            aLengthMenu: aLengthMenu,
+        listTable = $("#list_questioncat").DataTable({
+            serverSide: true,
+            processing: true,
+            aLengthMenu: [
+                [10, 25, 50, 100, 200],
+                [10, 25, 50, 100, 200],
+            ],
             iDisplayLength: 25,
             ordering: false,
             language: dataTableSettings,
             dom: tableDom,
+            // buttons: ["copy", "excel", "print"],
             buttons: [],
             scrollY: ($('#page-content-wrapper').height() - 300),
             scrollCollapse: true,
+            searchDelay: 1500,
+            pagingType: 'simple_numbers',
+            ajax: {
+                url: `../phpfunc/questioncategories.php?method=getlist`,
+                type: "POST",
+                data: function (d) {
+
+                },
+                dataSrc: function (json) {
+                    handleScriptLoad();
+                    return json.data;
+                },
+            },
             columns: 
             [
                 {
@@ -247,7 +214,7 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
                         return `${data}`;
                     },
                 },
-                /* {
+                {
                     data: "questioncategories_hidden",
                     render: function (data, type, row, meta) {
                         // return `${data}`;
@@ -257,9 +224,9 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
                             return `แสดง`;
                         }
                     },
-                }, */
+                },
                 {
-                    data: "questioncategories_recanme",
+                    data: "questioncategories_username",
                     render: function (data, type, row, meta) {
                         return `${data}`;
                     },
@@ -291,7 +258,9 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
                 },
             ],
         });
-    }
+        getCompfunc();
+
+    });
 
     function callQuestionCate(mode,id,name){
 
@@ -305,9 +274,6 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
                     questioncategories : id,
                 },
                 dataType: "JSON",
-                /*  beforeSend: function(){
-                    fireSwalOnSubmit();
-                }, */
                 success: function(obj)
                 {   
                     handleScriptLoad();
@@ -352,7 +318,6 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
                 confirmButtonColor: "#FE0000",
             }).then((result) => {
 
-                console.log(result.isConfirmed);
                 if (result.isConfirmed == true) {
 
                     if(id > 0){
@@ -378,7 +343,7 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
                                         showCloseButton: false,
                                         }).then(() => {
                                         setTimeout(() => {
-                                            getQuestionCategories();
+                                            listTable.ajax.reload();
                                         }, 100);
                                     });
                                 }else{
@@ -419,9 +384,10 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
         if($("#questioncategories_name").val() == ""){
             validate = false;
         }
-        /* if($("#questioncategories_hidden").val() == "" ){
+
+        if($("#questioncategories_hidden").val() == "" ){
             validate = false;
-        } */
+        }
 
         if(validate == true){
             var form = $("#frm_submit");
@@ -441,8 +407,7 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
                         $("#modalquestioncate").modal("hide");
                         alertSwalSuccess();
                         setTimeout(() => {
-                            getQuestionCategories();
-                            
+                            listTable.ajax.reload();
                             swal.close();
                         }, 1200);
                         
@@ -457,32 +422,6 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
         }  
 
     }
-
-    // function changeCompfunc() {
-    //     let staffcompfunc = $("#questioncategories_compfunc").val();
-    //     let html = ``;
-    //     let htmlselect = ``;
-    //     console.log("arrmcompfuncdep", arrmcompfuncdep,staffcompfunc);
-    //     html = `<option value="0">เลือกฝ่าย</option>`;
-     
-    //     arrmcompfuncdep.forEach(element => {
-    //         if (arrmcompfunc.length > 0) {
-    //             let selectted = "";
-    //             if (staffcompfunc == element.compfunc_id) {
-    //                 selectted = "selected";
-    //             }
-    //             html += `<option value="` + element.compfunc_id + `" `+selectted+`>` + element.compfunc_name + `</option>`;
-    //         }
-    //     });
-
-    //     // $("#staffcompfunc").html(html);
-    //     console.log(html); 
-
-    //     /* if(arrmcompfunc_val){
-    //         getDepartment();
-    //     } */
-
-    // }
 
     function getCompfunc() {
         const endpoint = "../phpfunc/proxGetData.php";
@@ -526,11 +465,6 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
 
         $("#questioncategories_compfunc").html(html);
 
-        // if(arrmcompfuncdep_val){
-        //     getDepartment();
-        // }
-        
-
     }
 
     function getDepartment(id="") {
@@ -553,7 +487,6 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
                     if (res.respCode == 1) {
                         let objData = res.data;
                         arrmcompfuncdep = objData;
-                        console.log("arrmcompfuncdep",arrmcompfuncdep);
                         changestaffcompfunc(id);
                     }
 
@@ -618,7 +551,6 @@ $staffcompfuncdepsecval = $_SESSION['userData']['staffcompfuncdepsec'];
     function changestaffcompfuncsec(id="") {
         let html = ``;
         html += `<option value="0">เลือกแผนก</option>`;
-        console.log("arrmcompfuncdepsec",arrmcompfuncdepsec);
         arrmcompfuncdepsec.forEach(element => {
             let selectted = "";
             // if (arrmcompfuncdep_val == element.department_id) {

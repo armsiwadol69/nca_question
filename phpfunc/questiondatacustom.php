@@ -87,7 +87,7 @@ class ncaapicalling
             $serach = " AND Q.question_name LIKE '%".$textSearch."%' ";
         }
 
-        if($post['start'] && $post['length']){
+        if($post['length']){
             $limit = "LIMIT ".$post['start'].",".$post['length'];
         }
 
@@ -109,7 +109,8 @@ class ncaapicalling
                             AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
                             -- AND Q.question_compfuncdep = '".$_SESSION['userData']['staffcompfuncdep']."'
                             ".$serach."
-                        $gruop
+                            $where
+                            $gruop
                         ORDER BY Q.question_name ASC";
             $resultCount = $go_ncadb->ncaretrieve($sqlCount, "question");
         }
@@ -144,7 +145,6 @@ class ncaapicalling
         $result = $go_ncadb->ncaretrieve($sql_data, "question");
         $data = array();
         if(count($result) > 0){
-
 
             $arrCompfunc = array();
             $arrcompfunc = $ncaquestion->getCompfuncData();
@@ -205,7 +205,11 @@ class ncaapicalling
             }
         }
 
+        /* echo "<pre>";
+        print_r($data);
+        print_r($resultCount);
 
+        die("----"); */
         $rtn = array(
             "resCode" => "1",
             "resMsg" => "Successfully",
@@ -213,7 +217,7 @@ class ncaapicalling
             "draw" => $post['draw'],
             "recordsTotal" => $resultCount[0]["count"],
             "data" => $data,
-            "recordsFiltered" => $resultCount[0]["count"],
+            "recordsFiltered" => count($resultCount),
             "sql" => $sql_data,
             "sqlCount" => $sqlCount,
         );

@@ -661,7 +661,7 @@ class question
                     return $data;
                 }
 
-                if($value['dataoption']){
+                if($value['dataoption'] && !$value['questiondt']) {
                     
                     foreach ($value['dataoption'] as $key2 => $value2) {
 
