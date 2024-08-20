@@ -21,6 +21,8 @@
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_questionmode.php" id="listquestionmode"><b><i class="bi bi-arrow-right-circle"></i></b> ประเภทคำถาม </a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_activities.php" id="listactivities"><b><i class="bi bi-arrow-right-circle"></i></b> ลักษณะของการตรวจ </a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_mistakelevel.php" id="listmistakelevel"><b><i class="bi bi-arrow-right-circle"></i></b> กำหนดน้ำหนักความผิด </a> -->
+            <a class="list-group-item list-group-item-action p-3 text-left" href="stat_report.php" id="statreport"><b><i class="bi bi-arrow-right-circle"></i></b> รายงานสถิติ </a>
+            <a class="list-group-item list-group-item-action p-3 text-left" href="../onappview/" target="_blank" id="statreport"><b><i class="bi bi-arrow-right-circle"></i></b> หน้าบันทึกสถิติ </a>
             <!-- <a class="list-group-item list-group-item-action text-left pe-none"></a> -->
 
         </div>

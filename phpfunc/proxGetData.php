@@ -25,7 +25,7 @@ $proxy = new proxGetData();
 
 switch ($method) {
     case 'getCompfunc';
-        echo json_encode( $ncaquestion->getCompfuncData());
+        echo json_encode($ncaquestion->getCompfuncData());
         break;
     case 'getDepartment';
         echo json_encode($ncaquestion->getDepartmentData($ar_prm["par_compfuncid"]));
