@@ -5,7 +5,8 @@ date_default_timezone_set("Asia/Bangkok");
 $gb_notlogin = true;
 require "../include.inc.php";
 
-$debugMode = false;
+$debugMode = true;
+
 if($debugMode){
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
@@ -133,10 +134,9 @@ class ncaQuestion{
         // echo $questionId;
         // exit();
 
-        $answer_busref = $ar_prm["formApp_busnumber"];
-        $answer_remark = $ar_prm["formApp_busnumber"]." | ".$ar_prm["formApp_busline"]."-".$ar_prm["formApp_buslinetype"]." ".$ar_prm["formApp_queueRouteName"]." ".$ar_prm["formApp_queuedtime"]
-                         ." ".$ar_prm["formApp_queuedtdate"];
         $answer_userId = $ar_prm["formApp_userId"];
+
+        $checkType = $ar_prm["check_type"];
 
         // echo $answer_remark;
 
@@ -145,13 +145,34 @@ class ncaQuestion{
                 $InsertSqlBuilder = new SqlBuilder();
                 $InsertSqlBuilder->setTableName("tb_answer");
                 $i = 0;
-                $sqlBuild[$i++] = new TField("answer_busref", $answer_busref, "string");
-                $sqlBuild[$i++] = new TField("answer_remark", iconv('utf-8','tis-620',$answer_remark), "string");
+                $sqlBuild = null;
                 $sqlBuild[$i++] = new TField("answer_question", $questionId, "string");
                 $sqlBuild[$i++] = new TField("answer_status", '1', "string");
                 $sqlBuild[$i++] = new TField("answer_active", '1', "string");
                 $sqlBuild[$i++] = new TField("answer_recspid", $answer_userId, "string");
                 $sqlBuild[$i++] = new TField("answer_recdatetime", $datetime, "string");
+
+                //IF FOR EACH CHECK TYPE 1, 2 and 3 (Staff, Outlet and Bus)
+
+                if($checkType == "1"){
+
+                    $answer_remark = $ar_prm["empid"]." | ".$ar_prm["empcode"]." | ".$ar_prm["empname"];
+                    $sqlBuild[$i++] = new TField("answer_staff", $ar_prm["empid"], "string");
+                    $sqlBuild[$i++] = new TField("answer_remark", $answer_remark);
+
+                }else if($checkType == "2"){
+
+                    $sqlBuild[$i++] = new TField("answer_outlet", $ar_prm["outletId"], "string");
+
+                }else if($checkType == "3"){
+
+                    $answer_busref = $ar_prm["formApp_busnumber"];
+                    $answer_remark = $ar_prm["formApp_busnumber"]." | ".$ar_prm["formApp_busline"]."-".$ar_prm["formApp_buslinetype"]." ".$ar_prm["formApp_queueRouteName"]." ".$ar_prm["formApp_queuedtime"]
+                                     ." ".$ar_prm["formApp_queuedtdate"];
+
+                    $sqlBuild[$i++] = new TField("answer_busref", $answer_busref, "string");
+                    $sqlBuild[$i++] = new TField("answer_remark", $answer_remark);
+                }
 
                 $InsertSqlBuilder->setField($sqlBuild);
 
@@ -178,10 +199,11 @@ class ncaQuestion{
         $optionsData = $this->getOptionData($this->id);
         $arr_options = json_decode($optionsData,true);
 
-        // echo "<pre>";
-        //     print_r($arr_question);
-        //     print_r($arr_options);
-        // echo "</pre>";
+        echo "<pre>";
+            print_r($arr_question);
+            print_r($arr_options);
+        echo "</pre>";
+
 
         $attachmentArray = array();
 
@@ -228,9 +250,9 @@ class ncaQuestion{
              
                 if($questionDt == $questionOptionDt){
                     array_push($haveOptions, $valueA);
-                    // echo "<div style='background-color:white; padding:20px;'><pre>";
-                    // print_r($value);
-                    // echo "</pre></div>";
+                    echo "<div style='background-color:white; padding:20px;'><pre>";
+                    print_r($value);
+                    echo "</pre></div>";
                 } 
             }
 
@@ -252,11 +274,13 @@ class ncaQuestion{
             $questionSigleAnswerType = array("1","2","3");
 
             if(in_array($questionType, $questionSigleAnswerType)){
+
                 $optionId = $this->findOptionIdWithQuestiondtDt($questionDt,$arr_options);
                 #PREPAR SQL INSERT TO tb_answerdt :: Answer Type TEXT
                 $InsertSqlBuilder = new SqlBuilder();
                 $InsertSqlBuilder->setTableName("tb_answerdt");
                 $i = 0;
+                $sqlBuild = null;
                 $sqlBuild[$i++] = new TField("answerdt_answer", $answerId, "string");
                 $sqlBuild[$i++] = new TField("answerdt_question", $g_qusetionId , "string");
                 $sqlBuild[$i++] = new TField("answerdt_questiondt", $questionDt , "string");
@@ -265,12 +289,12 @@ class ncaQuestion{
                 $sqlBuild[$i++] = new TField("answerdt_order", $questionOrder , "string");
                 $sqlBuild[$i++] = new TField("answerdt_recspid", $answer_userId , "string");
                 $sqlBuild[$i++] = new TField("answerdt_questiondtorder", $questionOrder , "string");
-                $sqlBuild[$i++] = new TField("answerdt_questiondtorder", $questionOrder , "string");
                 $sqlBuild[$i++] = new TField("answerdt_recdatetime", $datetime , "string");
                 #VALUE
-                $sqlBuild[$i++] = new TField("answerdt_value", iconv("utf-8","tis-620", $answerOptionsId) ,"string");
+                $sqlBuild[$i++] = new TField("answerdt_value", $answerOptionsId ,"string");
                 $InsertSqlBuilder->setField($sqlBuild);
                 $query = $InsertSqlBuilder->InsertSql();
+                $go_ncadb->ncaexec($query, "question");
                 $insertAnswerIdType1 = $go_ncadb->ncaGetInsId("question"); 
                 $branchSqlInsert[] = $query.";";
 
@@ -284,6 +308,7 @@ class ncaQuestion{
                     $InsertSqlBuilder = new SqlBuilder();
                     $InsertSqlBuilder->setTableName("tb_answerdt");
                     $i = 0;
+                    $sqlBuild = null;
                     $sqlBuild[$i++] = new TField("answerdt_answer", $answerId, "string");
                     $sqlBuild[$i++] = new TField("answerdt_question", $g_qusetionId , "string");
                     $sqlBuild[$i++] = new TField("answerdt_questiondt", $questionDt , "string");
@@ -315,6 +340,7 @@ class ncaQuestion{
                         $InsertSqlBuilder = new SqlBuilder();
                         $InsertSqlBuilder->setTableName("tb_answerdt");
                         $i = 0;
+                        $sqlBuild = null;
                         $sqlBuild[$i++] = new TField("answerdt_answer", $answerId, "string");
                         $sqlBuild[$i++] = new TField("answerdt_question", $g_qusetionId , "string");
                         $sqlBuild[$i++] = new TField("answerdt_questiondt", $questionDt , "string");
@@ -339,6 +365,7 @@ class ncaQuestion{
             }
 
             if($debugMode){
+                echo $query;
                 echo "<br>---------------------------------------------------------------------------------<br>";
                 echo '</div>';
             }
@@ -359,11 +386,11 @@ class ncaQuestion{
         // }else{
         //     echo '<script charset="" language="javascript">alert("บันทึกไม่สำเร็จ"); window.close()";</script>';
         // }
-        echo '
-                <script charset="utf-8" language="javascript">
-                     window.location.href = "../view/v_submitted.php?result=1";
-                </script>
-             ';
+        // echo '
+        //         <script charset="utf-8" language="javascript">
+        //              window.location.href = "../view/v_submitted.php?result=1";
+        //         </script>
+        //      ';
 }
 
     public function insertImageToAttachments($go_ncadb,$answerId,$answerDt,$questionId,$questionDt,$optionId,$attachmentData,$answer_userId,$datetime)
@@ -452,7 +479,8 @@ class ncaQuestion{
                 if (is_int($k)) {
                     continue;
                 }
-                $xx[$k] = iconv('tis-620', 'utf-8', $v);
+                // $xx[$k] = iconv('tis-620', 'utf-8', $v);
+                $xx[$k] = $v;
             }
             $ar[$key] = $xx;
         }
