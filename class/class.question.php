@@ -89,8 +89,9 @@ class question
             $questionIddt = 0;
             $ii = 0;
             $sqlObj = null;
-            $sqlObj[$ii++] = new TField("questioncategories_compfunc", $info['staffcompfunc'], "string");
-            $sqlObj[$ii++] = new TField("questioncategories_compfuncdep", $info['staffcompfuncdep'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_compfunc", $_SESSION['userData']['staffcompfunc'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_compfuncdep",  $_SESSION['userData']['staffcompfuncdep'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_compfuncdepsec",  $_SESSION['userData']['staffcompfuncdepsec'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_name", $info['mquestiontype_name'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_active", '1', "string");
             $sqlObj[$ii++] = new TField("questioncategories_recspid", $info['par_userid'], "string");
@@ -186,6 +187,7 @@ class question
         $sqlObj[$ii++] = new TField("question_detail", $info['par_qdatail'], "string");
         $sqlObj[$ii++] = new TField("question_compfunc", $info['staffcompfunc'], "string");
         $sqlObj[$ii++] = new TField("question_compfuncdep", $info['staffcompfuncdep'], "string");
+        $sqlObj[$ii++] = new TField("question_compfuncdepsec", $info['staffcompfuncdepsec'], "string");
         $sqlObj[$ii++] = new TField("question_questioncategories", $info['mquestiontype'], "string");
         $sqlObj[$ii++] = new TField("question_questioncategroup", $info['questiongroup'], "string");
         $sqlObj[$ii++] = new TField("question_questionmode", $info['questionmode'], "string");
