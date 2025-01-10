@@ -217,7 +217,7 @@ if($_GET['id'] > 0){
                                                         
                                                         foreach ($arrmquestiontype as $key => $value) {
                                                             if($value['questioncategories_active'] == 1){
-
+                                                                $selected = "";
                                                                 if($value['questioncategories'] == $mquestiontype){
                                                                     $selected = "selected";
                                                                 }
@@ -238,7 +238,7 @@ if($_GET['id'] > 0){
                                 
                                 <div class="col-lg-12 col-md-12 mt-2">
 
-                                    <label for="par_qname" class="form-label">ชื่อกลุ่มคำถาม <span class="text-danger">*</span></label>
+                                    <label for="par_qname" class="form-label">ชื่อชุดคำถาม <span class="text-danger">*</span></label>
                                     <input type="text" id="par_qname" name="par_qname" class="form-control" required value="<?php echo $questioninfo[0]['question_name']; ?>">
 
                                 </div>
@@ -1034,7 +1034,13 @@ include_once 'v_footer.php';
                     return false;
                 }
             }
-            
+
+
+            if($("#par_qname").val() == ""){
+                fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุชื่อชุดคำถาม ด้วยค่ะ");
+                return false;
+            }
+
             // if($("#questiongroupcheck").is(":checked")){
             //     let questionmode = ($("#questiongroup_name").val() == "" ? 0 : 1);
             // }else{
@@ -1044,6 +1050,7 @@ include_once 'v_footer.php';
             //     fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาระบุประเภท ด้วยค่ะ");
             //     return false;
             // }
+
             if($('input[name*=questionname]').length == 0){
                 fireSwalOnErrorCustom("สร้างคำถามไม่สำเร็จ","กรุณาเพิ่มคำถาม ด้วยค่ะ");
                 return false;
@@ -1056,7 +1063,6 @@ include_once 'v_footer.php';
                 return false;
             }
             
-
         <?php } ?>
 
         let validate = validateForm();

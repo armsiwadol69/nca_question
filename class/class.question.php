@@ -1029,7 +1029,7 @@ class question
                 if (is_int($k)) {
                     continue;
                 }
-                $xx[$k] = iconv('tis-620', 'utf-8', $v);
+                $xx[$k] = $v;
             }
             $ar[$key] = $xx;
         }
@@ -1594,7 +1594,7 @@ class question
         $data['array'] = $arrmquestiontype;
 
         $html  = '<select class="form-select" name="mquestiontype" id="mquestiontype" onchange="changemquestiontype()">';
-        $html .= '<option >เลือกหมวด</option>';
+        $html .= '<option value="0">เลือกหมวด</option>';
         
         if(count($arrmquestiontype) > 0){
             foreach ($arrmquestiontype as $key => $value) {
