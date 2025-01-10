@@ -192,7 +192,6 @@ table.dataTable tbody tr {
                     var parentId = row.data().question_questioncategories;
                     var index = row.index();
                     $.ajax({
-                        // url: `https://yourserver.com/api/children/${parentId}`,  // Replace with your actual API endpoint
                         url: `../phpfunc/questiondatacustom.php`,  // Replace with your actual API endpoint
                         data : {
                             "parent_id" : (parentId ? parentId : "999"),
@@ -246,21 +245,8 @@ table.dataTable tbody tr {
             }).then((result) => {
                 console.log(result.isConfirmed);
                 if (result.isConfirmed == true) {
-                // window.location.href = `../phpfunc/curd.php?method=del&id=${id}&currentUserId=${$currentUserId}`;
-                // var endpoint = `../phpfunc/rewardapi.php?method=getItemList&par_id=${par_id}`;
                     if(id > 0 && currentUserId > 0){
-
-                        // var endpoint = `../phpfunc/curd.php?mode=del&id=${id}&currentUserId=${currentUserId}`;
-                        // const response = axios.get(endpoint);
-                        // var data = response.data;
-                        // console.log(response,"check data",data);
-                        // if (data != null) {
-                        // 	itemListTable.clear();
-                        // 	itemListTable.rows.add(data.rtn);
-                        // 	itemListTable.draw();
-                        // }
-                    
-                        // let urlendpoint = `../phpfunc/curd.php`;
+                        
                         let urlendpoint = `../phpfunc/curd.php`;
                         $.ajax({
                             url: urlendpoint,

@@ -122,7 +122,7 @@ class ncaapicalling
                 LEFT JOIN tb_questiongroup AS QG ON (QG.questiongroup=Q.question_questioncategroup)
                 WHERE 
                     Q.question_active = '1' 
-                    AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
+                    -- AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
                     -- AND Q.question_compfuncdep = '".$_SESSION['userData']['staffcompfuncdep']."'
                     ".$serach."
                     $where
@@ -203,13 +203,14 @@ class ncaapicalling
                 $value['currrent_user'] = $_SESSION['userData']['stf'];
                 $data[] = $value;
             }
+            
         }
 
         /* echo "<pre>";
         print_r($data);
         print_r($resultCount);
-
         die("----"); */
+
         $rtn = array(
             "resCode" => "1",
             "resMsg" => "Successfully",

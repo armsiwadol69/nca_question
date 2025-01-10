@@ -150,10 +150,6 @@ function changeSubFolderPermissions($id, $action) {
 $ncaquestion = new question();
 
 if($methodRequest == "addQuestion") {
-    
-    echo "<pre>";
-    print_r($_POST);
-    die();
 
     $data = array();
     $questiondata = array();

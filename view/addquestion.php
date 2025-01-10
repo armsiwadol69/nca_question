@@ -73,7 +73,8 @@ $arrquestiongroup  = $ncaquestion->ncaArrayConverter($arr_questiongroup);
 // Get ประเภทของคำถาม
 $sqlquestionmode  = "SELECT * FROM tb_questionmode WHERE questionmode_active = 1";
 $arr_questionmode = $go_ncadb->ncaretrieve($sqlquestionmode, "question");
-$arrquestionmode  = $ncaquestion->ncaArrayConverter($arr_questionmode);
+// $arrquestionmode  = $ncaquestion->ncaArrayConverter($arr_questionmode);
+$arrquestionmode  = $arr_questionmode;
 
 // Get activities
 $sqlactivities  = "SELECT * FROM tb_activities WHERE activities_active = 1";

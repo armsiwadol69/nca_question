@@ -25,6 +25,13 @@
             <a class="list-group-item list-group-item-action p-3 text-left" href="../onappview/" target="_blank" id="statreport"><b><i class="bi bi-arrow-right-circle"></i></b> หน้าบันทึกสถิติ </a>
             <!-- <a class="list-group-item list-group-item-action text-left pe-none"></a> -->
 
+            <a class="list-group-item list-group-item-action p-3 text-left" href="addquestion.php" id="listquestion"><b><i class="bi bi-arrow-right-circle"></i></b> เพิ่มชุดคำถาม original</a>
+            <a class="list-group-item list-group-item-action p-3 text-left" href="list_question.php" id="listquestion"><b><i class="bi bi-arrow-right-circle"></i></b> รายการชุดคำถาม original</a>
+            <a class="list-group-item list-group-item-action p-3 text-left" href="list_questiongroup.php" id="listquestiongroup"><b><i class="bi bi-arrow-right-circle"></i></b> กลุ่มคำถาม </a>
+            <a class="list-group-item list-group-item-action p-3 text-left" href="list_questionmode.php" id="listquestionmode"><b><i class="bi bi-arrow-right-circle"></i></b> ประเภทคำถาม </a>
+            <a class="list-group-item list-group-item-action p-3 text-left" href="list_activities.php" id="listactivities"><b><i class="bi bi-arrow-right-circle"></i></b> ลักษณะของการตรวจ </a>
+            <a class="list-group-item list-group-item-action p-3 text-left" href="list_mistakelevel.php" id="listmistakelevel"><b><i class="bi bi-arrow-right-circle"></i></b> กำหนดน้ำหนักความผิด </a>
+
         </div>
         <div class="sidebar-footer list-group list-group-flush d-flex">
             <!-- User login -->
