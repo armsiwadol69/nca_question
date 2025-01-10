@@ -45,25 +45,25 @@ if($_GET['id']){
 
 }
 
-// Get questiontype
-$sqlOptionType  = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
-$arr_OptionType = $go_ncadb->ncaretrieve($sqlOptionType, "question");
-$arr_OptionType = $ncaquestion->ncaArrayConverter($arr_OptionType);
-
-// Get ฝ่าย
-$sqlmcompfunc  = "SELECT * FROM m_compfunc WHERE m_compfunc_active = 1 ";
-$arr_mcompfunc = $go_ncadb->ncaretrieve($sqlmcompfunc, "icms");
-$arrmcompfunc  = $ncaquestion->ncaArrayConverter($arr_mcompfunc);
-
-// Get แผนก
-$sqlmcompfuncdep  = "SELECT * FROM m_compfuncdep WHERE m_compfuncdep_active = 1 ";
-$arr_mcompfuncdep = $go_ncadb->ncaretrieve($sqlmcompfuncdep, "icms");
-$arrmcompfuncdep  = $ncaquestion->ncaArrayConverter($arr_mcompfuncdep);
-
 // Get หมวด
-$sqlmquestiontype  = "SELECT * FROM tb_questioncategories WHERE questioncategories_compfunc = '".$_SESSION['userData']['staffcompfunc']."' OR questioncategories_default = 1 AND questioncategories_active = 1 ";
+/* $sqlmquestiontype  = "SELECT * FROM tb_questioncategories WHERE questioncategories_compfunc = '".$_SESSION['userData']['staffcompfunc']."' OR questioncategories_default = 1 AND questioncategories_active = 1 ";
 $arr_mquestiontype = $go_ncadb->ncaretrieve($sqlmquestiontype, "question");
-$arrmquestiontype  = $ncaquestion->ncaArrayConverter($arr_mquestiontype);
+$arrmquestiontype  = $ncaquestion->ncaArrayConverter($arr_mquestiontype); */
+
+$sqlmquestiontype  = "  SELECT 
+                            *
+                        FROM tb_questioncategories 
+                        WHERE 
+                            ( 
+                                questioncategories_compfunc = '".$_SESSION['userData']['staffcompfunc']."' 
+                                AND questioncategories_compfuncdep = '".$_SESSION['userData']['staffcompfuncdep']."' 
+                                AND questioncategories_compfuncdepsec = '".$_SESSION['userData']['staffcompfuncdepsec']."' 
+                                AND questioncategories_active = 1 
+                            )
+                            OR questioncategories_default = 1 ";
+// $sqlmquestiontype  = "SELECT * FROM tb_questioncategories ";
+$arrmquestiontype = $go_ncadb->ncaretrieve($sqlmquestiontype, "question");
+// $arrmquestiontype  = $ncaquestion->ncaArrayConverter($arr_mquestiontype);
 
 // Get กลุ่ม
 $sqlquestiongroup  = "SELECT * FROM tb_questiongroup WHERE questiongroup_active = 1";
@@ -93,9 +93,10 @@ if($_GET['id'] > 0){
     $questiongroup    = $questioninfo[0]['question_questioncategroup'];
     $questionmode     = $questioninfo[0]['question_questionmode'];
 }else{
-    $staffcompfunc    = $_SESSION['userData']['staffcompfunc'];
-    $staffcompfuncdep = $_SESSION['userData']['staffcompfuncdep'];
-    $mquestiontype    = "";
+    $staffcompfunc       = $_SESSION['userData']['staffcompfunc'];
+    $staffcompfuncdep    = $_SESSION['userData']['staffcompfuncdep'];
+    $staffcompfuncdepsec = $_SESSION['userData']['staffcompfuncdepsec'];
+    $mquestiontype       = "";
 }
 
 if($_GET['id'] > 0){
@@ -141,47 +142,32 @@ if($_GET['id'] > 0){
                         <div class="col-lg-12 col-md-12 mt-2">
 
                             <div class="col-lg-12 col-md-12 mt-2">
+
                                 <div class="row">
-                                <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
 
-                                        <label for="par_staffcompfunc" class="form-label">ฝ่าย <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="staffcompfunc" id="staffcompfunc" onchange="changestaffcompfunc();">
-                                            <option>เลือกฝ่าย</option>
-                                            <?php
-                                                foreach ($arrmcompfunc as $key => $value) {
-                                                    $selected = "";
-                                                    /* if($value['m_compfunc'] == $staffcompfunc){
-                                                        $selected = "selected";
-                                                        echo '<option value="'.$value['m_compfunc'].'" '.$selected.'> '.$value['m_compfunc_name_th'].' </option>';
-                                                    } */
+                                    <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
 
-                                                    echo '<option value="'.$value['m_compfunc'].'" '.$selected.'> '.$value['m_compfunc_name_th'].' </option>';
-                                                }
-                                            ?>
+                                        <label for="par_staffcompfunc" class="form-label">สายงาน <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="staffcompfunc" id="staffcompfunc" onchange="getDepartment();">
+                                            <option value="0">เลือกสายงาน</option>
                                         </select>
                                     
                                     </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
 
-                                        <label for="par_staffcompfuncdep" class="form-label">แผนก <span class="text-danger">*</span></label>
-                                        <select class="form-select" name="staffcompfuncdep" id="staffcompfuncdep" onchange="changestaffcompfuncdep()">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
+
+                                        <label for="par_staffcompfuncdep" class="form-label">ฝ่าย <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="staffcompfuncdep" id="staffcompfuncdep" onchange="getSection();">
+                                            <option value="0">เลือกฝ่าย</option>
+                                        </select>
+                                    
+                                    </div>
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
+
+                                        <label for="par_staffcompfuncdepsec" class="form-label">แผนก <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="staffcompfuncdepsec" id="staffcompfuncdepsec" onchange="getCateHtml($(this));">
                                             <option value="0">เลือกแผนก</option>
-                                            <?php
-                                                foreach ($arrmcompfuncdep as $key => $value) {
-                                                    $selected = "";
-                                                    // if($value['m_compfuncdep'] == $staffcompfuncdep){
-                                                    //     $selected = "selected";
-                                                    // }
-                                                    /* if($value['m_compfuncdep_compfunc'] == $staffcompfunc){
-                                                        if($value['m_compfuncdep'] == $staffcompfuncdep){
-                                                            $selected = "selected";
-                                                        }
-                                                        echo '<option value="'.$value['m_compfuncdep'].'" '.$selected.'> '.$value['m_compfuncdep_name_th'].' </option>';
-                                                    } */
-
-                                                    // echo '<option value="'.$value['m_compfuncdep'].'" '.$selected.'> '.$value['m_compfuncdep_name_th'].' </option>';
-                                                }
-                                            ?>
                                         </select>
                                     
                                     </div>
@@ -375,18 +361,22 @@ if($_GET['id'] > 0){
 
         </div>
 
-        <div class="col-lg-6 col-md-6 col-sm-6">
-            <input type="hidden"  class="form-control" name="questioninfoid" id="questioninfoid" value="<?php echo $_GET['id'];?>">
-            <input type="hidden"  class="form-control" name="debug" id="debug" value="0">
-            <input type="hidden"  class="form-control" name="questioncopy" id="questioncopy" value="<?php echo $copy?>">
-            <input type="hidden"  class="form-control" name="mode" id="addQuestion" value="addQuestion">
-            <input type="hidden"  class="form-control" name="par_userId" id="par_userId" value="<?php echo $_SESSION['userData']['stf']; ?>">
-            <input type="hidden"  class="form-control" name="par_usernm" id="par_usernm" value="<?php echo $_SESSION['userData']['userdspms']; ?>">
-            <button type="button" class="btn btn-primary w-100 mt-2" onclick="submitFrom()"><i class="bi bi-save"></i><?php if($copy > 0){ echo " บันทึกข้อมูลจากการ Copy "; }else{ echo " บันทึกข้อมูล"; } ?> </button>
-        </div>
+        <div class="col-lg-12 col-md-12 mt-2">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <input type="hidden"  class="form-control" name="questioninfoid" id="questioninfoid" value="<?php echo $_GET['id'];?>">
+                    <input type="hidden"  class="form-control" name="debug" id="debug" value="0">
+                    <input type="hidden"  class="form-control" name="questioncopy" id="questioncopy" value="<?php echo $copy?>">
+                    <input type="hidden"  class="form-control" name="mode" id="addQuestion" value="addQuestion">
+                    <input type="hidden"  class="form-control" name="par_userId" id="par_userId" value="<?php echo $_SESSION['userData']['stf']; ?>">
+                    <input type="hidden"  class="form-control" name="par_usernm" id="par_usernm" value="<?php echo $_SESSION['userData']['userdspms']; ?>">
+                    <button type="button" class="btn btn-primary w-100 mt-2" onclick="submitFrom()"><i class="bi bi-save"></i><?php if($copy > 0){ echo " บันทึกข้อมูลจากการ Copy "; }else{ echo " บันทึกข้อมูล"; } ?> </button>
+                </div>
 
-        <div class="col-lg-6 col-md-6 col-sm-6">
-            <a href="list_question.php" class="btn btn-secondary w-100 mt-2"><i class="bi bi-back"></i> ย้อนกลับหน้ารายการ </a>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <a href="list_question.php" class="btn btn-secondary w-100 mt-2"><i class="bi bi-back"></i> ย้อนกลับหน้ารายการ </a>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -594,8 +584,26 @@ include_once 'v_footer.php';
     var Iscopy  = '<?php if($_GET['copy'] > 0){ echo '1'; }else{ echo '0'; } ?>';
     var timeout = null;
 
-    var arrmcompfunc = <?php echo json_encode($arrmcompfunc); ?>;
-    var arrmcompfuncdep = <?php echo json_encode($arrmcompfuncdep); ?>;
+    var arrmcompfunc = [];
+    var arrmcompfunc_val = '';
+    var arrmcompfuncdep = [];
+    var arrmcompfuncdep_val = '';
+    var arrmcompfuncdepsec = [];
+    var arrmcompfuncdepsec_val = '';
+
+    <?php if(!$_GET['id'] && !$_GET['cateid']){ ?>
+
+    arrmcompfunc_val       = '<?php echo $staffcompfunc; ?>';
+    arrmcompfuncdep_val    = '<?php echo $staffcompfuncdep; ?>';
+    arrmcompfuncdepsec_val = '<?php echo $staffcompfuncdepsec; ?>';
+
+    <?php }else if($_GET['id'] && !$_GET['cateid']){ ?>
+
+    arrmcompfunc_val = '<?php echo $questioninfo[0]['question_compfunc']; ?>';
+    arrmcompfuncdep_val = '<?php echo $questioninfo[0]['question_compfuncdep']; ?>';
+    arrmcompfuncdepsec_val = '<?php echo $questioninfo[0]['question_compfuncdepsec']; ?>';
+
+    <?php } ?>
 
     $(function() {
 
@@ -780,7 +788,7 @@ include_once 'v_footer.php';
             }, 300);
         });
 
-
+        getCompfunc();
 
     });
 
@@ -1416,6 +1424,188 @@ include_once 'v_footer.php';
             color += letters[Math.floor(Math.random() * 16)];
         }
         return color;
+    }
+
+    function getCompfunc() {
+        const endpoint = "../phpfunc/proxGetData.php";
+        const params = {
+            method: 'getCompfunc',
+        };
+
+        $.ajax({
+            type: "POST",
+            url: endpoint,
+            data: params,
+            dataType: "json",
+            success: function(data){
+                let res = data;
+                if (res.respCode == 1) {
+                    let objData = res.data;
+                    arrmcompfunc = objData;
+                    changeStaffComp();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log("An error occurred: ", status, error);
+            },
+        });
+    }
+
+    function changeStaffComp() {
+        let html = ``;
+        html = `<option value="0">เลือกสายงาน</option>`;
+     
+        arrmcompfunc.forEach(element => {
+            if (arrmcompfunc.length > 0) {
+                let selectted = "";
+                if (arrmcompfunc_val == element.compfunc_id) {
+                    selectted = "selected";
+                }
+                html += `<option value="` + element.compfunc_id + `" `+selectted+`>` + element.compfunc_name + `</option>`;
+            }
+        });
+
+        $("#staffcompfunc").html(html);
+
+        if(arrmcompfunc_val){
+            getDepartment();
+        }
+
+    }
+
+    function getDepartment() {
+        let compfunc = $("#staffcompfunc").val();
+        if(compfunc){
+            const endpoint = "../phpfunc/proxGetData.php";
+            const params = {
+                method: 'getDepartment',
+                par_compfuncid: compfunc,
+            };
+
+            $.ajax({
+                type: "POST",
+                url: endpoint,
+                data: params,
+                dataType: "json",
+                success: function(data) {
+                    let res = data;
+                    if (res.respCode == 1) {
+                        let objData = res.data;
+                        arrmcompfuncdep = objData;
+
+                        changestaffcompfunc();
+                        getMquestiontype();
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    console.log("An error occurred: ", status, error);
+                },
+            });
+        }
+    }
+
+    function getMquestiontype(){
+
+        if($("#staffcompfunc").val() > 0){
+
+            var form = $("#frm_submit_mtype");
+            var actionUrl = "../phpfunc/curdCustom.php";
+            
+            $.ajax({
+                type: "POST",
+                url: actionUrl,
+                data: {
+                    mode: "mquestiontypedata",
+                    compfunc : $("#staffcompfunc").val(),
+                    compfuncdep : $("#staffcompfuncdep").val(),
+                    currentmquestiontype : $("#mquestiontype").val(),
+                },
+                dataType: "JSON",
+                // beforeSend: function(){
+                //     fireSwalOnSubmit();
+                // },
+                success: function(obj)
+                {
+                    $("#mquestiontypeselect").html(obj.data.html);
+
+                }
+            });
+
+        }
+    }
+
+    function changestaffcompfunc() {
+        let html = ``;
+        let staffcompfunc = $("#staffcompfunc").val();
+        html += `<option value="0">เลือกฝ่าย</option>`;
+        arrmcompfuncdep.forEach(element => {
+            let selectted = "";
+            if (arrmcompfuncdep_val == element.department_id) {
+                selectted = "selected";
+            }
+            html += `<option value="` + element.department_id + `" `+selectted+`>` + element.department_name + `</option>`;
+
+        });
+
+        $("#staffcompfuncdep").html("");
+        $("#staffcompfuncdep").html(html);
+        
+        if(arrmcompfuncdep_val){
+            getSection();
+        }
+
+    }
+
+    function getSection(id="") {
+        
+        let compfuncdep = $("#staffcompfuncdep").val();
+        
+        if(compfuncdep > 0){
+        
+            const endpoint = "../phpfunc/proxGetData.php";
+            const params = {
+                method: 'getSection',
+                par_departmentid: compfuncdep,
+            };
+
+            $.ajax({
+                type: "POST",
+                url: endpoint,
+                data: params,
+                dataType: "json",
+                success: function(data) {
+                    let res = data;
+                    if (res.respCode == 1) {
+                        let objData = res.data;
+                        arrmcompfuncdepsec = objData;
+                        changestaffcompfuncsec(id);
+                        getMquestiontype();
+                    }
+
+                },
+                error: function(xhr, status, error) {
+                    console.log("An error occurred: ", status, error);
+                },
+            });
+        }
+    }
+
+    function changestaffcompfuncsec(id="") {
+        let html = ``;
+        html +=     `<option value="0">เลือกแผนก</option>`;
+
+        arrmcompfuncdepsec.forEach(element => {
+            let selectted = "";
+            if (arrmcompfuncdepsec_val == element.section_id) {
+                selectted = "selected";
+            }
+            html += `<option value="` + element.section_id + `" ` + selectted + `>` + element.section_name + `</option>`;
+        });
+
+        $("#staffcompfuncdepsec").html(html);
+        
+
     }
 
 

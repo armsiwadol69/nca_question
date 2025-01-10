@@ -28,19 +28,6 @@ if (is_array($_POST)) {
     }
 }
 
-
-if ($_POST['debug'] > 0) {
-    echo '<pre>';
-    print_r($ar_prm);
-    print_r($_POST);
-    print_r($_FILES["imageFiles"]);
-    // echo '<br>------------------------------------------------------<br>';
-    // print_r($ar_prm["imageFilesOld"]);
-    echo '<br>------------------------------------------------------<br>';
-    echo '</pre>';
-    die();
-}
-
 function upload_file($files, $id)
 {   
     $get_files = $files;
@@ -150,14 +137,6 @@ function changeSubFolderPermissions($id, $action) {
 $ncaquestion = new question();
 
 if($methodRequest == "addQuestion") {
-    
-    // echo "<pre>";
-    // print_r($_POST);
-    // echo "<br>--------question------";
-    // print_r($_POST['question']);
-    // echo "--------question------<br>";
-
-    
 
     $data = array();
     $questiondata = array();
@@ -166,9 +145,6 @@ if($methodRequest == "addQuestion") {
     if($_POST['catemode'] > 0){
 
         foreach (array_unique($_POST['question']) as $k => $v) {
-            
-            // print_r($v);
-            // echo "VVVVVVVVVVVVVVV => ".$v."<br>";
 
             $array_info[$value] = array(
                 "par_questioninfoid"  => $_POST['questioninfoid'],
@@ -183,7 +159,7 @@ if($methodRequest == "addQuestion") {
                 "staffcompfuncdepsec" => $_POST['staffcompfuncdepsec'],
                 "mquestiontype"       => $_POST['mquestiontype'],
                 "questiongroup"       => $_POST['questiongroup'],
-                "questionmode"        => $_POST['questionmode'],
+                "questionmode"        => "1",
                 "departmentid"        => $_POST['question_departmentid'],
                 "offensegroupid"      => $_POST['question_offensegroupid'],
                 "mquestiontypecheck"  => $_POST['mquestiontypecheck'],
@@ -246,19 +222,7 @@ if($methodRequest == "addQuestion") {
 
             }
 
-            // echo "==================================================================================<br>";
         }
-        // echo "-----------array_info-------------";
-        // print_r($array_info);
-        // echo "-----------questiondata-------------";
-        // print_r($questiondata);
-        // die();
-
-        // print_r($array_info);
-        // echo "-----------questiondata-------------";
-        // print_r($questiondata);
-
-        
 
         $data = $ncaquestion->manageDataQuestion($questiondata);
 
@@ -277,7 +241,7 @@ if($methodRequest == "addQuestion") {
             "staffcompfuncdepsec" => $_POST['staffcompfuncdepsec'],
             "mquestiontype"       => $_POST['mquestiontype'],
             "questiongroup"       => $_POST['questiongroup'],
-            "questionmode"        => $_POST['questionmode'],
+            "questionmode"        => "1",
             "departmentid"        => $_POST['question_departmentid'],
             "offensegroupid"      => $_POST['question_offensegroupid'],
             "mquestiontypecheck"  => $_POST['mquestiontypecheck'],
@@ -368,4 +332,4 @@ if($methodRequest == "addQuestion") {
     $data = $ncaquestion->updategroup($_POST);
     echo json_encode(array("data"=>$data));
 
-} 
+}

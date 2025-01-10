@@ -150,10 +150,6 @@ function changeSubFolderPermissions($id, $action) {
 $ncaquestion = new question();
 
 if($methodRequest == "addQuestion") {
-    
-    echo "<pre>";
-    print_r($_POST);
-    die();
 
     $data = array();
     $questiondata = array();
@@ -166,8 +162,9 @@ if($methodRequest == "addQuestion") {
         "par_userid"         => $_POST['par_userId'],
         "oldquestion"        => $_POST['oldquestion'],
         "questionid"         => $_POST['questionid'],
-        "staffcompfunc"      => $_POST['staffcompfunc'],
-        "staffcompfuncdep"   => $_POST['staffcompfuncdep'],
+        "staffcompfunc"       => $_POST['staffcompfunc'],
+        "staffcompfuncdep"    => $_POST['staffcompfuncdep'],
+        "staffcompfuncdepsec" => $_POST['staffcompfuncdepsec'],
         "mquestiontype"      => $_POST['mquestiontype'],
         "questiongroup"      => $_POST['questiongroup'],
         "questionmode"       => $_POST['questionmode'],

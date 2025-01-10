@@ -35,16 +35,11 @@ switch ($ar_prm["method"]) {
     case "getQuestionList":
         echo $apiCalling->getQuestionList($ar_prm);
         break;
-    // case "getItemList":
-    //     echo $apiCalling->getItemList($ar_prm["par_id"], $ar_prm["offset"], $ar_prm["limit"], $ar_prm["draw"], $ar_prm["giftType"], $ar_prm["search"]);
-    //     break;
-    
 
 }
 
 class ncaapicalling
 {
-    //Thanks to p'JJ aka MASTER'JJ
     public function ncaArrayConverter($par_array)
     {
         if (empty($par_array)) {
@@ -92,7 +87,7 @@ class ncaapicalling
             $serach = " AND Q.question_name LIKE '%".$textSearch."%' ";
         }
 
-        if($post['start'] && $post['length']){
+        if($post['length']){
             $limit = "LIMIT ".$post['start'].",".$post['length'];
         }
 
@@ -103,17 +98,20 @@ class ncaapicalling
         }
 
         if(!$post['parent_id']){
-            $sqlCount = "SELECT COUNT(Q.question) AS count
-                    FROM tb_question AS Q
-                    LEFT JOIN tb_questioncategories AS QC ON (QC.questioncategories=Q.question_questioncategories)
-                    LEFT JOIN tb_questionmode AS QM ON (QM.questionmode=Q.question_questionmode)
-                    LEFT JOIN tb_questiongroup AS QG ON (QG.questiongroup=Q.question_questioncategroup)
-                    WHERE 
-                        Q.question_active = '1' 
-                        -- AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
-                        ".$serach."
-                    $gruop
-                    ORDER BY Q.question_name ASC";
+            $sqlCount = "SELECT 
+                            COUNT(Q.question) AS count
+                        FROM tb_question AS Q
+                        LEFT JOIN tb_questioncategories AS QC ON (QC.questioncategories=Q.question_questioncategories)
+                        LEFT JOIN tb_questionmode AS QM ON (QM.questionmode=Q.question_questionmode)
+                        LEFT JOIN tb_questiongroup AS QG ON (QG.questiongroup=Q.question_questioncategroup)
+                        WHERE 
+                            Q.question_active = '1' 
+                            AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
+                            -- AND Q.question_compfuncdep = '".$_SESSION['userData']['staffcompfuncdep']."'
+                            ".$serach."
+                            $where
+                            $gruop
+                        ORDER BY Q.question_name ASC";
             $resultCount = $go_ncadb->ncaretrieve($sqlCount, "question");
         }
 
@@ -125,6 +123,7 @@ class ncaapicalling
                 WHERE 
                     Q.question_active = '1' 
                     -- AND Q.question_compfunc = '".$_SESSION['userData']['staffcompfunc']."'
+                    -- AND Q.question_compfuncdep = '".$_SESSION['userData']['staffcompfuncdep']."'
                     ".$serach."
                     $where
                     $gruop
@@ -146,7 +145,6 @@ class ncaapicalling
         $result = $go_ncadb->ncaretrieve($sql_data, "question");
         $data = array();
         if(count($result) > 0){
-
 
             $arrCompfunc = array();
             $arrcompfunc = $ncaquestion->getCompfuncData();
@@ -175,24 +173,13 @@ class ncaapicalling
                 }
             }
 
-           /*  echo "<pre>";
+            /* echo "<pre>";
             print_r($arrCompfunc);
             print_r($arrCompfuncdep);
             print_r($arrCompfuncdepsec);
             echo "</pre>"; */
 
             foreach ($result as $key => $value) {
-
-                /* echo "<pre>";
-            print_r($value);
-            echo "</pre>";
-            die(); */
-
-                if($value['question_recspid'] > 0){
-                    $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$value['question_recspid']."' ";
-                    $res = $go_ncadb->ncaretrieve($sql, "icms");
-                    $value['question_recname'] = $res[0]['staff_dspnm'];
-                }
 
                 $value['question_compfuncname'] = $arrCompfunc[$value['question_compfunc']]['compfunc_name'];
                 $value['question_compfuncdepname'] =  $arrCompfuncdep[$value['question_compfuncdep']]['department_name'];
@@ -206,15 +193,23 @@ class ncaapicalling
 
                 if($value['question_modispid']){
 
-                    $value['question_recspid'] = $value['question_modispid'];
-                    $value['question_recdatetime'] = $value['question_modidatetime'];
-    
+                    $value['question_username'] = $value['question_modiname'];
+                    $value['question_userdatetime'] = $value['question_modidatetime'];
+     
+                }else{
+                    $value['question_username'] = $value['question_recname'];
+                    $value['question_userdatetime'] = $value['question_recdatetime'];
                 }
                 $value['currrent_user'] = $_SESSION['userData']['stf'];
                 $data[] = $value;
             }
+            
         }
 
+        /* echo "<pre>";
+        print_r($data);
+        print_r($resultCount);
+        die("----"); */
 
         $rtn = array(
             "resCode" => "1",
@@ -223,7 +218,7 @@ class ncaapicalling
             "draw" => $post['draw'],
             "recordsTotal" => $resultCount[0]["count"],
             "data" => $data,
-            "recordsFiltered" => $resultCount[0]["count"],
+            "recordsFiltered" => count($resultCount),
             "sql" => $sql_data,
             "sqlCount" => $sqlCount,
         );

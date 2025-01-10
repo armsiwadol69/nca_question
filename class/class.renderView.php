@@ -69,27 +69,27 @@ class questionview
                     $pid  = $this->generateRandomString(15);
                     $opid = $this->generateRandomString(15);
                     $inputTypeName = $this->getInpustType("questiontype",$value['questiondt_questiontype']);
-                    // $html .= '  <div class="bgcontentcolor content'.$value['questiondt'].'" id="'.$pid.'">
-                    //                 <input type="hidden" name="mainname[]" value="'.$pid.'" />
-                    //                 <input type="hidden" name="oldquestion[]" value="'.$value['questiondt'].'" />
-                    //                 <div class="list-group-item nested-3 question" id="'.$value['questiondt'].'" data-id="'.$value['questiondt'].'">
-                    //                     <input type="hidden" name="questiondt['.$value['questiondt'].']" value="'.$value['questiondt'].'" />
-                    //                     <input type="hidden" name="questionid[]" value="'.$value['questiondt'].'" />
-                    //                     <input type="hidden" name="questionname[]" value="'.$value['questiondt'].'" />
-                    //                     <input type="hidden" name="datainputtype[]" value="'.$value['questiondt_questiontype'].'" />
-                    //                     <input type="hidden" name="questionnameinput['.$value['questiondt'].']" value="'.$inputTypeName['questiontype_type'].'" />
-                    //                     <input type="hidden" name="questionismain['.$value['questiondt'].']" value="'.($value['questiondt_parent'] > 0 ? '' : '1').'" />
-                    //                     <input type="hidden" name="questionismainname['.$value['questiondt'].']" value="'.$parentdeata['questiondt'].'" /> 
-                    //                     <input type="hidden" name="questionnameinputafter['.$value['questiondt'].']" value="'.$parentdeata['questionoption_questiondt'].'" />
-                    //                     <input type="hidden" name="questionnameinputparent['.$parentdeata['questiondt'].']" value="'.$parentdeata['questiondt'].'" />
-                    //                     <input type="hidden" name="questionnameinputafteroptoion['.$value['questiondt'].']" value="'.($value['questiondt_after'] ? 'option'.$parentdeata['questionoption_questiondt'].($parentdeata['questionoption_order'] - 1) : '' ).'" />
-                    //                     <div class="col-lg-12">
-                    //                         คำถาม : <input class="form-control-50 col-lg-5" type="text" name="questiontext['.$value['questiondt'].']" required="" value="'.$value['questiondt_title'].'" />
-                    //                     </div>
-                    //                     <div class="list-group">
-                    //                         '.$this->genareteViewOptions($value['questiondt'],$pid,$value,$questionArray).'
-                    //                     </div>
-                    //                 </div>';
+                        // $html .= '  <div class="bgcontentcolor content'.$value['questiondt'].'" id="'.$pid.'">
+                        //                 <input type="hidden" name="mainname[]" value="'.$pid.'" />
+                        //                 <input type="hidden" name="oldquestion[]" value="'.$value['questiondt'].'" />
+                        //                 <div class="list-group-item nested-3 question" id="'.$value['questiondt'].'" data-id="'.$value['questiondt'].'">
+                        //                     <input type="hidden" name="questiondt['.$value['questiondt'].']" value="'.$value['questiondt'].'" />
+                        //                     <input type="hidden" name="questionid[]" value="'.$value['questiondt'].'" />
+                        //                     <input type="hidden" name="questionname[]" value="'.$value['questiondt'].'" />
+                        //                     <input type="hidden" name="datainputtype[]" value="'.$value['questiondt_questiontype'].'" />
+                        //                     <input type="hidden" name="questionnameinput['.$value['questiondt'].']" value="'.$inputTypeName['questiontype_type'].'" />
+                        //                     <input type="hidden" name="questionismain['.$value['questiondt'].']" value="'.($value['questiondt_parent'] > 0 ? '' : '1').'" />
+                        //                     <input type="hidden" name="questionismainname['.$value['questiondt'].']" value="'.$parentdeata['questiondt'].'" /> 
+                        //                     <input type="hidden" name="questionnameinputafter['.$value['questiondt'].']" value="'.$parentdeata['questionoption_questiondt'].'" />
+                        //                     <input type="hidden" name="questionnameinputparent['.$parentdeata['questiondt'].']" value="'.$parentdeata['questiondt'].'" />
+                        //                     <input type="hidden" name="questionnameinputafteroptoion['.$value['questiondt'].']" value="'.($value['questiondt_after'] ? 'option'.$parentdeata['questionoption_questiondt'].($parentdeata['questionoption_order'] - 1) : '' ).'" />
+                        //                     <div class="col-lg-12">
+                        //                         คำถาม : <input class="form-control-50 col-lg-5" type="text" name="questiontext['.$value['questiondt'].']" required="" value="'.$value['questiondt_title'].'" />
+                        //                     </div>
+                        //                     <div class="list-group">
+                        //                         '.$this->genareteViewOptions($value['questiondt'],$pid,$value,$questionArray).'
+                        //                     </div>
+                        //                 </div>';
                         // $html .='<div '.$isHidden.'>';
                         $html .= "<h4 class='answerTitle my-3' id='questionTitle$questiondt' $isHidden>".$value['questiondt_title']."</h4>";
                         $html .= "<div class='answerBox' id='questionBox$questiondt' $isHidden>".$this->genareteViewOptions($value['questiondt'],$pid,$value,$questionArray, "")."</div>";
