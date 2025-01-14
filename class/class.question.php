@@ -1031,6 +1031,7 @@ class question
                 if (is_int($k)) {
                     continue;
                 }
+                // $xx[$k] = iconv('tis-620', 'utf-8', $v);
                 $xx[$k] = $v;
             }
             $ar[$key] = $xx;

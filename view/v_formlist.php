@@ -26,7 +26,7 @@
                 if (is_int($k)) {
                     continue;
                 }
-                $xx[$k] = iconv('tis-620', 'utf-8', $v);
+                $xx[$k] = $v;
             }
             $ar[$key] = $xx;
         }
@@ -105,8 +105,13 @@
             <div class="bg-gradient w-100" style="max-height:100%;overflow-y:auto;">
                 <div class="list-group mt-5">
                 <?  
-                    $no = 0;
+                    $no = 1;
                     foreach ($questionList as $key => $formData) {
+
+                        if($formData["question_questioncategories"] != "1"){
+                            continue;
+                        }
+
                         if( ($no % 2) != 0 ) {
                             $style="style='background-color:rgba(210, 210, 210,0.3);'";
                         } else {
@@ -136,8 +141,8 @@
 
         function openFormPage(id){
             const obj_prm = <? echo json_encode($ar_prm)?>;
-            // let get_prm = objectToQueryString(obj_prm);
-            get_prm = `&formId=${id}`;
+            let get_prm = objectToQueryString(obj_prm);
+            get_prm += `&formId=${id}`;
             console.log(get_prm);
             window.location = 'v_answerForm.php?'+get_prm;
         }
