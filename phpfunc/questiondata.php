@@ -4,6 +4,7 @@ session_start();
 $gb_notlogin = true;
 require "../include.inc.php";
 require "customfunction.php";
+require_once ("../class/class.question.php");
 
 // $method = $_GET["method"];
 
@@ -42,7 +43,6 @@ switch ($ar_prm["method"]) {
 
 class ncaapicalling
 {
-    //Thanks to p'JJ aka MASTER'JJ
     public function ncaArrayConverter($par_array)
     {
         if (empty($par_array)) {
@@ -82,8 +82,9 @@ class ncaapicalling
     {   
 
         global $go_ncadb;
+        $ncaquestion = new question();
 
-        if($post['search']){
+        if($post['search']['value']){
             $textSearch = $post['search']['value'];
             $serach = " AND Q.question_name LIKE '%".iconv('utf-8', 'tis-620', $textSearch)."%' ";
         }
@@ -116,6 +117,34 @@ class ncaapicalling
         $result = $go_ncadb->ncaretrieve($sql_data, "question");
         $data = array();
         if(count($result) > 0){
+
+            $arrCompfunc = array();
+            $arrcompfunc = $ncaquestion->getCompfuncData();
+            if($arrcompfunc['respCode'] == "1"){
+                $compfun = $arrcompfunc['data'];
+                foreach ($compfun as $key1 => $value1) {
+                    $arrCompfunc[$value1['compfunc_id']] = $value1;
+                }
+            }
+
+            $arrCompfuncdep = array();
+            $arrcompfuncdep = $ncaquestion->getDepartmentData();
+            if($arrcompfuncdep['respCode'] == "1"){
+                $compfuncdep = $arrcompfuncdep['data'];
+                foreach ($compfuncdep as $key1 => $value1) {
+                    $arrCompfuncdep[$value1['department_id']] = $value1;
+                }
+            }
+
+            $arrCompfuncdepsec = array();
+            $arrcompfuncdepsec = $ncaquestion->getSectionData();
+            if($arrcompfuncdepsec['respCode'] == "1"){
+                $compfuncdepsec = $arrcompfuncdepsec['data'];
+                foreach ($compfuncdepsec as $key1 => $value1) {
+                    $arrCompfuncdepsec[$value1['section_id']] = $value1;
+                }
+            }
+
             foreach ($result as $key => $value) {
 
                 if($value['question_recspid'] > 0){
@@ -123,21 +152,10 @@ class ncaapicalling
                     $res = $go_ncadb->ncaretrieve($sql, "icms");
                     $value['question_recname'] = $res[0]['staff_dspnm'];
                 }
-                if($value['question_compfunc'] > 0){
-                    $sqlmcompfunc = "SELECT m_compfunc_name_th FROM m_compfunc WHERE m_compfunc = '".$value['question_compfunc']."' ";
-                    $arr_mcompfunc = $go_ncadb->ncaretrieve($sqlmcompfunc, "icms");
-                    $value['question_compfuncname'] = $arr_mcompfunc[0]['m_compfunc_name_th'];
-                }
-                if($value['question_compfuncdep'] > 0){
-                    $sqlmcompfuncdep = "SELECT m_compfuncdep_name_th FROM m_compfuncdep WHERE m_compfuncdep = '".$value['question_compfuncdep']."' ";
-                    $arr_mcompfuncdep = $go_ncadb->ncaretrieve($sqlmcompfuncdep, "icms");
-                    $value['question_compfuncdepname'] = $arr_mcompfuncdep[0]['m_compfuncdep_name_th'];
-                }
-                if($value['question_questioncategories'] > 0){
-                    $sqlmquestiontype = "SELECT questioncategories_name FROM tb_questioncategories WHERE questioncategories = '".$value['question_questioncategories']."' ";
-                    $arr_mquestiontype= $go_ncadb->ncaretrieve($sqlmquestiontype, "question");;
-                    $value['question_questioncategoriesname'] = $arr_mquestiontype[0]['questioncategories_name'];
-                }
+
+                $value['question_compfuncname'] = $arrCompfunc[$value['question_compfunc']]['compfunc_name'];
+                $value['question_compfuncdepname'] =  $arrCompfuncdep[$value['question_compfuncdep']]['department_name'];
+                $value['question_compfuncdepsecname'] =  $arrCompfuncdepsec[$value['question_compfuncdepsec']]['section_name'];
 
                 if($value['question_modispid']){
 
@@ -157,7 +175,8 @@ class ncaapicalling
             "params" => $post,
             "draw" => $post['draw'],
             "recordsTotal" => $resultCount[0]["count"],
-            "data" => $this->ncaArrayConverter($data),
+            // "data" => $this->ncaArrayConverter($data),
+            "data" => $data,
             "recordsFiltered" => $resultCount[0]["count"],
             "sql" => $sql_data,
             "sqlCount" => $sqlCount,
