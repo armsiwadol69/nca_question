@@ -55,9 +55,12 @@
 
             }else if($type == "2"){
                 //Outlet
+
+                $str_search = $ref;
                 
             }else if($type == "3"){
-                //Bus
+
+                $str_search = $ref;
 
             }
 
@@ -74,6 +77,7 @@
             $mainSql = "";
 
             if($type == "1"){
+
                 $mainSql = "SELECT
                             answer
                             FROM
@@ -83,11 +87,51 @@
                             answer_staff = '$str_search' AND
                             answer_recdate BETWEEN '$startDate' AND '$endDate' AND
                             answer_active = '1'";
+
+            }else if($type =="2"){
+
+                $mainSql = "SELECT
+                            answer
+                            FROM
+                            tb_answer
+                            WHERE
+                            answer_type = '$type' AND
+                            answer_outlet = '$str_search' AND
+                            answer_recdate BETWEEN '$startDate' AND '$endDate' AND
+                            answer_active = '1'";
+
+            }else if($type =="3"){
+
+                $mainSql = "SELECT
+                answer
+                FROM
+                tb_answer
+                WHERE
+                answer_type = '$type' AND
+                answer_busref = '$str_search' AND
+                answer_recdate BETWEEN '$startDate' AND '$endDate' AND
+                answer_active = '1'";
+
             }
 
             $excAnswer = $go_ncadb->ncaretrieve($mainSql, "question");
 
             $answerWithKey = $this->ncaArrayConverter($excAnswer);
+
+            if(!$answerWithKey){
+                $ar_rtn = array(
+                    "resCode" => "1",
+                    "resMsg" => "this ref has no record",
+                    "ref" => $refObj,
+                    "type" => $type,
+                    "point" => 0,
+                    "data" => array(),
+                    "allmistake" => array()
+                );
+
+                return json_encode($ar_rtn);
+
+            }
 
             $ar_answer = array();
 
@@ -96,8 +140,6 @@
             }
 
             $sqlIn = $this->arrayToSqlInClause($ar_answer);    
-
-    
             
             $sqlAnswerDt = "SELECT
                             tb_answerdt.*,

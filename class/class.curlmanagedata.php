@@ -91,4 +91,58 @@ class curlManageData
             }
         }
     }
+
+    function getBusAllBusNumber(){
+
+        $go_ncadb  = new ncadb();
+
+        $sql = "SELECT
+                busrecord.*
+                FROM
+                busrecord
+                LEFT JOIN
+                bus
+                ON 
+                bus.bus = busrecord.busrecord_bus
+                WHERE
+                busrecord.busrecord_status = 1 AND
+                busrecord.busrecord_active = 1 AND
+                bus.bus_active = 1
+                GROUP BY busrecord.busrecord_number";
+
+        $exc = $go_ncadb->ncaretrieve($sql, "icms");
+
+        $excReformat = $this->TisToUtfArrayConverter($exc);
+
+        $rtn_ar = array();
+
+        foreach ($excReformat as $kk => $vv) {
+            $rtn_ar[] = array(
+                "busnumber" => $vv["busrecord_number"],
+                "busrecord" => $vv["busrecord"],
+            );
+        }
+
+        
+        return $rtn_ar;
+    }
+
+        function TisToUtfArrayConverter($par_array)
+    {
+        if (empty($par_array)) {
+            return array();
+        }
+        $ar = array();
+        foreach ($par_array as $key => $value) {
+            $xx = array();
+            foreach ($par_array[$key] as $k => $v) {
+                if (is_int($k)) {
+                    continue;
+                }
+                $xx[$k] = iconv('tis-620', 'utf-8', $v);
+            }
+            $ar[$key] = $xx;
+        }
+        return $ar;
+    }
 }
