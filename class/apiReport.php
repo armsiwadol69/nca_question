@@ -22,7 +22,7 @@
 
     switch ($method) {
         case 'getReport':
-            echo $reportGenerator->getReport($ar_prm["type"],$ar_prm["ref"]);
+            echo $reportGenerator->getReport($ar_prm["type"],$ar_prm["ref"],$ar_prm["startDate"],$ar_prm["endDate"]);
             break;
         default:
             echo json_encode(array("resCode" => "99", "resMsg" => "No Method was specified"));
@@ -78,6 +78,8 @@
                             answer_recdatetime BETWEEN '$startDate' AND '$endDate' AND
                             answer_active = '1'";
             }
+
+            echo $mainSql;
         }
 
 
