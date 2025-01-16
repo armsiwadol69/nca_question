@@ -1,5 +1,5 @@
 <?php
-    header('Content-Type: text/html; charset=utf-8');
+    header('Content-Type: application/json; charset=utf-8');
     date_default_timezone_set("Asia/Bangkok");
     $gb_notlogin = true;
 
@@ -15,6 +15,8 @@
             $ar_prm[$k] = $v;
         }
     }
+
+    $go_ncadb = new ncadb();
 
     $reportGenerator = new ReportGenerator();
 
@@ -39,11 +41,15 @@
 
             $str_search = "";
 
+            $refObj = array();
+
             if($type == "1"){
                 //Staff
                 $staffInfo = $this->getEmpCode($ref);
 
                 $ar_staff = json_decode($staffInfo, true);
+
+                $refObj = $ar_staff["data"][0];
 
                 $str_search = $ar_staff["data"][0]["empicms_id"];
 
@@ -75,11 +81,116 @@
                             WHERE
                             answer_type = '$type' AND
                             answer_staff = '$str_search' AND
-                            answer_recdatetime BETWEEN '$startDate' AND '$endDate' AND
+                            answer_recdate BETWEEN '$startDate' AND '$endDate' AND
                             answer_active = '1'";
             }
 
-            echo $mainSql;
+            $excAnswer = $go_ncadb->ncaretrieve($mainSql, "question");
+
+            $answerWithKey = $this->ncaArrayConverter($excAnswer);
+
+            $ar_answer = array();
+
+            foreach ($answerWithKey as $kk => $vv) {
+                $ar_answer[$kk] = $vv["answer"];
+            }
+
+            $sqlIn = $this->arrayToSqlInClause($ar_answer);    
+
+    
+            
+            $sqlAnswerDt = "SELECT
+                            tb_answerdt.*,
+                            tb_question.question_name,
+                            tb_questiondt.questiondt,
+                            tb_questiondt.questiondt_title,
+                            tb_questionoption.questionoption_name,
+                            tb_questionoption.questionoption_mistakelevel,
+                            tb_mistakelevel.mistakelevel_shortname,
+                            tb_mistakelevel.mistakelevel_name,
+                            tb_mistakelevel.mistakelevel_value AS 'weight'
+                            FROM
+                            tb_answerdt 
+                            LEFT JOIN tb_question ON tb_answerdt.answerdt_question = tb_question.question
+                            LEFT JOIN tb_questiondt ON tb_answerdt.answerdt_questiondt = tb_questiondt.questiondt
+                            LEFT JOIN tb_questionoption ON tb_answerdt.answerdt_optionid = tb_questionoption.questionoption
+                            LEFT JOIN tb_mistakelevel ON tb_questionoption.questionoption_mistakelevel = tb_mistakelevel.mistakelevel                            
+                            WHERE
+                            answerdt_answer $sqlIn
+                            AND answerdt_value = '0' 
+                            ORDER BY
+                            answerdt DESC";
+            
+            $excAnswerDt = $go_ncadb->ncaretrieve($sqlAnswerDt, "question");
+
+            $answerDtWithKey = $this->ncaArrayConverter($excAnswerDt);
+
+            $result = array();
+
+            $grouped = array();
+
+            $totalPoint = 0;
+            
+            foreach ($answerDtWithKey as $item) {
+
+                $questiondt = $item['questiondt'];
+            
+                if (!isset($grouped[$questiondt])) {
+                    $grouped[$questiondt] = array(
+                        "question_name" => $item["question_name"],
+                        "questiondt" => $item["questiondt"],
+                        "questiondt_title" => $item["questiondt_title"],
+                        "questionoption_name" => $item["questionoption_name"],
+                        "questionoption_mistakelevel" => $item["questionoption_mistakelevel"],
+                        "mistakelevel_shortname" => $item["mistakelevel_shortname"],
+                        "mistakelevel_name" => $item["mistakelevel_name"],
+                        "weight" => $item["weight"],
+                        "count" => 0
+                    );
+                }
+                
+                $totalPoint += $item["weight"];
+
+                $grouped[$questiondt]['count']++;
+
+            }
+            
+            $result = array_values($grouped);
+
+            //To be use in usort
+            function compare_by_count($a, $b) {
+                if ($a['count'] == $b['count']) {
+                    return 0;
+                }
+                return ($a['count'] < $b['count']) ? 1 : -1;
+            }
+            
+            usort($result, 'compare_by_count');
+
+            if(empty($result)){
+                $ar_rtn = array(
+                    "resCode" => "2",
+                    "resMsg" => "Record is clean",
+                    "ref" => $refObj,
+                    "type" => $type,
+                    "point" => $totalPoint,
+                    "data" => $result,
+                    "allmistake" => $answerDtWithKey
+                );
+            }else{
+                $ar_rtn = array(
+                    "resCode" => "1",
+                    "resMsg" => "Successfully",
+                    "ref" => $refObj,
+                    "type" => $type,
+                    "point" => $totalPoint,
+                    "data" => $result,
+                    "allmistake" => $answerDtWithKey
+                );
+            }
+            
+            return json_encode($ar_rtn);
+
         }
 
 
@@ -123,6 +234,37 @@
             $response = curl_exec($curl);
             curl_close($curl);
             return $response;
+        }
+
+        public function ncaArrayConverter($par_array){
+            if (empty($par_array)) {
+                return array();
+            }
+            $ar = array();
+            foreach ($par_array as $key => $value) {
+                $xx = array();
+                foreach ($par_array[$key] as $k => $v) {
+
+                    if (is_int($k)) {
+                        continue;
+                    }
+
+                    $xx[$k] = $v;
+                }
+                $ar[$key] = $xx;
+            }
+            return $ar;
+        }
+
+        function arrayToSqlInClause($array) {
+
+            $escapedValues = array();
+        
+            foreach ($array as $value) {
+                $escapedValues[] = "'" . addslashes($value) . "'";
+            }
+        
+            return "IN (" . implode(", ", $escapedValues) . ")";
         }
        
     }

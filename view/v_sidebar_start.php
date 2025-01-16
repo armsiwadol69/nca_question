@@ -37,6 +37,7 @@
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_questionmode.php" id="listquestionmode"><b><i class="bi bi-arrow-right-circle"></i></b> ประเภทคำถาม </a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_activities.php" id="listactivities"><b><i class="bi bi-arrow-right-circle"></i></b> ลักษณะของการตรวจ </a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_mistakelevel.php" id="listmistakelevel"><b><i class="bi bi-arrow-right-circle"></i></b> กำหนดน้ำหนักความผิด </a>
+            <a class="list-group-item list-group-item-action p-3 text-left" href="rpt_individual.php" id="rptindividual"><b><i class="bi bi-arrow-right-circle"></i></b> รายงานสถิติความผิดรายบุคคล </a>
 
         </div>
         <div class="sidebar-footer list-group list-group-flush d-flex">

@@ -532,4 +532,5 @@ function arrayToInputsBootstrap($array) {
             }
         );
     }
+    
     </script>

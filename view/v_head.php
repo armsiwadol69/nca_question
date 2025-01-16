@@ -42,6 +42,7 @@ header('Content-Type: text/html; charset=utf-8');
     <!-- bootstrap-multiselect -->
     <link rel="stylesheet" href="../assets/bootstrap-multiselect/select2.min.css?v=<?php echo $version; ?>">
     <link rel="stylesheet" href="../assets/bootstrap-multiselect/select2-bootstrap-5-theme.min.css?v=<?php echo $version; ?>">
+    <link rel="stylesheet" href="../assets/daterangepicker/daterangepicker.css">
     <!-- bootstrap-multiselect -->
 </head>
 <body>
