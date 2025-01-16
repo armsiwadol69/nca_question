@@ -2,7 +2,7 @@
 session_start();
 include_once 'v_head.php';
 include_once 'v_sidebar_start.php';
-require_once ("../class/class.question.php");
+// require_once ("../class/class.question.php");
 // ini_set('memory_limit', '2048M');
 
 $go_ncadb = new ncadb();

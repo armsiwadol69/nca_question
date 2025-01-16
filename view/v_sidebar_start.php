@@ -1,5 +1,9 @@
 <?php 
-    include_once '../phpfunc/loadingIndicator.php';
+    include_once ('../phpfunc/loadingIndicator.php');
+    require_once ("../class/class.question.php");
+    require_once ("../class/class.answer.php"); 
+    require_once ("../class/class.renderView.php");
+    require_once ("../class/class.curlmanagedata.php");
 ?>
 <div class="d-flex" id="wrapper">
     <div class="border-end text-white shadow" id="sidebar-wrapper">
@@ -27,6 +31,8 @@
 
             <a class="list-group-item list-group-item-action p-3 text-left" href="addquestion.php" id="listquestion"><b><i class="bi bi-arrow-right-circle"></i></b> เพิ่มชุดคำถาม original</a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_question.php" id="listquestion"><b><i class="bi bi-arrow-right-circle"></i></b> รายการชุดคำถาม original</a>
+
+            <a class="list-group-item list-group-item-action p-3 text-left" href="list_answer.php" id="listquestion"><b><i class="bi bi-arrow-right-circle"></i></b> รายการคำตอบ</a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_questiongroup.php" id="listquestiongroup"><b><i class="bi bi-arrow-right-circle"></i></b> กลุ่มคำถาม </a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_questionmode.php" id="listquestionmode"><b><i class="bi bi-arrow-right-circle"></i></b> ประเภทคำถาม </a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_activities.php" id="listactivities"><b><i class="bi bi-arrow-right-circle"></i></b> ลักษณะของการตรวจ </a>
