@@ -130,6 +130,7 @@ class NcaQuestionForm {
         $sqlObj[$ii++] = new TField("statanswer_recdsnm", $data["empname"], "string");
         $sqlObj[$ii++] = new TField("statanswer_recspcode", $data["empcode"], "string");
         $sqlObj[$ii++] = new TField("statanswer_recdatetime", $g_datetime, "string");
+        $sqlObj[$ii++] = new TField("statanswer_recdate", $g_date, "string");
 
         $sqlInsert->SetField($sqlObj);
         $query = $sqlInsert->InsertSql();

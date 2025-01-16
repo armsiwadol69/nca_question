@@ -119,6 +119,8 @@ class ncaQuestion{
         global $debugMode;
 
         $datetime = date('Y-m-d H:i:s');
+
+        $date = date('Y-m-d');
        
         if($debugMode){
             echo "<pre>";
@@ -151,6 +153,8 @@ class ncaQuestion{
                 $sqlBuild[$i++] = new TField("answer_active", '1', "string");
                 $sqlBuild[$i++] = new TField("answer_recspid", $answer_userId, "string");
                 $sqlBuild[$i++] = new TField("answer_recdatetime", $datetime, "string");
+                $sqlBuild[$i++] = new TField("answer_recdate", $date, "string");
+                $sqlBuild[$i++] = new TField("answer_type", $checkType, "string");
 
                 //IF FOR EACH CHECK TYPE 1, 2 and 3 (Staff, Outlet and Bus)
 
