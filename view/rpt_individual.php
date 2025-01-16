@@ -36,7 +36,7 @@ td {
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                 <div class="card w-100 h-100 shadow-sm">
                     <div class="card-header">
-                        ระบุข้อมูลที่ต้องการ
+                        พารามิเตอร์
                     </div>
                     <div class="card-body p-0">
 
@@ -60,7 +60,7 @@ td {
                             <label class="btn btn-outline-primary border border-primary" for="check_type_2">สาขา</label>
 
                             <input type="radio" class="btn-check btn-check-type-group" name="check_type" id="check_type_3" value="3" autocomplete="off" required>
-                            <label class="btn btn-outline-primary border border-primary disabled" for="check_type_3">รถ</label>
+                            <label class="btn btn-outline-primary border border-primary" for="check_type_3">รถ</label>
                         </div>
                         <div class="frm-check-type-1 w-100 p-2" id="frm-check-type-1" hidden>
                             <!-- emp -->
@@ -84,24 +84,47 @@ td {
                         </div>
                         <div class="frm-check-type-2 w-100 p-2" id="frm-check-type-2" hidden>
                             <!-- outlet -->
-                            <div class="form-floating">
-                                <select class="form-select rounded-0 input-t-2" id="outletId" name="outletId" aria-label="สาขา">
-                                    <option value="" disabled selected>เลือก...</option>
-                                    <?
-                                        $sec_outletlist = $curlNcaData->getoutlet();
-                                        foreach ($sec_outletlist["data"] as $rk => $rv) {
-                                            echo '<option value="'.$rv['outlet_id'].'">'.$rv['outlet_nameth'].' ('.$rv['outlet_nmth'].')'.'</option>';
-                                        }
-                                    ?>
-                                </select>
-                                <label for="สาขา">สาขา</label>
+                            <div class="row g-2">
+                                <div class="col-10">
+                                    <div class="form-floating">
+                                        <select class="form-select rounded-0 input-t-2" id="outletId" name="outletId" aria-label="สาขา">
+                                            <option value="" disabled selected>เลือก...</option>
+                                            <?
+                                                $sec_outletlist = $curlNcaData->getoutlet();
+                                                foreach ($sec_outletlist["data"] as $rk => $rv) {
+                                                    echo '<option value="'.$rv['outlet_id'].'">'.$rv['outlet_nameth'].' ('.$rv['outlet_nmth'].')'.'</option>';
+                                                }
+                                            ?>
+                                        </select>
+                                        <label for="สาขา">สาขา</label>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-sm btn-info btn-emp-search w-100 rounded-0 h-100" type="button" onclick="getReport();">ค้นหา</button>
+                                </div>
                             </div>
                         </div>
                         <div class="frm-check-type-3 w-100 p-2" id="frm-check-type-3" hidden>
                             <h5 class="mb-2">ข้อมูลรถ</h5>
                             <!-- bus -->
-                            <div class="row g-1">
-                                <?php //echo arrayToInputsBootstrap($_GET);?>
+                            <div class="row g-2">
+                                <div class="col-10">
+                                    <div class="form-floating">
+                                        <select class="form-select rounded-0 input-t-3" id="busnumber" name="busnumber" aria-label="สาขา">
+                                            <option value="" disabled selected>เลือก...</option>
+                                            <?
+                                                $sec_bus = $curlNcaData->getBusAllBusNumber();
+                                                foreach ($sec_bus as $rk => $rv) {
+                                                    echo '<option value="'.$rv['busnumber'].'">'.$rv['busnumber'].' ('.$rv['busrecord'].')'.'</option>';
+                                                }
+                                            ?>
+                                        </select>
+                                        <label for="เบอร์รถ">เบอร์รถ</label>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-sm btn-info btn-emp-search w-100 rounded-0 h-100" type="button" onclick="getReport();">ค้นหา</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -126,7 +149,7 @@ td {
                     </div>
                     <div clas="card-body">
                         <div class="col-12">
-                            <div class="table-responsive w-100 p-1">
+                            <div class="table-responsive w-100 p-3">
                                 <table id="table_history" class="table table-bordered table-striped shadow-sm w-100">
                                     <thead class="text-bg-primary" style="vertical-align: middle;">
                                         <tr>
@@ -408,7 +431,7 @@ td {
 
         } else if (searchType == "3") {
 
-            //NOT NOW
+            ref = $("#busnumber").val();
         }
 
         const apiEndpoint = "../class/apiReport.php";
