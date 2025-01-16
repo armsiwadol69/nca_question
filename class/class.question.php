@@ -527,6 +527,7 @@ class question
             $sqlObj[$ii++] = new TField("question_compfuncdepsec", $info['staffcompfuncdepsec'], "string");
             $sqlObj[$ii++] = new TField("question_questioncategories", $info['mquestiontype'], "string");
             $sqlObj[$ii++] = new TField("question_questioncategroup", $info['questiongroup'], "string");
+            // $sqlObj[$ii++] = new TField("question_questionmode", $info['questionmode'], "string");
             $sqlObj[$ii++] = new TField("question_questionmode", $info['questionmode'], "string");
             // $sqlObj[$ii++] = new TField("question_departmentid", $info['departmentid'], "string");
             // $sqlObj[$ii++] = new TField("question_offensegroupid", $info['offensegroupid'], "string");
@@ -1858,6 +1859,5 @@ class question
 
 		return $rtDate;
 	}
-
 
 }
