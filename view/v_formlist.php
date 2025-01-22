@@ -109,7 +109,7 @@
                     foreach ($questionList as $key => $formData) {
 
                         if($formData["question_questioncategories"] != "1"){
-                            continue;
+                            // continue;
                         }
 
                         if( ($no % 2) != 0 ) {
