@@ -4,6 +4,7 @@ class answer extends question
     public $answerid;
     public $name;
     public $question = array();
+    public $questionData = array();
 
     function __construct($answerid=0,$questionid=0) {
         if($answerid){
@@ -27,6 +28,7 @@ class answer extends question
 
         $sql = "SELECT * FROM tb_answer WHERE answer= '".$this->answerid."'";
         $res = $go_ncadb->ncaretrieve($sql, "question");
+        $this->questionData = $res[0];
         return $res;
 
     }
@@ -37,10 +39,9 @@ class answer extends question
                     * 
                 FROM tb_answerdt AD
                     LEFT JOIN tb_questiondt AS QDT ON(QDT.questiondt=AD.answerdt_questiondt)
-                    LEFT JOIN tb_questionoption AS QOP ON (QOP.questionoption_questiondt=QDT.questiondt)
+                    -- LEFT JOIN tb_questionoption AS QOP ON (QOP.questionoption_questiondt=QDT.questiondt)
                 WHERE 
-                    answerdt_answer = '".$this->answerid."'";
-        
+                    answerdt_answer = '".$this->answerid."' ORDER BY questiondt_order ASC";
         $res = $go_ncadb->ncaretrieve($sql, "question");
         return $res;
     }
@@ -53,7 +54,8 @@ class answer extends question
 
             $html = "";
             global $go_ncadb;
-            $sql        = "SELECT * FROM tb_questiondt WHERE ".$field." = '".$questiondt."' AND questiondt_active = '1' ";
+            $sql        = "SELECT * FROM tb_answerdt AS ADT LEFT JOIN tb_questiondt AS QDT  ON (QDT.questiondt=ADT.answerdt_questiondt) WHERE ".$field." = '".$questiondt."' AND questiondt_active = '1' ";
+
             if($after > 0){
                 $sql .= " AND questiondt_after = '".$after."'";
                 $isHidden = "hidden";
@@ -69,8 +71,6 @@ class answer extends question
             $data       = $this->ncaArrayConverter($dataOption);
             
             if($data){
-                $sqlOptionType = "SELECT * FROM tb_questiontype WHERE questiontype_active = 1 ";
-                $arr_OptionType = $go_ncadb->ncaretrieve($sqlOptionType, "question");
 
                 $html = "";
 
@@ -79,11 +79,10 @@ class answer extends question
                     array_push($questionArray,$value['questiondt']);
 
                     $pid  = $this->generateRandomString(15);
-                    $opid = $this->generateRandomString(15);
-                    $inputTypeName = $this->getInpustType("questiontype",$value['questiondt_questiontype']);
-                        $html .= "<h5 class='answerTitle my-3' id='questionTitle$questiondt' $isHidden>".$value['questiondt_title']."</h5>";
-                        $html .= "<div class='answerBox' id='questionBox$questiondt' $isHidden>".$this->genareteViewOptions($value['questiondt'],$pid,$value,$questionArray, "")."</div>";
-                        // $html .='<div>';
+                    // $inputTypeName = $this->getInpustType("questiontype",$value['questiondt_questiontype']);
+                        $html .= "<h5 class='answerTitle my-1' id='questionTitle$questiondt' $isHidden>".$value['questiondt_title']."</h5>";
+                        $html .= "<div class='answerBox' id='questionBox$questiondt' $isHidden>".$this->genareteViewOptionsAnswer($value['questiondt'],$pid,$value,$questionArray, "")."</div>";
+                    // $html .='<div>';
                     $html .= '<input type="hidden" name="allquestionName[]" id="allquestionName_'.$value['questiondt'].'" value="'.$value['questiondt'].'" />';
                     $html .= '</div>';
                     
@@ -100,7 +99,7 @@ class answer extends question
 
     }
 
-    function genareteViewOptions($question,$pid,$dataParent,$questionArray, $isHidden)
+    function genareteViewOptionsAnswer($question,$pid,$dataParent,$questionArray, $isHidden)
     {
         global $go_ncadb;
 
@@ -120,14 +119,61 @@ class answer extends question
         $html = "<div>";
             
         $inputTypeName = $this->getInpustType("questiontype",$dataParent['questiondt_questiontype']);
+
+        // echo "<pre>----------------------------****----------------1111-------------------";
+        // print_r($dataParent);
+        // print_r($this->questionData);
+        // echo "</pre>---------------------------****----------------11111-------------------";
+        // echo "---------------------------****-----------------------------------<br>";
+        
         foreach ($data as $key => $value) {
             $order = ($key + 1);
             $sql_parent = "SELECT * FROM tb_questiondt WHERE questiondt_parent = '".$dataParent['questiondt']."' AND questiondt_after = '".$order."'";
             $dp         = $go_ncadb->ncaretrieve($sql_parent, "question");
             $dataP      = $this->ncaArrayConverter($dp);
 
-            $html .= ' <div class="list-group-item answer border-none ms-5" data-id="question'.$value['questionoption_questiondt'].'"'.' style >'.' 
-                            '.$this->createAnswerByType('optionid'.$value['questionoption_questiondt'],'optionid'.$value['questionoption_questiondt'].'',$dataParent['questiondt_questiontype'],$value['questionoption_order'],$value["questionoption_name"],$value["questionoption"]).
+            /* echo "<pre>";
+            print_r($value);
+            echo "</pre>"; */
+            $result ="";
+            if($dataParent['answerdt_order'] == $value['questionoption_order']){
+
+                switch ($dataParent['answerdt_questiontype']) {
+                    case '1':
+                        $result = $dataParent['answerdt_value'];
+                        break;
+                    case '2':
+                        $result = $dataParent['answerdt_value'];
+                        break;
+                    case '3':
+                        $result = $this->dateThai($dataParent['answerdt_value']);
+                        // $result = $dataParent['answerdt_value'];
+                        break;
+                    case '4':
+                        $result = "checked";
+                        break;
+                    case '5':
+                        $result = "checked";
+                        break;
+                    default:
+                        $result = "";
+                        break;
+                }
+               
+            }
+
+            $offenseName = "";
+            if($this->questionData['answer_questionmode'] == "2"){
+                $datamistakelevel = $this->getDataMistakelevelByAnswerOption($value['questionoption']);
+                if($datamistakelevel['mistakelevel'] > 0){
+                    $offenseName = " <span class='text-danger'>( ความผิด : ".$datamistakelevel['mistakelevel_name']." )</span>";
+                }
+            }
+
+            // echo "result ".$value['questionoption_order']." : ".$result."<br>";
+
+            $html .= ' <div class="list-group-item answer border-none ms-2" data-id="question'.$value['questionoption_questiondt'].'"'.' style >'.' 
+                            '.$this->createAnswerByType('optionid'.$value['questionoption_questiondt'],'optionid'.$value['questionoption_questiondt'].'',$dataParent['questiondt_questiontype'],$value['questionoption_order'],$value["questionoption_name"],$value["questionoption"],$result).$offenseName.
                             $this->createFileUploader($value['questionoption_images'],'optionid'.$value['questionoption_questiondt'],$value['questionoption_questiondt'].'',$dataParent['questiondt_questiontype'],$value['questionoption_order'],$value["questionoption_name"],$value["questionoption"]).'
                             <div class="list-group-item '.(count($dataP) > 0 ? "" : "hide" ).' questionquestion'.$value['questionoption_questiondt'].$key.' ms-3 mt-3 mb-3" data-id="'.$pid.'" >
                                 '.$this->genareteViewAnswerFormData("questiondt_parent",$dataParent['questiondt'],$order,$value,$questionArray).'
@@ -135,8 +181,10 @@ class answer extends question
 
             $html .= "</div>";
         }
+
+        // echo "---------------------------****-----------------------------------<br>";
     
-        return $html;
+        return $html."<hr>";
     }
 
     function getInpustType($field="",$data="")
@@ -162,22 +210,23 @@ class answer extends question
         }
     }
 
-    function createAnswerByType($id,$name,$type, $order, $text, $dt){
+
+    function createAnswerByType($id,$name,$type, $order, $text, $dt, $result=""){
         switch ($type) {
             case '1':
-                return ' <input type="text" class="form-control" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="" aria-label="คำตอบ" aria-describedby="คำตอบ" required>';
+                return ' <input type="text" class="form-control" id="inputId'.$dt.'" name="'.$name.'" value="'.$result.'" aria-label="คำตอบ" aria-describedby="คำตอบ" required>';
             case '2':
                 return '
                             <label for="inputId'.$dt.'">จำนวนที่พบ</label>
-                            <input type="number" class="form-control form-control-inline" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="0" min="0" max="69" aria-label="คำตอบ" aria-describedby="คำตอบ" required>
+                            <input type="number" class="form-control form-control-inline" id="inputId'.$dt.'" name="'.$name.'"  value="'.$result.'" min="0" max="69" aria-label="คำตอบ" aria-describedby="คำตอบ" required>
                             <span>ครั้ง</span>
                        ';
             case '3':
-                return ' <input type="date" class="form-control" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="" aria-label="คำตอบ" aria-describedby="คำตอบ">';
+                return ' <input type="text" class="form-control" id="inputId'.$dt.'" name="'.$name.'" value="'.$result.'" aria-label="คำตอบ" aria-describedby="คำตอบ">';
             case '4':
-                return ' <input type="radio" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ" required    >'." ".$order.".".' <label for="inputId'.$dt.'">'.$text.'</label>';
+                return ' <input type="radio" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'" aria-label="คำตอบ" aria-describedby="คำตอบ" required '.$result.' disable>'." ".$order.".".' <label for="inputId'.$dt.'">'.$text.'</label>';
             case '5':
-                return ' <input type="checkbox" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'[]" placeholder="กรอกคำตอบ" value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ">'." ".$order.".".' <label for="inputId'.$dt.'">'.$text.'</label>';
+                return ' <input type="checkbox" class="form-check-input" id="inputId'.$dt.'" name="'.$name.'[]"  value="'.$dt.'" aria-label="คำตอบ" aria-describedby="คำตอบ" '.$result.' disable>'." ".$order.".".' <label for="inputId'.$dt.'">'.$text.'</label>';
             default:
                 break;
         }
@@ -187,6 +236,17 @@ class answer extends question
         if($isRequire == "1"){
             return '<input class="form-control form-control-sm my-2 file-upload-option" type="file" accept="image/png, image/gif, image/jpeg" id="fileUploadOptionId'.$id.'" name="fileUploadOption[]['.$id.']" multiple hidden>';
         }
+    }
+
+    function getDataMistakelevelByAnswerOption($answerdt_optionid){
+        global $go_ncadb;
+        $sql = "SELECT ML.*
+                FROM tb_questionoption AS QOP 
+                    LEFT JOIN tb_mistakelevel AS ML ON (ML.mistakelevel = QOP.questionoption_mistakelevel)
+                WHERE QOP.questionoption = '".$answerdt_optionid."' AND QOP.questionoption_mistakelevel > 0";
+        // echo $sql;
+        $result = $go_ncadb->ncaretrieve($sql, "question");
+        return $result[0];
     }
 
 }

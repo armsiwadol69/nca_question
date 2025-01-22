@@ -136,13 +136,13 @@ class ncaapicalling
 
             foreach ($result as $key => $value) {
 
-                if($value['answer_recspid'] > 0){
+                /* if($value['answer_recspid'] > 0){
                     $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$value['answer_recspid']."' ";
                     $res = $this->ncaArrayConverter($go_ncadb->ncaretrieve($sql, "icms"));
                     $value['answer_recname'] = $res[0]['staff_dspnm'];
                 }else{
                     $value['answer_recname'] = "";
-                }
+                } */
 
                 // $value['question_compfuncname'] = $arrCompfunc[$value['question_compfunc']]['compfunc_name'];
                 // $value['question_compfuncdepname'] =  $arrCompfuncdep[$value['question_compfuncdep']]['department_name'];
@@ -155,7 +155,8 @@ class ncaapicalling
     
                 } */
 
-                $value['answer_recspid'] = $value['answer_recspid'];
+                $value['answer_recspid']     = $value['answer_recspid'];
+                $value['answer_recname']     = $value['answer_recname'];
                 $value['answer_recdatetime'] = $value['answer_recdatetime'];
 
                 $value['currrent_user'] = $_SESSION['userData']['stf'];
@@ -187,7 +188,6 @@ class ncaapicalling
                 $data[] = $value;
             }
         }
-
 
         $rtn = array(
             "resCode" => "1",

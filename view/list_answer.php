@@ -192,9 +192,9 @@ td{
                 answer : answer,
             },
             dataType: "JSON",
-            // beforeSend: function(){
-            //     fireSwalOnSubmit();
-            // },
+            beforeSend: function(){
+                $("#answerquestionbody").html("");
+            },
             success: function(obj)
             {
                 var resinfo = obj.datainfo;
@@ -202,51 +202,78 @@ td{
                 var html = "";
                 html += `<div class="col-lg-12 col-md-12 col-sm-12 p-2">`;
                 html += `    <div class="row"> `;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_staffcompfunc" class="form-label">สายงาน : `+resinfo.compfuncname+`</label>`;
-                html += `        </div>`;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_staffcompfuncdep" class="form-label">ฝ่าย : `+resinfo.compfuncdepname+`</label>`;
-                html += `        </div>`;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_staffcompfuncdepsec" class="form-label">แผนก : `+resinfo.compfuncdepsecname+`</label>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_qdatail" class="form-label">ตรวจ : `+resinfo.answer_type+`</label>`;
+                html += `           </div>`; 
                 html += `        </div>`; 
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_mquestiontype" class="form-label">หมวด : `+resinfo.questioncategories_name+` </label>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_qdatail" class="form-label">วันที่ตรวจ : `+
+                +`</label>`;
+                html += `           </div>`;
                 html += `        </div>`;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_mquestiontype" class="form-label">กลุ่ม : `+resinfo.questiongroup_name+` </label>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_qdatail" class="form-label">รหัสพนักงาน : `+resinfo.staff_code+`</label>`;
+                html += `           </div>`;
                 html += `        </div>`;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_qname" class="form-label">ประเภท : `+resinfo.questionmode_name+`</label>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_qdatail" class="form-label">ชื่อพนักงาน : `+resinfo.staff_name+`</label>`;
+                html += `           </div>`;
                 html += `        </div>`;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_qname" class="form-label">ชื่อของชุดคำถาม : `+resinfo.questiongroup_name+`</label>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_staffcompfunc" class="form-label">สายงาน : `+resinfo.compfuncname+`</label>`;
+                html += `           </div>`;
                 html += `        </div>`;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_qdatail" class="form-label">รายละเอียด : `+resinfo.question_detail+`</label>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_staffcompfuncdep" class="form-label">ฝ่าย : `+resinfo.compfuncdepname+`</label>`;
+                html += `           </div>`;
                 html += `        </div>`;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_qdatail" class="form-label">ผู้ตรวจ : `+resinfo.question_detail+`</label>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_staffcompfuncdepsec" class="form-label">แผนก : `+resinfo.compfuncdepsecname+`</label>`;
+                html += `           </div>`; 
+                html += `        </div>`; 
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_mquestiontype" class="form-label">หมวด : `+resinfo.questioncategories_name+` </label>`;
+                html += `           </div>`;
                 html += `        </div>`;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_qdatail" class="form-label">วันที่ตรวจ : `+dayjs(resinfo.answer_recdatetime, "YYYY-MM-DD hh:mm").format("DD/MM/BBBB HH:mm")+`</label>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_mquestiontype" class="form-label">กลุ่ม : `+resinfo.questiongroup_name+` </label>`;
+                html += `           </div>`;
                 html += `        </div>`;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_qdatail" class="form-label">ตรวจ : `+resinfo.answer_type+`</label>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_qname" class="form-label">ประเภท : `+resinfo.questionmode_name+`</label>`;
+                html += `           </div>`;
                 html += `        </div>`;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_qdatail" class="form-label">รหัสพนักงาน : `+resinfo.staff_code+`</label>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_qname" class="form-label">ชื่อของชุดคำถาม : `+resinfo.questiongroup_name+`</label>`;
+                html += `           </div>`;
                 html += `        </div>`;
-                html += `        <div class="col-lg-6 col-md-6 col-sm-6 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `            <label for="par_qdatail" class="form-label">ชื่อพนักงาน : `+resinfo.staff_name+`</label>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_qdatail" class="form-label">รายละเอียด : `+resinfo.question_detail+`</label>`;
+                html += `           </div>`;
                 html += `        </div>`;
+                html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
+                html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
+                html += `               <label for="par_qdatail" class="form-label">ผู้ตรวจ : `+resinfo.question_detail+`</label>`;
+                html += `           </div>`;
+                html += `        </div>`;
+                html += `    </div>`;
+                html += `    <div class="row p-1"> `;
                 html += `        <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
                 html += `            <div class="row ">`;
                 html += `                <div class="col-md-12 col-lg-12">`;
-
-                html += reshtml;
-                
+                html +=                      reshtml;
                 html += `                </div>`;
                 html += `            </div>`;
                 html += `        </div>`;
