@@ -54,7 +54,13 @@ class answer extends question
 
             $html = "";
             global $go_ncadb;
-            $sql        = "SELECT * FROM tb_answerdt AS ADT LEFT JOIN tb_questiondt AS QDT  ON (QDT.questiondt=ADT.answerdt_questiondt) WHERE ".$field." = '".$questiondt."' AND questiondt_active = '1' ";
+            $sql = "SELECT * 
+                    FROM tb_answerdt AS ADT 
+                        LEFT JOIN tb_questiondt AS QDT  
+                            ON (QDT.questiondt=ADT.answerdt_questiondt) 
+                    WHERE 
+                        ".$field." = '".$questiondt."' 
+                        AND ADT.answerdt_answer = '".$this->answerid."' ";
 
             if($after > 0){
                 $sql .= " AND questiondt_after = '".$after."'";

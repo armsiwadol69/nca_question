@@ -172,18 +172,20 @@ class ncaapicalling
 
             $arrAnswerinfo['staff_name'] = $staff[2];
 
-            if($datanswerdt){
-                /* echo "<pre>";
-                print_r($datanswerdt);
-                echo "</pre>";
+            /* echo "<pre>";
+            print_r($datanswerdt);
+            echo "</pre>"; */
 
-                exit(); */
+            if($datanswerdt){
+
                 $arr_parent = array();
                 $htmlQuestion = "";
+                $ii = 0;
                 foreach($datanswerdt AS $key => $val){
-                    if(!$val['questiondt_parent']){
-                        $htmlQuestion  .= $ncaanswer->genareteViewAnswerFormData("questiondt",$val['questiondt'],0,$arr_parent);
-                    }
+                    // if(!$val['questiondt_parent']){
+                        $ii++;
+                        $htmlQuestion  .= "II : ".$ii." ".$ncaanswer->genareteViewAnswerFormData("answerdt_questiondt",$val['answerdt_questiondt'],0,$arr_parent);
+                    // }
                 }
             }
         }

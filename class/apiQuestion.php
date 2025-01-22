@@ -152,9 +152,13 @@ class ncaQuestion{
                 $sqlBuild[$i++] = new TField("answer_status", '1', "string");
                 $sqlBuild[$i++] = new TField("answer_active", '1', "string");
                 $sqlBuild[$i++] = new TField("answer_recspid", $answer_userId, "string");
+                $sqlBuild[$i++] = new TField("answer_recname", $answer_username, "string");
                 $sqlBuild[$i++] = new TField("answer_recdatetime", $datetime, "string");
                 $sqlBuild[$i++] = new TField("answer_recdate", $date, "string");
                 $sqlBuild[$i++] = new TField("answer_type", $checkType, "string");
+                $sqlBuild[$i++] = new TField("answer_questioncategories", $ar_prm["answer_questioncategories"], "string");
+                $sqlBuild[$i++] = new TField("answer_questioncategroup", $ar_prm["answer_questioncategroup"], "string");
+                $sqlBuild[$i++] = new TField("answer_questionmode", $ar_prm["answer_questionmode"], "string");
 
                 //IF FOR EACH CHECK TYPE 1, 2 and 3 (Staff, Outlet and Bus)
 
@@ -163,6 +167,9 @@ class ncaQuestion{
                     $answer_remark = $ar_prm["empid"]." | ".$ar_prm["empcode"]." | ".$ar_prm["empname"];
                     $sqlBuild[$i++] = new TField("answer_staff", $ar_prm["empid"], "string");
                     $sqlBuild[$i++] = new TField("answer_remark", $answer_remark);
+                    $sqlBuild[$i++] = new TField("answer_compfunc", $ar_prm["empcomfunc"]);
+                    $sqlBuild[$i++] = new TField("answer_compfuncdep", $ar_prm["empcomfuncdep"]);
+                    $sqlBuild[$i++] = new TField("answer_compfuncdepsec", $ar_prm["empcomfuncdepsec"]);
 
                 }else if($checkType == "2"){
 

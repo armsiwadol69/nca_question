@@ -48,24 +48,27 @@ td{
 <!-- Modal generate Answer question -->
 
 <div class="modal fade" id="generateanswerquestion" tabindex="-1" aria-labelledby="createBatch" aria-hidden="true" >
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5">ผลการตรวจ</h1>
-                    <span class="btn-close" data-bs-dismiss="modal" aria-label="Close"></span>
-                </div>
 
-                <div class="modal-body" id="answerquestionbody">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
 
-                    
-                    
-                </div>
+        <div class="modal-content">
 
+            <div class="modal-header">
+                
+                <h1 class="modal-title fs-5">ผลการตรวจ</h1>
+                <span class="btn-close" data-bs-dismiss="modal" aria-label="Close"></span>
+
+            </div>
+
+            <div class="modal-body" id="answerquestionbody">
+                
             </div>
 
         </div>
 
     </div>
+
+</div>
 
 <!-- </main> -->
 
@@ -209,8 +212,7 @@ td{
                 html += `        </div>`; 
                 html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
                 html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `               <label for="par_qdatail" class="form-label">วันที่ตรวจ : `+
-                +`</label>`;
+                html += `               <label for="par_qdatail" class="form-label">วันที่ตรวจ : `+dayjs(resinfo.answer_recdatetime, "YYYY-MM-DD hh:mm").format("DD/MM/BBBB HH:mm")+`</label>`;
                 html += `           </div>`;
                 html += `        </div>`;
                 html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
@@ -255,7 +257,7 @@ td{
                 html += `        </div>`;
                 html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
                 html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `               <label for="par_qname" class="form-label">ชื่อของชุดคำถาม : `+resinfo.questiongroup_name+`</label>`;
+                html += `               <label for="par_qname" class="form-label">ชื่อของชุดคำถาม : `+resinfo.question_name+`</label>`;
                 html += `           </div>`;
                 html += `        </div>`;
                 html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
@@ -265,7 +267,7 @@ td{
                 html += `        </div>`;
                 html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
                 html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `               <label for="par_qdatail" class="form-label">ผู้ตรวจ : `+resinfo.question_detail+`</label>`;
+                html += `               <label for="par_qdatail" class="form-label">ผู้ตรวจ : `+resinfo.answer_recname+`</label>`;
                 html += `           </div>`;
                 html += `        </div>`;
                 html += `    </div>`;
