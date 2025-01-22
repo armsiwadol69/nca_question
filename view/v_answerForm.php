@@ -29,9 +29,12 @@ if($_GET['formId']){
     $questioninfo = $ncaquestion->getDataQuestion();
     $arr_parent = array();
     $htmlQuestion = "";
-    $formId = $questioninfo[0]["question"];
+    $formId   = $questioninfo[0]["question"];
     $formName = $questioninfo[0]["question_name"];
-    $formDes = $questioninfo[0]["question_detail"];
+    $formDes  = $questioninfo[0]["question_detail"];
+    $answer_questioncategories = $questioninfo[0]["question_questioncategories"];
+    $answer_questioncategroup  = $questioninfo[0]["question_questioncategroup"];
+    $answer_questionmode  = $questioninfo[0]["question_questionmode"];
     foreach($questioninfo AS $key => $val){
         if(!$val['questiondt_parent']){
             $htmlQuestion  .= $ncaquestion->genareteViewFormData("questiondt",$val['questiondt'],0,$arr_parent);
@@ -179,6 +182,9 @@ function arrayToInputsBootstrap($array) {
                                         <h5 class="mb-2">ข้อมูลพนักงาน</h5>
                                         <!-- emp -->
                                         <input type="hidden" name="empid" id="empid" value="" required>
+                                        <input type="hidden" name="empcomfunc" id="empcomfunc" value="" required>
+                                        <input type="hidden" name="empcomfuncdep" id="empcomfuncdep" value="" required>
+                                        <input type="hidden" name="empcomfuncdepsec" id="empcomfuncdepsec" value="" required>
                                         <div class="row g-2">
                                             <div class="col-xl-10 col-lg-10 col-md-9 col-sm-8">
                                                 <div class="form-floating">
@@ -224,6 +230,9 @@ function arrayToInputsBootstrap($array) {
                     </div>
                     <? echo $htmlQuestion; ?>
                     <input type="hidden" name="id" id="id" value="<?echo $formId?>" />
+                    <input type="hidden" name="answer_questioncategories" id="answer_questioncategories" value="<?echo $answer_questioncategories?>" />
+                    <input type="hidden" name="answer_questioncategroup" id="answer_questioncategroup" value="<?echo $answer_questioncategroup?>" />
+                    <input type="hidden" name="answer_questionmode" id="answer_questionmode" value="<?echo $answer_questionmode?>" />
                     <button type="submit" class="btn btn-primary w-100 mt-5 mb-5">บันทึกข้อมูล</button>
                     <!-- <button type="button" class="btn btn-primary w-100" onclick="logFormData('mForm');submitForm();">logFormData</button> -->
                 </form>
@@ -467,6 +476,9 @@ function arrayToInputsBootstrap($array) {
     function setEmpDt(data) {
         $("#empid").val(`${data.empicms_id}`).trigger('change');
         $("#empname").val(`${data.emp_firstname} ${data.emp_lastname}`);
+        $("#empcomfunc").val(`${data.emp_func}`);
+        $("#empcomfuncdep").val(`${data.emp_dep}`);
+        $("#empcomfuncdepsec").val(`${data.emp_sec}`);
     }
 
     async function showLoadingOnQuery() {
