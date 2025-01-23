@@ -553,17 +553,6 @@ include_once 'v_footer.php';
     <?php } ?>
 
     $(function() {
-
-        $('.datepicker').datepicker({
-            format: "dd/mm/yyyy",
-            // todayBtn: "linked",
-            clearBtn: false,
-            multidate: false,
-            language: "th",
-            startDate : gStartDate,
-            endDate : gEndDate,
-            autoclose: true
-        });
         
         handleScriptLoad();
 

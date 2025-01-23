@@ -388,77 +388,77 @@ if($_GET['id'] > 0){
     
 </form>
 
-    <!-- Modal generate input box -->
+<!-- Modal generate input box -->
 
-    <div class="modal fade" id="generateinputbox" tabindex="-1" aria-labelledby="createBatch" aria-hidden="true" >
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5">สร้างคำถาม</h1>
-                    <span class="btn-close" data-bs-dismiss="modal" aria-label="Close"></span>
-                </div>
-                <div class="modal-body">
+<div class="modal fade" id="generateinputbox" tabindex="-1" aria-labelledby="createBatch" aria-hidden="true" >
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">สร้างคำถาม</h1>
+                <span class="btn-close" data-bs-dismiss="modal" aria-label="Close"></span>
+            </div>
+            <div class="modal-body">
 
-                    <!-- <form action="javascript:void(0);" id="frm_category"> -->
+                <!-- <form action="javascript:void(0);" id="frm_category"> -->
 
-                        <div class="row gy-3">
-                            
-                            <div class="col-12">
-                                <label class="form-label" for="option">คำถาม<span class="text-danger">*</span></label>
-                                <input class="form-control" type="text" name="optiontquestion" id="optiontquestion" required>
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label" for="par_icon">ลักษณะของการตรวจ<span class="text-danger">*</span></label>
-                                <select class="form-select" name="activities" id="activities" aria-label="isshowing">
-                                    <option value="0">เลือกลักษณะของการตรวจ</option>
-                                    <?php    
-                                        foreach ($arr_activities as $key => $value) {
-                                            echo '<option value="'.$value['activities'].'">'.$value['activities_name'].'</option>';
-                                        }
-                                    ?>
-                                </select>
-                            </div>
-
-                            <div class="col-12" id="normal_type">
-                                <label class="form-label" for="par_icon">ประเภทคำตอบ<span class="text-danger">*</span></label>
-                                <select class="form-select" name="optiontype" id="optiontype" aria-label="isshowing">
-                                    <option value="0">เลือกประเภทคำตอบ</option>
-                                    <?php    
-                                        foreach ($arr_OptionType as $key => $value) {
-                                            echo '<option value="'.$value['questiontype'].'">'.$value['questiontype_name'].'</option>';
-                                        }
-                                    ?>
-                                </select>
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label" for="option">จำนวน<span class="text-danger">*</span></label>
-                                <input class="form-control" type="number" name="optiontnumber" id="optiontnumber" min="1" required>
-                                
-                                <input type="hidden" name="qmode" id="qmode" value="">
-                                <input type="hidden" name="qtype" id="qtype" value="">
-                                <input type="hidden" name="qinpname" id="qinpname" value="">
-                                <input type="hidden" name="qinpclass" id="qinpclass" value="">
-                                <input type="hidden" name="qafter" id="qafter" value="">
-                                <input type="hidden" name="qafteroption" id="qafteroption" value="">
-       
-                            </div>
-                            
-                            <div class="col-12">
-                                <span id="createOption" class="btn btn-primary w-100" >สร้าง</span>
-                            </div>
+                    <div class="row gy-3">
+                        
+                        <div class="col-12">
+                            <label class="form-label" for="option">คำถาม<span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="optiontquestion" id="optiontquestion" required>
                         </div>
 
-                    <!-- </form> -->
-                    
-                </div>
+                        <div class="col-12">
+                            <label class="form-label" for="par_icon">ลักษณะของการตรวจ<span class="text-danger">*</span></label>
+                            <select class="form-select" name="activities" id="activities" aria-label="isshowing">
+                                <option value="0">เลือกลักษณะของการตรวจ</option>
+                                <?php    
+                                    foreach ($arr_activities as $key => $value) {
+                                        echo '<option value="'.$value['activities'].'">'.$value['activities_name'].'</option>';
+                                    }
+                                ?>
+                            </select>
+                        </div>
 
+                        <div class="col-12" id="normal_type">
+                            <label class="form-label" for="par_icon">ประเภทคำตอบ<span class="text-danger">*</span></label>
+                            <select class="form-select" name="optiontype" id="optiontype" aria-label="isshowing">
+                                <option value="0">เลือกประเภทคำตอบ</option>
+                                <?php    
+                                    foreach ($arr_OptionType as $key => $value) {
+                                        echo '<option value="'.$value['questiontype'].'">'.$value['questiontype_name'].'</option>';
+                                    }
+                                ?>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label" for="option">จำนวน<span class="text-danger">*</span></label>
+                            <input class="form-control" type="number" name="optiontnumber" id="optiontnumber" min="1" required>
+                            
+                            <input type="hidden" name="qmode" id="qmode" value="">
+                            <input type="hidden" name="qtype" id="qtype" value="">
+                            <input type="hidden" name="qinpname" id="qinpname" value="">
+                            <input type="hidden" name="qinpclass" id="qinpclass" value="">
+                            <input type="hidden" name="qafter" id="qafter" value="">
+                            <input type="hidden" name="qafteroption" id="qafteroption" value="">
+    
+                        </div>
+                        
+                        <div class="col-12">
+                            <span id="createOption" class="btn btn-primary w-100" >สร้าง</span>
+                        </div>
+                    </div>
+
+                <!-- </form> -->
+                
             </div>
 
         </div>
 
     </div>
+
+</div>
 
 <!-- </main> -->
 
@@ -611,17 +611,6 @@ include_once 'v_footer.php';
     <?php } ?>
 
     $(function() {
-
-        $('.datepicker').datepicker({
-            format: "dd/mm/yyyy",
-            // todayBtn: "linked",
-            clearBtn: false,
-            multidate: false,
-            language: "th",
-            startDate : gStartDate,
-            endDate : gEndDate,
-            autoclose: true
-        });
         
         handleScriptLoad();
 

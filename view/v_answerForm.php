@@ -139,8 +139,7 @@ function arrayToInputsBootstrap($array) {
                                     <?php echo arrayToInputsBootstrap($_GET);?>
                                 </div>
                             </div>
-                            <button class="btn btn-sm w-100 btn-info my-2" type="button" hidden data-bs-toggle="collapse" data-bs-target="#showGet" aria-expanded="false"
-                                aria-controls="showGet">แสดงข้อมูลรถ</button>
+                            <button class="btn btn-sm w-100 btn-info my-2" type="button" hidden data-bs-toggle="collapse" data-bs-target="#showGet" aria-expanded="false" aria-controls="showGet">แสดงข้อมูลรถ</button>
                         </div>
                         <div class="col-12 text-center">
                             <?
@@ -169,11 +168,11 @@ function arrayToInputsBootstrap($array) {
                                         <input type="radio" class="btn-check btn-check-type-group" name="check_type" id="check_type_1" value="1" autocomplete="off" required>
                                         <label class="btn btn-outline-primary border border-primary" for="check_type_1">บุคคล</label>
 
-                                        <input type="radio" class="btn-check btn-check-type-group" name="check_type" id="check_type_2" value="2" autocomplete="off" required>
-                                        <label class="btn btn-outline-primary border border-primary" for="check_type_2">สาขา</label>
-
-                                        <input type="radio" class="btn-check btn-check-type-group" name="check_type" id="check_type_3" value="3" autocomplete="off" required>
+                                        <input type="radio" class="btn-check btn-check-type-group" name="check_type" id="check_type_3" value="2" autocomplete="off" required>
                                         <label class="btn btn-outline-primary border border-primary" for="check_type_3">รถ</label>
+
+                                        <input type="radio" class="btn-check btn-check-type-group" name="check_type" id="check_type_2" value="3" autocomplete="off" required>
+                                        <label class="btn btn-outline-primary border border-primary" for="check_type_2">สาขา</label>
                                     </div>
                                     <div class="w-100 p-2">
                                         <hr>
@@ -208,11 +207,11 @@ function arrayToInputsBootstrap($array) {
                                             <select class="form-select rounded-0 input-t-2" id="outletId" name="outletId" aria-label="สาขา">
                                                 <option value="" disabled selected>เลือก...</option>
                                                 <?
-                                        $sec_outletlist = $curlNcaData->getoutlet();
-                                        foreach ($sec_outletlist["data"] as $rk => $rv) {
-                                            echo '<option value="'.$rv['outlet_id'].'">'.$rv['outlet_nameth'].' ('.$rv['outlet_nmth'].')'.'</option>';
-                                        }
-                                    ?>
+                                                    $sec_outletlist = $curlNcaData->getoutlet();
+                                                    foreach ($sec_outletlist["data"] as $rk => $rv) {
+                                                        echo '<option value="'.$rv['outlet_id'].'">'.$rv['outlet_nameth'].' ('.$rv['outlet_nmth'].')'.'</option>';
+                                                    }
+                                                ?>
                                             </select>
                                             <label for="สาขา">สาขา</label>
                                         </div>
@@ -238,311 +237,306 @@ function arrayToInputsBootstrap($array) {
                 </form>
             </div>
         </div>
-        <!-- <div class="row">
-            <div class="col-12">
-                
-            </div>
-        </div> -->
     </div>
     <?php include_once 'v_footer.php';?>
     <script>
-    function logFormData(formId) {
-        const form = document.getElementById(formId);
+        function logFormData(formId) {
+            const form = document.getElementById(formId);
 
-        if (!form) {
-            console.error('Form not found');
-            return;
-        }
-
-        const formData = new FormData(form);
-
-        console.log(JSON.stringify(Object.fromEntries(formData)));
-
-        const data = {};
-
-        formData.forEach((value, key) => {
-            data[key] = value;
-        });
-
-        console.log('Form Data:', data);
-        document.getElementById('jsonviewer').innerHTML = JSON.stringify(data);
-    }
-
-    // Event listener for all radio buttons and text inputs
-    $('input[name^="optionid"], input[name^="optionid"], input').on('change keyup', function() {
-        // Get the id of the current input
-        var inputId = $(this).attr('id');
-
-        console.log(inputId);
-
-        const filePicker = $(this).parent().find('input[type="file"]');
-
-        console.log(filePicker);
-
-        // Check if the current input is checked or not empty
-        var isCheckedOrNotEmpty = $(this).is(':checked');
-
-        // Get the parent element
-        var parentElement = $(this).closest('.list-group-item');
-
-        // console.log(parentElement.prevAll());
-
-        // Get the corresponding h4 and .list-group-item elements within the parent element
-        var correspondingH4 = parentElement.find('h4').first();
-        var correspondingList = parentElement.find('.answerBox').first();
-
-        //checkForGroup
-        var groupOfHeading4 = parentElement.find('h4');
-        var groupOfAnswerBox = parentElement.find('.answerBox');
-        // console.log(groupOfHeading4);
-        // console.log(groupOfAnswerBox);
-        console.log(groupOfHeading4.length);
-        console.log(groupOfAnswerBox.length);
-
-        const imageUploadInput = $(this).next().next('.file-upload-option');
-
-        console.log(imageUploadInput);
-
-        if (groupOfAnswerBox.length == "2" && groupOfAnswerBox.length == "2") {
-            groupOfHeading4 = parentElement.find('h4').first();
-            groupOfAnswerBox = parentElement.find('.answerBox').first();
-        }
-
-        if (isCheckedOrNotEmpty) {
-            // console.log("checked");
-            correspondingH4.removeAttr('hidden');
-            correspondingList.removeAttr('hidden');
-
-            groupOfHeading4.each(function() {
-                $(this).removeAttr('hidden');
-            })
-            
-            groupOfAnswerBox.each(function() {
-                $(this).removeAttr('hidden');
-                $(this).removeAttr('required');
-                $(this).find('input[type^="text"], input[type^="number"], input[type^="date"]').prop('required', 'true');
-            })
-
-            imageUploadInput.removeAttr('hidden');
-            imageUploadInput.prop('required', 'true');
-
-            parentElement.find('.answer input').not('[type="checkbox"]').first().prop('required', true);
-        } else {
-            console.log("unchecked");
-            correspondingH4.attr('hidden', 'hidden');
-            correspondingList.attr('hidden', 'hidden');
-
-            // Remove 'required' attribute from inputs in class 'answer'
-            parentElement.find('.answer input').prop('required', false);
-            imageUploadInput.attr('hidden', 'hidden');
-        }
-
-        console.log(isCheckedOrNotEmpty);
-
-        var selectedValue = $(this).val();
-        var otherRadioButtons = $('input[name="' + $(this).attr('name') + '"]');
-
-        otherRadioButtons.each(function() {
-            if ($(this).val() !== selectedValue) {
-                console.log("Value of other radio button: " + $(this).val());
-                const parentElement = $(this).closest('.list-group-item');
-                const correspondingH4 = parentElement.find('h4'); // Select only the first h4
-                const correspondingList = parentElement.find('.answerBox'); // Select only the first .list-group-item
-                const fileUploadList = parentElement.find('.file-upload-option');
-                correspondingH4.each(function() {
-                    $(this).attr('hidden', 'hidden');
-                });
-                correspondingList.each(function() {
-                    $(this).attr('hidden', 'hidden');
-                });
-                fileUploadList.each(function() {
-                    $(this).attr('hidden', 'hidden');
-                    $(this).removeAttr('required')
-                });
-                const allOptions = correspondingList.find('input[name^="optionid"]');
-                allOptions.each(function() {
-                    var elementType = $(this).attr('type');
-                    if (elementType === 'text') {
-                        $(this).val(''); // Set value to empty for text input
-                    } else if (elementType === 'date') {
-                        $(this).val(''); // Set value to empty for date input
-                    } else if (elementType === 'checkbox') {
-                        $(this).prop('checked', false); // Uncheck checkbox
-                    } else if (elementType === 'radio') {
-                        $(this).prop('checked', false); // Uncheck radio button
-                    }
-                    $(this).prop('required', false);
-                });
-            }
-        });
-    });
-
-    function pickedCheckType(type_v) {
-
-        const el_input_type_1 = $(".input-t-1");
-        const el_input_type_2 = $(".input-t-2");
-        const el_input_type_3 = $(".input-t-3");
-
-        const div_check_type_1 = $("#frm-check-type-1");
-        const div_check_type_2 = $("#frm-check-type-2");
-        const div_check_type_3 = $("#frm-check-type-3");
-
-        // Disable all input fields initially
-        el_input_type_1.prop("disabled", true).prop("required", false);
-        el_input_type_2.prop("disabled", true).prop("required", false);
-        el_input_type_3.prop("disabled", true).prop("required", false);
-
-        // Hide all divs initially
-        div_check_type_1.attr("hidden", true);
-        div_check_type_2.attr("hidden", true);
-        div_check_type_3.attr("hidden", true);
-
-        if (type_v == "1") {
-            // Check emp
-            el_input_type_1.prop("disabled", false);
-            div_check_type_1.attr("hidden", false);
-        } else if (type_v == "2") {
-            // Check outlet
-            el_input_type_2.prop("disabled", false);
-            div_check_type_2.attr("hidden", false);
-        } else if (type_v == "3") {
-            // Check bus
-            el_input_type_3.prop("disabled", false);
-            div_check_type_3.attr("hidden", false);
-        }
-
-        // Add required attribute to visible input fields
-        // $("input:visible").prop("required", true);
-    }
-
-    function clearEmpDt() {
-        $("#empid").val("");
-        $("#empname").val("");
-        $("#empcode").val("");
-        isSeeAll = 0;
-    }
-
-    function addEventToRadioCheckType() {
-        $(".btn-check-type-group").bind("change", function(event) {
-            const selectedValue = $(this).val();
-            pickedCheckType(selectedValue);
-            isSeeAll = 0;
-            clearEmpDt();
-            // getQuestion();
-        });
-    }
-
-    async function searchEmp() {
-        const pickedDept = $("#sec_section").val();
-
-        if (pickedDept == "0") {
-            showAlertToast("กรุณาเลือกแผนกก่อน", "info", "center");
-            return;
-        }
-
-        const empCode = $("#empcode").val();
-
-        if (!empCode) {
-            showAlertToast("กรอกรหัสพนักงาน", "info", "center");
-            return;
-        }
-
-        showLoadingOnQuery();
-
-        const url = "../class/apiproxy.php?method=getEmpData&empCode=" + empCode;
-
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
+            if (!form) {
+                console.error('Form not found');
+                return;
             }
 
-            Swal.close();
+            const formData = new FormData(form);
 
-            const json = await response.json();
-            if (json.respCode == "1") {
-                const empDept = json.data[0]["emp_sec"];
-                setEmpDt(json.data[0]);
-                showAlertToast("ค้นหาสำเร็จ", "success", "bottom");
+            console.log(JSON.stringify(Object.fromEntries(formData)));
+
+            const data = {};
+
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            console.log('Form Data:', data);
+            document.getElementById('jsonviewer').innerHTML = JSON.stringify(data);
+        }
+
+        // Event listener for all radio buttons and text inputs
+        $('input[name^="optionid"], input[name^="optionid"], input').on('change keyup', function() {
+            // Get the id of the current input
+            var inputId = $(this).attr('id');
+
+            console.log(inputId);
+
+            const filePicker = $(this).parent().find('input[type="file"]');
+
+            console.log(filePicker);
+
+            // Check if the current input is checked or not empty
+            var isCheckedOrNotEmpty = $(this).is(':checked');
+
+            // Get the parent element
+            var parentElement = $(this).closest('.list-group-item');
+
+            // console.log(parentElement.prevAll());
+
+            // Get the corresponding h4 and .list-group-item elements within the parent element
+            var correspondingH4 = parentElement.find('h4').first();
+            var correspondingList = parentElement.find('.answerBox').first();
+
+            //checkForGroup
+            var groupOfHeading4 = parentElement.find('h4');
+            var groupOfAnswerBox = parentElement.find('.answerBox');
+            // console.log(groupOfHeading4);
+            // console.log(groupOfAnswerBox);
+            console.log(groupOfHeading4.length);
+            console.log(groupOfAnswerBox.length);
+
+            const imageUploadInput = $(this).next().next('.file-upload-option');
+
+            console.log(imageUploadInput);
+
+            if (groupOfAnswerBox.length == "2" && groupOfAnswerBox.length == "2") {
+                groupOfHeading4 = parentElement.find('h4').first();
+                groupOfAnswerBox = parentElement.find('.answerBox').first();
+            }
+
+            if (isCheckedOrNotEmpty) {
+                // console.log("checked");
+                correspondingH4.removeAttr('hidden');
+                correspondingList.removeAttr('hidden');
+
+                groupOfHeading4.each(function() {
+                    $(this).removeAttr('hidden');
+                })
+                
+                groupOfAnswerBox.each(function() {
+                    $(this).removeAttr('hidden');
+                    $(this).removeAttr('required');
+                    $(this).find('input[type^="text"], input[type^="number"], input[type^="date"]').prop('required', 'true');
+                })
+
+                imageUploadInput.removeAttr('hidden');
+                imageUploadInput.prop('required', 'true');
+
+                parentElement.find('.answer input').not('[type="checkbox"]').first().prop('required', true);
             } else {
-                showAlertToast("ไม่พบข้อมูลพนักงาน", "info", "center");
-                clearEmpDt();
+                console.log("unchecked");
+                correspondingH4.attr('hidden', 'hidden');
+                correspondingList.attr('hidden', 'hidden');
+
+                // Remove 'required' attribute from inputs in class 'answer'
+                parentElement.find('.answer input').prop('required', false);
+                imageUploadInput.attr('hidden', 'hidden');
             }
-        } catch (error) {
-            console.error(error.message);
-        }
-    }
 
-    function setEmpDt(data) {
-        $("#empid").val(`${data.empicms_id}`).trigger('change');
-        $("#empname").val(`${data.emp_firstname} ${data.emp_lastname}`);
-        $("#empcomfunc").val(`${data.emp_func}`);
-        $("#empcomfuncdep").val(`${data.emp_dep}`);
-        $("#empcomfuncdepsec").val(`${data.emp_sec}`);
-    }
+            console.log(isCheckedOrNotEmpty);
 
-    async function showLoadingOnQuery() {
-        Swal.fire({
-            title: "รอซักครู่...",
-            html: "กำลังเรียกข้อมูลที่จำเป็น",
-            toast: true,
-            position: "bottom",
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading();
-            },
-        });
-    }
+            var selectedValue = $(this).val();
+            var otherRadioButtons = $('input[name="' + $(this).attr('name') + '"]');
 
-    $(document).ready(function() {
-        const setReq = $('#mForm > .answerBox > div');
-        // .prop('required', true);
-        // console.log($('#mForm > div .answerBox > div > div > input'));
-        addEventToRadioCheckType();
-    });
-
-    function submitFormData(formId, successCallback, errorCallback) {
-        let form = document.getElementById(formId);
-        if (!form) {
-            console.error("Form with id '" + formId + "' not found.");
-            return;
-        }
-
-        let formData = new FormData(form);
-
-        fetch(form.action, {
-                method: form.method,
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    if (successCallback && typeof successCallback === 'function') {
-                        successCallback(response);
-                    }
-                } else {
-                    throw new Error('Failed to submit form');
-                }
-            })
-            .catch(error => {
-                if (errorCallback && typeof errorCallback === 'function') {
-                    errorCallback(error);
-                } else {
-                    console.error('Error submitting form:', error);
+            otherRadioButtons.each(function() {
+                if ($(this).val() !== selectedValue) {
+                    console.log("Value of other radio button: " + $(this).val());
+                    const parentElement = $(this).closest('.list-group-item');
+                    const correspondingH4 = parentElement.find('h4'); // Select only the first h4
+                    const correspondingList = parentElement.find('.answerBox'); // Select only the first .list-group-item
+                    const fileUploadList = parentElement.find('.file-upload-option');
+                    correspondingH4.each(function() {
+                        $(this).attr('hidden', 'hidden');
+                    });
+                    correspondingList.each(function() {
+                        $(this).attr('hidden', 'hidden');
+                    });
+                    fileUploadList.each(function() {
+                        $(this).attr('hidden', 'hidden');
+                        $(this).removeAttr('required')
+                    });
+                    const allOptions = correspondingList.find('input[name^="optionid"]');
+                    allOptions.each(function() {
+                        var elementType = $(this).attr('type');
+                        if (elementType === 'text') {
+                            $(this).val(''); // Set value to empty for text input
+                        } else if (elementType === 'date') {
+                            $(this).val(''); // Set value to empty for date input
+                        } else if (elementType === 'checkbox') {
+                            $(this).prop('checked', false); // Uncheck checkbox
+                        } else if (elementType === 'radio') {
+                            $(this).prop('checked', false); // Uncheck radio button
+                        }
+                        $(this).prop('required', false);
+                    });
                 }
             });
-    }
+        });
 
-    function submitForm() {
-        submitFormData('mForm',
-            function(response) {
-                console.log('Form submitted successfully');
-                // Handle success response
-            },
-            function(error) {
-                console.error('Form submission error:', error);
-                // Handle error
+        function pickedCheckType(type_v) {
+
+            const el_input_type_1 = $(".input-t-1");
+            const el_input_type_2 = $(".input-t-2");
+            const el_input_type_3 = $(".input-t-3");
+
+            const div_check_type_1 = $("#frm-check-type-1");
+            const div_check_type_2 = $("#frm-check-type-2");
+            const div_check_type_3 = $("#frm-check-type-3");
+
+            // Disable all input fields initially
+            el_input_type_1.prop("disabled", true).prop("required", false);
+            el_input_type_2.prop("disabled", true).prop("required", false);
+            el_input_type_3.prop("disabled", true).prop("required", false);
+
+            // Hide all divs initially
+            div_check_type_1.attr("hidden", true);
+            div_check_type_2.attr("hidden", true);
+            div_check_type_3.attr("hidden", true);
+
+            if (type_v == "1") {
+                // Check emp
+                el_input_type_1.prop("disabled", false);
+                div_check_type_1.attr("hidden", false);
+            } else if (type_v == "2") {
+                // Check bus
+                el_input_type_3.prop("disabled", false);
+                div_check_type_3.attr("hidden", false);
+            } else if (type_v == "3") {ง
+                // Check outlet
+                el_input_type_2.prop("disabled", false);
+                div_check_type_2.attr("hidden", false);
             }
-        );
-    }
+
+            // Add required attribute to visible input fields
+            // $("input:visible").prop("required", true);
+        }
+
+        function clearEmpDt() {
+            $("#empid").val("");
+            $("#empname").val("");
+            $("#empcode").val("");
+            isSeeAll = 0;
+        }
+
+        function addEventToRadioCheckType() {
+            $(".btn-check-type-group").bind("change", function(event) {
+                const selectedValue = $(this).val();
+                pickedCheckType(selectedValue);
+                isSeeAll = 0;
+                clearEmpDt();
+                // getQuestion();
+            });
+        }
+
+        async function searchEmp() {
+            const pickedDept = $("#sec_section").val();
+
+            if (pickedDept == "0") {
+                showAlertToast("กรุณาเลือกแผนกก่อน", "info", "center");
+                return;
+            }
+
+            const empCode = $("#empcode").val();
+
+            if (!empCode) {
+                showAlertToast("กรอกรหัสพนักงาน", "info", "center");
+                return;
+            }
+
+            showLoadingOnQuery();
+
+            const url = "../class/apiproxy.php?method=getEmpData&empCode=" + empCode;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+
+                Swal.close();
+
+                const json = await response.json();
+                if (json.respCode == "1") {
+                    const empDept = json.data[0]["emp_sec"];
+                    setEmpDt(json.data[0]);
+                    showAlertToast("ค้นหาสำเร็จ", "success", "bottom");
+                } else {
+                    showAlertToast("ไม่พบข้อมูลพนักงาน", "info", "center");
+                    clearEmpDt();
+                }
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
+
+        function setEmpDt(data) {
+            $("#empid").val(`${data.empicms_id}`).trigger('change');
+            $("#empname").val(`${data.emp_firstname} ${data.emp_lastname}`);
+            $("#empcomfunc").val(`${data.emp_func}`);
+            $("#empcomfuncdep").val(`${data.emp_dep}`);
+            $("#empcomfuncdepsec").val(`${data.emp_sec}`);
+        }
+
+        async function showLoadingOnQuery() {
+            Swal.fire({
+                title: "รอซักครู่...",
+                html: "กำลังเรียกข้อมูลที่จำเป็น",
+                toast: true,
+                position: "bottom",
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+        }
+
+        $(document).ready(function() {
+            const setReq = $('#mForm > .answerBox > div');
+            // .prop('required', true);
+            // console.log($('#mForm > div .answerBox > div > div > input'));
+            addEventToRadioCheckType();
+        });
+
+        function submitFormData(formId, successCallback, errorCallback) {
+            let form = document.getElementById(formId);
+            if (!form) {
+                console.error("Form with id '" + formId + "' not found.");
+                return;
+            }
+
+            let formData = new FormData(form);
+
+            fetch(form.action, {
+                    method: form.method,
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        if (successCallback && typeof successCallback === 'function') {
+                            successCallback(response);
+                        }
+                    } else {
+                        throw new Error('Failed to submit form');
+                    }
+                })
+                .catch(error => {
+                    if (errorCallback && typeof errorCallback === 'function') {
+                        errorCallback(error);
+                    } else {
+                        console.error('Error submitting form:', error);
+                    }
+                });
+        }
+
+        function submitForm() {
+            submitFormData('mForm',
+                function(response) {
+                    console.log('Form submitted successfully');
+                    // Handle success response
+                },
+                function(error) {
+                    console.error('Form submission error:', error);
+                    // Handle error
+                }
+            );
+        }
     
     </script>

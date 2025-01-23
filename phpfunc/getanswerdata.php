@@ -84,6 +84,7 @@ class ncaapicalling
         $datanswer = $ncaanswer->getDataAnswer();
         if($datanswer){
 
+            $arrAnswerinfo = array();
             /* echo "<pre>";
             print_r($datanswer);
             echo "</pre>"; */
@@ -91,7 +92,6 @@ class ncaapicalling
             $datanswerdt = $ncaanswer->getAnswerdt();
             $questioninfo = $ncaanswer->getDataQuestion();
 
-            $arrCompfunc = array();
             $arrcompfunc = $ncaanswer->getCompfuncData();
             $compfuncname = "";
             if($arrcompfunc['respCode'] == "1"){
@@ -105,7 +105,6 @@ class ncaapicalling
             $arrAnswerinfo['compfuncname'] = $compfuncname;
 
             $compfuncdepname = "";
-            $arrCompfuncdep = array();
             $arrcompfuncdep = $ncaanswer->getDepartmentData($datanswer[0]['answer_compfunc']);
             if($arrcompfuncdep['respCode'] == "1"){
                 $compfuncdep = $arrcompfuncdep['data'];
@@ -119,7 +118,6 @@ class ncaapicalling
             $arrAnswerinfo['compfuncdepname'] = $compfuncdepname;
 
             $compfuncdepsecname = "";
-            $arrCompfuncdepsec = array();
             $arrcompfuncdepsec = $ncaanswer->getSectionData($datanswer[0]['answer_compfuncdep']);
             if($arrcompfuncdepsec['respCode'] == "1"){
                 $compfuncdepsec = $arrcompfuncdepsec['data'];
@@ -152,25 +150,46 @@ class ncaapicalling
             $arrAnswerinfo['question_name']           = $questioninfo[0]['question_name'];
             $arrAnswerinfo['question_detail']         = $questioninfo[0]['question_detail'];
 
+            $staff = explode("|", $datanswer[0]['answer_remark']);
             if($datanswer[0]['answer_type'] == 1){
+
                 $arrAnswerinfo['answer_type'] = "คน";
+                $arrAnswerinfo['staff'] = $staff[0];
+                $arrAnswerinfo['staff_code'] = $staff[1];
+                $arrAnswerinfo['staff_name'] = $staff[2];
+
             }else if($datanswer[0]['answer_type'] == 2){
-                $$arrAnswerinfo['answer_type'] = "รถ";
+
+                $arrAnswerinfo['answer_type'] = "รถ";
+
             }else if($datanswer[0]['answer_type'] == 3){
+
                 $arrAnswerinfo['answer_type'] = "สาขา";
+                $arrOutlet = $ncaanswer->getoutlet();
+                $outletname = "";
+                if($arrOutlet['respCode'] == "1"){
+                    $outlet = $arrOutlet['data'];
+                    foreach ($outlet as $key1 => $value1) {
+
+                        if($datanswer[0]['answer_outlet'] == $value1['outlet_id']){
+                            $arrAnswerinfo['answer_outletname'] = $value1['outlet_nameth'];
+                        }
+                    }
+                }
+
+                /* echo "<pre>";
+                print_r($arrOutlet);
+                echo "</pre>"; */
+
             }else{
                 $arrAnswerinfo['answer_type'] = "-";
             }
 
             $arrAnswerinfo['answer_recdatetime'] = $datanswer[0]['answer_recdatetime'];
 
-            $staff = explode("|", $datanswer[0]['answer_remark']);
+            
 
-            $arrAnswerinfo['staff'] = $staff[0];
-
-            $arrAnswerinfo['staff_code'] = $staff[1];
-
-            $arrAnswerinfo['staff_name'] = $staff[2];
+            
 
             /* echo "<pre>";
             print_r($datanswerdt);
@@ -182,10 +201,9 @@ class ncaapicalling
                 $htmlQuestion = "";
                 $ii = 0;
                 foreach($datanswerdt AS $key => $val){
-                    // if(!$val['questiondt_parent']){
-                        $ii++;
-                        $htmlQuestion  .= "II : ".$ii." ".$ncaanswer->genareteViewAnswerFormData("answerdt_questiondt",$val['answerdt_questiondt'],0,$arr_parent);
-                    // }
+                    
+                    $htmlQuestion  .= $ncaanswer->genareteViewAnswerFormData("answerdt_questiondt",$val['answerdt_questiondt'],0,$arr_parent);
+                    
                 }
             }
         }

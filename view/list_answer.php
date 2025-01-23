@@ -29,12 +29,12 @@ td{
                 <thead class="text-bg-primary" style="vertical-align: middle;">
                     <tr>
                         <td width="50px;">ลำดับ</td>
-                        <td >ผู้ตรวจ</td>
-                        <td >วันที่ตรวจ</td>
-                        <td >หัวข้อการตรวจ</td>
                         <td >ตรวจ</td>
+                        <td >หัวข้อการตรวจ</td>
                         <td >ประเภท</td>
                         <td >ref</td>
+                        <td >ผู้ตรวจ</td>
+                        <td >วันที่ตรวจ</td>
                         <td width="200px;"></td>
                     </tr>
                 </thead>
@@ -120,27 +120,13 @@ td{
                     },
                 },
                 {
-                    data: "answer_recname",
+                    data: "answer_type",
                     render: function (data, type, row, meta) {
                         return `${data}`;
-                    },
-                },
-                {
-                    data: "answer_recdatetime",
-                    render: function (data, type, row) {
-                        return (
-                            dayjs(data, "YYYY-MM-DD hh:mm").format("DD/MM/BBBB HH:mm")
-                        );
                     },
                 },
                 {
                     data: "question_name",
-                    render: function (data, type, row, meta) {
-                        return `${data}`;
-                    },
-                },
-                {
-                    data: "answer_type",
                     render: function (data, type, row, meta) {
                         return `${data}`;
                     },
@@ -155,6 +141,20 @@ td{
                     data: "answer_ref",
                     render: function (data, type, row, meta) {
                         return `${data}`;
+                    },
+                },
+                {
+                    data: "answer_recname",
+                    render: function (data, type, row, meta) {
+                        return `${data}`;
+                    },
+                },
+                {
+                    data: "answer_recdatetime",
+                    render: function (data, type, row) {
+                        return (
+                            dayjs(data, "YYYY-MM-DD hh:mm").format("DD/MM/BBBB HH:mm")
+                        );
                     },
                 },
                 {
@@ -257,7 +257,7 @@ td{
                 html += `        </div>`;
                 html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
                 html += `           <div class="col-lg-12 col-md-12 col-sm-12 shadow rounded-3 border border-info p-2 mb-1 mt-1">`;
-                html += `               <label for="par_qname" class="form-label">ชื่อของชุดคำถาม : `+resinfo.question_name+`</label>`;
+                html += `               <label for="par_qname" class="form-label">ชื่อของชุดคำถาม : `+resinfo.questiongroup_name+`</label>`;
                 html += `           </div>`;
                 html += `        </div>`;
                 html += `        <div class="col-lg-6 col-md-6 col-sm-6 p-1">`;
