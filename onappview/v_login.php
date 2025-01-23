@@ -18,7 +18,7 @@
     }
 
     if(isset( $_SESSION["credential"]) && !empty( $_SESSION["credential"]) ){
-        echo "<script>window.location.href = 'v_renderform.php';</script>";
+        echo "<script>window.location.href = 'v_menu.php';</script>";
         exit();
     }
 
