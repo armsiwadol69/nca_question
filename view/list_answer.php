@@ -48,26 +48,15 @@ td{
 <!-- Modal generate Answer question -->
 
 <div class="modal fade" id="generateanswerquestion" tabindex="-1" aria-labelledby="createBatch" aria-hidden="true" >
-
     <div class="modal-dialog modal-dialog-centered modal-lg">
-
         <div class="modal-content">
-
             <div class="modal-header">
-                
                 <h1 class="modal-title fs-5">ผลการตรวจ</h1>
                 <span class="btn-close" data-bs-dismiss="modal" aria-label="Close"></span>
-
             </div>
-
-            <div class="modal-body" id="answerquestionbody">
-                
-            </div>
-
+            <div class="modal-body" id="answerquestionbody"></div>
         </div>
-
     </div>
-
 </div>
 
 <!-- </main> -->
@@ -207,7 +196,7 @@ td{
                 html += `<div class="col-lg-12 col-md-12 col-sm-12 p-2">
                             <div class="card border border-1 border-info">
                                 <div class="card-body">
-                                    <div class="row"> 
+                                    <div class="row px-4"> 
                                         <div class="col-lg-6 col-md-6 col-sm-6 p-1">
                                             <label for="par_qdatail" class="form-label mb-0"><span class="fw-bold">ตรวจ : </span>`+resinfo.answer_type+`</label>  
                                         </div>
