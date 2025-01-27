@@ -49,9 +49,9 @@ td{
 <?php
 
     
-    echo "<pre>";
+    /* echo "<pre>";
     print_r($_SESSION);
-    echo "</pre>";
+    echo "</pre>"; */
 
     include_once 'v_sidebar_end.php';
     include_once 'v_footer.php';

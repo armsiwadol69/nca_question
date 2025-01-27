@@ -307,7 +307,7 @@ table.dataTable tbody tr {
             html += `     <td>`+index+`.`+(i+1)+`</td>`;
             html += `     <td>${data[i].question_name}</td>`;
             html += `     <td>${data[i].questionmode_name}</td>`;
-            html += `     <td>${data[i].question_username}</td>`;
+            html += `     <td>${data[i].question_recname}</td>`;
             html += `     <td>${dayjs(data[i].question_userdatetime, "YYYY-MM-DD hh:mm").format("DD/MM/BBBB HH:mm")}</td>`;
             html += `     <td><div class="btn-group" role="group">
             <button type="button" class="btn btn-warning" onclick="callActionCustom('edit','${data[i].question}','id')"><i class="bi bi-pencil-square"></i> แก้ไข</button><button type="button" class="btn btn-danger"  onclick="callActionCustom('delete','${data[i].question}','${escapeHtml(data[i].question_name)}','${data[i].currrent_user}')"><i class="bi bi-trash3"></i> ลบ</button></div></td>`;

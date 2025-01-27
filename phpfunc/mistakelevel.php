@@ -39,7 +39,7 @@ if($ar_prm["method"] == "getlist"){
 
         foreach ($result as $key => $value) {
 
-            if($value['mistakelevel_modispid']){
+            /* if($value['mistakelevel_modispid']){
                 $rec_id = $value['mistakelevel_modispid'];
             }else{
                 $rec_id = $value['mistakelevel_recspid'];
@@ -47,11 +47,11 @@ if($ar_prm["method"] == "getlist"){
             
             $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$rec_id."' ";
             $res = $go_ncadb->ncaretrieve($sql, "icms");
-            $value['mistakelevel_recname'] = $res[0]['staff_dspnm'];
+            $value['mistakelevel_recname'] = $res[0]['staff_dspnm']; */
             
-            if($value['mistakelevel_modispid']){
+            if($value['mistakelevel_modispid'] && $value['mistakelevel_modiname']){
 
-                $value['mistakelevel_recspid'] = $value['mistakelevel_modispid'];
+                $value['mistakelevel_recname'] = $value['mistakelevel_modiname'];
                 $value['mistakelevel_recdatetime'] = $value['mistakelevel_modidatetime'];
 
             }
@@ -106,6 +106,7 @@ if($ar_prm["method"] == "editmistakelevel" || $ar_prm["method"] == "addmistakele
     if($ar_prm['mistakelevel'] > 0){
 
         $sqlObj[$ii++] = new TField("mistakelevel_modispid", $_SESSION['userData']['stf'], "string");
+        $sqlObj[$ii++] = new TField("mistakelevel_modiname", $_SESSION['userData']['userdspms'], "string");
         $sqlObj[$ii++] = new TField("mistakelevel_modidatetime", $datetime, "string");
 
         $sqlInsertMquestiontype->SetField($sqlObj);
@@ -115,6 +116,7 @@ if($ar_prm["method"] == "editmistakelevel" || $ar_prm["method"] == "addmistakele
     }else{
 
         $sqlObj[$ii++] = new TField("mistakelevel_recspid", $_SESSION['userData']['stf'], "string");
+        $sqlObj[$ii++] = new TField("mistakelevel_recname", $_SESSION['userData']['userdspms'], "string");
         $sqlObj[$ii++] = new TField("mistakelevel_recdatetime", $datetime, "string");
         $sqlObj[$ii++] = new TField("mistakelevel_active", "1", "string");
 
