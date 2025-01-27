@@ -48,6 +48,7 @@ if ($userLogin['resCode'] == "1") {
         'staffcompfunc'       => $userInfo['m_compfunc'],
         'staffcompfuncdep'    => $userInfo['m_compfuncdep'],
         'staffcompfuncdepsec' => $userInfo['m_compfuncdepsec'],
+        'ExprieTime'          => strtotime('+1 hour', time()),
     );
 
     /* echo "<pre>";

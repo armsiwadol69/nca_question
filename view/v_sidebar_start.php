@@ -4,6 +4,25 @@
     require_once ("../class/class.answer.php"); 
     require_once ("../class/class.renderView.php");
     require_once ("../class/class.curlmanagedata.php");
+
+    /* echo "<pre>";
+    print_r($_SESSION);
+    echo "</pre>"; */
+
+    if(empty($_SESSION["userData"])) {
+        echo '<script type="text/javascript"> window.location = "v_login.php?loginrtn=2"; </script>';
+        exit();
+
+    }else if(time() < $_SESSION["userData"]['ExprieTime']){
+
+        $_SESSION["userData"]['ExprieTime'] =  strtotime('+1 hour', time());
+
+    }else if(time() > $_SESSION["userData"]['ExprieTime']){
+
+        echo '<script type="text/javascript"> window.location = "./auth/logout.php"; </script>';
+        exit();
+
+    }
 ?>
 <div class="d-flex" id="wrapper">
     <div class="border-end text-white shadow" id="sidebar-wrapper">
@@ -38,15 +57,17 @@
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_activities.php" id="listactivities"><b><i class="bi bi-arrow-right-circle"></i></b> ลักษณะของการตรวจ </a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="list_mistakelevel.php" id="listmistakelevel"><b><i class="bi bi-arrow-right-circle"></i></b> กำหนดน้ำหนักความผิด </a>
             <a class="list-group-item list-group-item-action p-3 text-left" href="rpt_individual.php" id="rptindividual"><b><i class="bi bi-arrow-right-circle"></i></b> รายงานสถิติความผิดรายบุคคล </a>
+            <a class="list-group-item list-group-item-action p-3 text-left" href="manageuser.php" id="manageuser"><b><i class="bi bi-arrow-right-circle"></i></b> ตั้งค่าผู้ใช้ระบบ </a>
+            <a class="list-group-item list-group-item-action p-3 text-left" href="menu.php" id="menu"><b><i class="bi bi-arrow-right-circle"></i></b> ตั้งค่าเมนู </a>
 
         </div>
         <div class="sidebar-footer list-group list-group-flush d-flex">
             <!-- User login -->
-            <button class="list-group-item list-group-item-action list-group-item-secondary p-1 text-center pe-none" style=""><i class="bi bi-person-circle"></i> <?php echo $_SESSION['userData']['userdspms']?></button>
+            <button class="list-group-item list-group-item-action list-group-item-secondary p-1 text-center pe-none"><i class="bi bi-person-circle"></i> <?php echo $_SESSION['userData']['userdspms']?></button>
             <!-- Log out -->
             <button class="list-group-item list-group-item-action list-group-item-danger p-1 text-center my-1" onclick="clickToLogout();"><i class="bi bi-box-arrow-left"></i> ออกจากระบบ</button>
 
-            <button class="list-group-item list-group-item-action list-group-item-secondary p-1 text-center pe-none" style=""> V 1.00 </button>
+            <button class="list-group-item list-group-item-action list-group-item-secondary p-1 text-center pe-none"> V 1.00 </button>
             <!-- <a class="list-group-item list-group-item-action list-group-item-secondary user-select-none p-1 text-center">v1.0</a> -->
         </div>
     </div>

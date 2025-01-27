@@ -11,8 +11,8 @@ $go_ncadb = new ncadb();
 <div class="row">
     <div class="col-12">
         <div class="w-100 d-flex mt-2">
-            <h3 class="me-auto mt-1">กำหนดน้ำหนักความผิด</h3>
-            <button type="button" class="btn btn-primary"  onclick="callmistakelevel('addmistakelevel','0')"><i class="bi bi-plus-square"></i> เพิ่มน้ำหนักความผิดใหม่</button>
+            <h3 class="me-auto mt-1">ตั้งค่าเมนู</h3>
+            <button type="button" class="btn btn-primary"  onclick="callMenu('addmistakelevel','0')"><i class="bi bi-plus-square"></i> เพิ่มเมนูใหม่</button>
         </div>
         <hr>
     </div>
@@ -39,10 +39,10 @@ $go_ncadb = new ncadb();
 </div>
 
 <div class="modal fade" id="modalmistakelevel" tabindex="-1" aria-labelledby="createBatch" aria-hidden="true" >
-    <div class="modal-dialog modal-dialog-centered modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg">
+        <div class="modal-content modal-lg">
             <div class="modal-header">
-                <h1 class="modal-title fs-5">แก้ไขน้ำหนักความผิด</h1>
+                <h1 class="modal-title fs-5">กำหนดเมนู</h1>
                 <span class="btn-close" data-bs-dismiss="modal" aria-label="Close"></span>
             </div>
 
@@ -52,20 +52,57 @@ $go_ncadb = new ncadb();
 
                     <div class="row gy-3">
                         
-                        <div class="col-12">
+                        <div class="col-6">
                             <label class="form-label" for="mistakelevel_shortname">ชื่อย่อ<span class="text-danger">*</span></label>
                             <input class="form-control" type="text" name="mistakelevel_shortname" id="mistakelevel_shortname" required>
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-6">
+                            <label class="form-label" for="mistakelevel_name">ชื่อเต็ม<span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="mistakelevel_name" id="mistakelevel_name" required>
+                        </div>
+                        
+                        <div class="col-6">
+                            <label class="form-label" for="mistakelevel_shortname">ชื่อย่อ<span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="mistakelevel_shortname" id="mistakelevel_shortname" required>
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label" for="mistakelevel_name">ชื่อเต็ม<span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="mistakelevel_name" id="mistakelevel_name" required>
+                        </div>
+                        
+                        <div class="col-6">
+                            <label class="form-label" for="mistakelevel_shortname">ชื่อย่อ<span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="mistakelevel_shortname" id="mistakelevel_shortname" required>
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label" for="mistakelevel_name">ชื่อเต็ม<span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="mistakelevel_name" id="mistakelevel_name" required>
+                        </div>
+                        
+                        <div class="col-6">
+                            <label class="form-label" for="mistakelevel_shortname">ชื่อย่อ<span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="mistakelevel_shortname" id="mistakelevel_shortname" required>
+                        </div>
+
+                        <div class="col-6">
+                            <label class="form-label" for="mistakelevel_name">ชื่อเต็ม<span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="mistakelevel_name" id="mistakelevel_name" required>
+                        </div>
+                        
+                        
+                        <div class="col-6">
+                            <label class="form-label" for="mistakelevel_shortname">ชื่อย่อ<span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="mistakelevel_shortname" id="mistakelevel_shortname" required>
+                        </div>
+
+                        <div class="col-6">
                             <label class="form-label" for="mistakelevel_name">ชื่อเต็ม<span class="text-danger">*</span></label>
                             <input class="form-control" type="text" name="mistakelevel_name" id="mistakelevel_name" required>
                         </div>
 
-                        <div class="col-12">
-                            <label class="form-label" for="mistakelevel_value">น้ำหนัก<span class="text-danger">*</span></label>
-                            <input class="form-control" type="number" name="mistakelevel_value" id="mistakelevel_value" required>
-                        </div>
 
                         <div class="col-12">
                             <textarea class="form-control" id="mistakelevel_description" name="mistakelevel_description" rows="5" required=""></textarea>
@@ -188,8 +225,8 @@ $go_ncadb = new ncadb();
                         isDisabled = "";
 
                         return `<div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-warning" onclick="callmistakelevel('editmistakelevel','${row.mistakelevel}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
-                                    <button type="button" class="btn btn-danger ${isDisabled}" onclick="callmistakelevel('delete','${row.mistakelevel}','${row.mistakelevel_name}')"><i class="bi bi-trash3"></i> ลบ</button>
+                                    <button type="button" class="btn btn-warning" onclick="callMenu('editmistakelevel','${row.mistakelevel}')"><i class="bi bi-pencil-square"></i> แก้ไข</button>
+                                    <button type="button" class="btn btn-danger ${isDisabled}" onclick="callMenu('delete','${row.mistakelevel}','${row.mistakelevel_name}')"><i class="bi bi-trash3"></i> ลบ</button>
                                 </div>`;
                     },
                 },
@@ -197,7 +234,7 @@ $go_ncadb = new ncadb();
         });
     }
 
-    function callmistakelevel(mode,id,name){
+    function callMenu(mode,id,name){
 
         if(mode == "editmistakelevel"){
             var actionUrl =  `../phpfunc/mistakelevel.php`;

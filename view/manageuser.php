@@ -11,7 +11,7 @@ $go_ncadb = new ncadb();
 <div class="row">
     <div class="col-12">
         <div class="w-100 d-flex mt-2">
-            <h3 class="me-auto mt-1">กำหนดน้ำหนักความผิด</h3>
+            <h3 class="me-auto mt-1">ตั้งค่าผู้ใช้ระบบ</h3>
             <button type="button" class="btn btn-primary"  onclick="callmistakelevel('addmistakelevel','0')"><i class="bi bi-plus-square"></i> เพิ่มน้ำหนักความผิดใหม่</button>
         </div>
         <hr>
@@ -39,7 +39,7 @@ $go_ncadb = new ncadb();
 </div>
 
 <div class="modal fade" id="modalmistakelevel" tabindex="-1" aria-labelledby="createBatch" aria-hidden="true" >
-    <div class="modal-dialog modal-dialog-centered modal-dialog">
+    <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5">แก้ไขน้ำหนักความผิด</h1>
