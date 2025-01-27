@@ -147,11 +147,11 @@ class ncaapicalling
 
             foreach ($result as $key => $value) {
 
-                if($value['question_recspid'] > 0){
+                /* if($value['question_recspid'] > 0){
                     $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$value['question_recspid']."' ";
                     $res = $go_ncadb->ncaretrieve($sql, "icms");
                     $value['question_recname'] = $res[0]['staff_dspnm'];
-                }
+                } */
 
                 $value['question_compfuncname'] = $arrCompfunc[$value['question_compfunc']]['compfunc_name'];
                 $value['question_compfuncdepname'] =  $arrCompfuncdep[$value['question_compfuncdep']]['department_name'];

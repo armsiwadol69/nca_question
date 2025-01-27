@@ -109,7 +109,7 @@ class answer extends question
     {
         global $go_ncadb;
 
-        $sql        = "SELECT * FROM tb_questionoption WHERE questionoption_questiondt = '".$question."' ORDER BY questionoption_order ASC";
+        $sql        = "SELECT * FROM tb_questionoption AS QOP WHERE QOP.questionoption_questiondt = '".$question."' ORDER BY QOP.questionoption_order ASC";
         $dataOption = $go_ncadb->ncaretrieve($sql, "question");
         $data       = $this->ncaArrayConverter($dataOption);
 
@@ -123,8 +123,6 @@ class answer extends question
         }
 
         $html = "<div>";
-            
-        $inputTypeName = $this->getInpustType("questiontype",$dataParent['questiondt_questiontype']);
 
         // echo "<pre>----------------------------****----------------1111-------------------";
         // print_r($dataParent);
@@ -172,7 +170,7 @@ class answer extends question
             if($this->questionData['answer_questionmode'] == "2"){
                 $datamistakelevel = $this->getDataMistakelevelByAnswerOption($value['questionoption']);
                 if($datamistakelevel['mistakelevel'] > 0){
-                    $offenseName = " <span class='text-danger'>( ความผิด : ".$datamistakelevel['mistakelevel_name']." )</span>";
+                    $offenseName = " <span class='text-danger'> &nbsp;&nbsp; ความผิด : ".$datamistakelevel['mistakelevel_name']." ( น้ำหนัก : ".$datamistakelevel['mistakelevel_value']." )</span>";
                 }
             }
 

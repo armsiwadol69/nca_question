@@ -41,13 +41,14 @@ if($ar_prm["method"] == "getlist"){
 
             if($value['questionmode_modispid']){
                 $rec_id = $value['questionmode_modispid'];
+                $value['questionmode_recname'] = $value['questionmode_modiname'];
             }else{
                 $rec_id = $value['questionmode_recspid'];
             }
             
-            $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$rec_id."' ";
+            /* $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$rec_id."' ";
             $res = $go_ncadb->ncaretrieve($sql, "icms");
-            $value['questionmode_recname'] = $res[0]['staff_dspnm'];
+            $value['questionmode_recname'] = $res[0]['staff_dspnm']; */
             
             if($value['questionmode_modispid']){
 
@@ -55,7 +56,7 @@ if($ar_prm["method"] == "getlist"){
                 $value['questionmode_recdatetime'] = $value['questionmode_modidatetime'];
 
             }
-            $value['currrent_user'] = $_SESSION['userData']['stf'];
+            $value['currrent_user'] = $_SESSION['userData']['staffcd'];
             $data[] = $value;
         }
 
@@ -103,7 +104,8 @@ if($ar_prm["method"] == "editquestionemode" || $ar_prm["method"] == "addquestion
 
     if($ar_prm['questionmode'] > 0){
 
-        $sqlObj[$ii++] = new TField("questionmode_modispid", $_SESSION['userData']['stf'], "string");
+        $sqlObj[$ii++] = new TField("questionmode_modispid", $_SESSION['userData']['staffcd'], "string");
+        $sqlObj[$ii++] = new TField("questionmode_modiname", $_SESSION['userData']['userdspms'], "string");
         $sqlObj[$ii++] = new TField("questionmode_modidatetime", $datetime, "string");
 
         $sqlInsertMquestiontype->SetField($sqlObj);
@@ -112,7 +114,8 @@ if($ar_prm["method"] == "editquestionemode" || $ar_prm["method"] == "addquestion
 
     }else{
 
-        $sqlObj[$ii++] = new TField("questionmode_recspid", $_SESSION['userData']['stf'], "string");
+        $sqlObj[$ii++] = new TField("questionmode_recspid", $_SESSION['userData']['staffcd'], "string");
+        $sqlObj[$ii++] = new TField("questionmode_recname", $_SESSION['userData']['userdspms'], "string");
         $sqlObj[$ii++] = new TField("questionmode_recdatetime", $datetime, "string");
         $sqlObj[$ii++] = new TField("questionmode_active", "1", "string");
 
@@ -160,7 +163,8 @@ if($ar_prm["method"] == "deletequestionmode"){
         $ii = 0;
         $sqlObj = null;
 
-        $sqlObj[$ii++] = new TField("questionmode_modispid", $_SESSION['userData']['stf'], "string");
+        $sqlObj[$ii++] = new TField("questionmode_modispid", $_SESSION['userData']['staffcd'], "string");
+        $sqlObj[$ii++] = new TField("questionmode_modiname", $_SESSION['userData']['userdspms'], "string");
         $sqlObj[$ii++] = new TField("questionmode_modidatetime", $datetime, "string");
         $sqlObj[$ii++] = new TField("questionmode_active", "0", "string");
 

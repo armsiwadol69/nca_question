@@ -41,20 +41,21 @@ if($ar_prm["method"] == "getlist"){
 
             if($value['questiongroup_modispid']){
                 $rec_id = $value['questiongroup_modispid'];
+                $value['questiongroup_recname'] = $value['questiongroup_modiname'];
             }else{
                 $rec_id = $value['questiongroup_recspid'];
             }
 
-            $sql_staff = "SELECT staff_dspnm FROM staff WHERE staff = '".$rec_id."' ";
+            /* $sql_staff = "SELECT staff_dspnm FROM staff WHERE staff = '".$rec_id."' ";
             $res_staff = $go_ncadb->ncaretrieve($sql_staff, "icms");
-            $value['questiongroup_recname'] = $res_staff[0]['staff_dspnm'];
+            $value['questiongroup_recname'] = $res_staff[0]['staff_dspnm']; */
             
-
             /* if($value['questiongroup_questioncategories'] > 0){
                 $sql = "SELECT questioncategories_name FROM tb_questioncategories WHERE questioncategories = '".$value['questiongroup_questioncategories']."' ";
                 $res = $go_ncadb->ncaretrieve($sql, "question");
                 $value['questiongroup_categoriesname'] = $res[0]['questioncategories_name'];
             } */
+
             if($value['questiongroup_modispid']){
 
                 $value['questiongroup_recspid'] = $value['questiongroup_modispid'];

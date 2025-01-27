@@ -89,12 +89,19 @@ class question
             $questionIddt = 0;
             $ii = 0;
             $sqlObj = null;
+
+            /* $sqlObj[$ii++] = new TField("questioncategories_compfunc", $_SESSION['userData']['staffcompfunc'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_compfuncdep",  $_SESSION['userData']['staffcompfuncdep'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_compfuncdepsec",  $_SESSION['userData']['staffcompfuncdepsec'], "string"); */
+            
             $sqlObj[$ii++] = new TField("questioncategories_compfunc", $_SESSION['userData']['staffcompfunc'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_compfuncdep",  $_SESSION['userData']['staffcompfuncdep'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_compfuncdepsec",  $_SESSION['userData']['staffcompfuncdepsec'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_name", $info['mquestiontype_name'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_active", '1', "string");
+            $sqlObj[$ii++] = new TField("questioncategories_hidden", '0', "string");
             $sqlObj[$ii++] = new TField("questioncategories_recspid", $info['par_userid'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_recanme", $_SESSION['userData']['userdspms'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_recdatetime", $datetime, "string");
 
             $sqlInsertCate->SetField($sqlObj);
@@ -129,9 +136,11 @@ class question
             $sqlObj[$ii++] = new TField("questiongroup_name", $arrmquestiongroup[0]['questiongroup_name'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_description", $arrmquestiongroup[0]['questiongroup_description'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_questioncategories", $info['mquestiontype'] , "string");
-            $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['stf'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['staffcd'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_recname", $_SESSION['userData']['userdspms'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_recdatetime", $datetime, "string");
             $sqlObj[$ii++] = new TField("questiongroup_active", "1", "string");
+            $sqlObj[$ii++] = new TField("questiongroup_hidden", "0", "string");
 
             $sqlInsertGroup->SetField($sqlObj);
             $queryGroupe = $sqlInsertGroup->InsertSql();
@@ -158,9 +167,11 @@ class question
             $sqlObj[$ii++] = new TField("questiongroup_name",  $arrmquestiongroup[0]['questiongroup_name'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_description", $arrmquestiongroup[0]['questiongroup_description'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_questioncategories", $info['mquestiontype'] , "string");
-            $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['stf'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['staffcd'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_recname", $_SESSION['userData']['userdspms'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_recdatetime", $datetime, "string");
             $sqlObj[$ii++] = new TField("questiongroup_active", "1", "string");
+            $sqlObj[$ii++] = new TField("questiongroup_hidden", "0", "string");
 
             $sqlInsertGroup->SetField($sqlObj);
             $queryGroupe = $sqlInsertGroup->InsertSql();
@@ -193,10 +204,10 @@ class question
         $sqlObj[$ii++] = new TField("question_questionmode", $info['questionmode'], "string");
         $sqlObj[$ii++] = new TField("question_active", '1', "string");
         
-        
         if($info['par_questioninfoid'] && $info['questioncopy'] == 0){
 
-            $sqlObj[$ii++] = new TField("question_modispid", $info['par_userid'], "string");
+            $sqlObj[$ii++] = new TField("question_modispid", $$_SESSION['userData']['staffcd'], "string");
+            $sqlObj[$ii++] = new TField("question_modiname", $_SESSION['userData']['userdspms'], "string");
             $sqlObj[$ii++] = new TField("question_modidatetime", $datetime, "string");
 
             $sqlInsertQuestion->SetField($sqlObj);
@@ -205,7 +216,8 @@ class question
 
         }else{
 
-            $sqlObj[$ii++] = new TField("question_recspid", $info['par_userid'], "string");
+            $sqlObj[$ii++] = new TField("question_recspid", $_SESSION['userData']['staffcd'], "string");
+            $sqlObj[$ii++] = new TField("question_recname", $_SESSION['userData']['userdspms'], "string");
             $sqlObj[$ii++] = new TField("question_recdatetime", $datetime, "string");
 
             $sqlInsertQuestion->SetField($sqlObj);
@@ -238,7 +250,8 @@ class question
                 $sqlObjdt = null;
 
                 $sqlObjdt[$ii++] = new TField("questiondt_active", 0, "string");
-                $sqlObjdt[$ii++] = new TField("questiondt_modispid", $info['par_userid'], "string");
+                $sqlObjdt[$ii++] = new TField("questiondt_modispid", $_SESSION['userData']['staffcd'], "string");
+                $sqlObjdt[$ii++] = new TField("questiondt_modiname", $_SESSION['userData']['userdspms'], "string");
                 $sqlObjdt[$ii++] = new TField("questiondt_modidatetime", $datetime, "string");
 
                 $sqlInsertQuestiondt->SetField($sqlObjdt);
@@ -276,7 +289,8 @@ class question
 
                     if($info['questioncopy'] > 0){
 
-                        $sqlObjdt[$ii++] = new TField("questiondt_recspid", $info['par_userid'], "string");
+                        $sqlObjdt[$ii++] = new TField("questiondt_recspid", $_SESSION['userData']['staffcd'], "string");
+                        $sqlObjdt[$ii++] = new TField("questiondt_recname", $_SESSION['userData']['userdspms'], "string");
                         $sqlObjdt[$ii++] = new TField("questiondt_recdatetime", $datetime, "string");
 
                         $sqlInsertQuestiondt->SetField($sqlObjdt);
@@ -284,7 +298,8 @@ class question
 
                     }else{
 
-                        $sqlObjdt[$ii++] = new TField("questiondt_modispid", $info['par_userid'], "string");
+                        $sqlObjdt[$ii++] = new TField("questiondt_modispid", $_SESSION['userData']['staffcd'], "string");
+                        $sqlObjdt[$ii++] = new TField("questiondt_modiname", $_SESSION['userData']['userdspms'], "string");
                         $sqlObjdt[$ii++] = new TField("questiondt_modidatetime", $datetime, "string");
                         $sqlInsertQuestiondt->SetField($sqlObjdt);
                         $sqlInsertQuestiondt->SetWhereClause(" questiondt = '".$value['questiondt']."'");
@@ -294,7 +309,8 @@ class question
 
                 }else{
 
-                    $sqlObjdt[$ii++] = new TField("questiondt_recspid", $info['par_userid'], "string");
+                    $sqlObjdt[$ii++] = new TField("questiondt_recspid", $_SESSION['userData']['staffcd'], "string");
+                    $sqlObjdt[$ii++] = new TField("questiondt_recname", $_SESSION['userData']['userdspms'], "string");
                     $sqlObjdt[$ii++] = new TField("questiondt_recdatetime", $datetime, "string");
                     $sqlInsertQuestiondt->SetField($sqlObjdt);
                     $queryQuestiondt = $sqlInsertQuestiondt->InsertSql();
@@ -337,7 +353,8 @@ class question
 
                     if($value['questionoption'][$key2] > 0  && $info['questioncopy'] == 0){
 
-                        $sqlObjoption[$ii++] = new TField("questionoption_modispid", $info['par_userid'], "string");
+                        $sqlObjoption[$ii++] = new TField("questionoption_modispid", $_SESSION['userData']['staffcd'], "string");
+                        $sqlObjoption[$ii++] = new TField("questionoption_modiname", $_SESSION['userData']['userdspms'], "string");
                         $sqlObjoption[$ii++] = new TField("questionoption_modidatetime", $datetime, "string");
 
                         $sqlInsertQuestionoption->SetField($sqlObjoption);
@@ -346,7 +363,8 @@ class question
 
                     }else{
                                 
-                        $sqlObjoption[$ii++] = new TField("questionoption_recspid", $info['par_userid'], "string");
+                        $sqlObjoption[$ii++] = new TField("questionoption_recspid", $_SESSION['userData']['staffcd'], "string");
+                        $sqlObjoption[$ii++] = new TField("questionoption_recname", $_SESSION['userData']['userdspms'], "string");
                         $sqlObjoption[$ii++] = new TField("questionoption_recdatetime", $datetime, "string");
 
                         $sqlInsertQuestionoption->SetField($sqlObjoption);
@@ -430,8 +448,8 @@ class question
                 $sqlObj[$ii++] = new TField("questioncategories_compfuncdepsec",  $_SESSION['userData']['staffcompfuncdepsec'], "string");
                 $sqlObj[$ii++] = new TField("questioncategories_name", $info['mquestiontype_name'], "string");
                 $sqlObj[$ii++] = new TField("questioncategories_active", '1', "string");
-                $sqlObj[$ii++] = new TField("questioncategories_recspid", $_SESSION['userData']['stf'], "string");
                 $sqlObj[$ii++] = new TField("questioncategories_recspcode", $_SESSION['userData']['staffcd'], "string");
+                $sqlObj[$ii++] = new TField("questioncategories_recspid", $_SESSION['userData']['staffcd'], "string");
                 $sqlObj[$ii++] = new TField("questioncategories_recanme", $_SESSION['userData']['userdspms'], "string");
                 $sqlObj[$ii++] = new TField("questioncategories_recdatetime", $datetime, "string");
 
@@ -466,7 +484,8 @@ class question
                 $sqlObj[$ii++] = new TField("questiongroup_name", $arrmquestiongroup[0]['questiongroup_name'], "string");
                 $sqlObj[$ii++] = new TField("questiongroup_description", $arrmquestiongroup[0]['questiongroup_description'], "string");
                 $sqlObj[$ii++] = new TField("questiongroup_questioncategories", $info['mquestiontype'], "string");
-                $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['stf'], "string");
+                $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['staffcd'], "string");
+                $sqlObj[$ii++] = new TField("questiongroup_recname", $_SESSION['userData']['userdspms'], "string");
                 $sqlObj[$ii++] = new TField("questiongroup_recdatetime", $datetime, "string");
                 $sqlObj[$ii++] = new TField("questiongroup_active", "1", "string");
 
@@ -495,7 +514,8 @@ class question
                 $sqlObj[$ii++] = new TField("questiongroup_name", $arrmquestiongroup[0]['questiongroup_name'], "string");
                 $sqlObj[$ii++] = new TField("questiongroup_description", $arrmquestiongroup[0]['questiongroup_description'], "string");
                 $sqlObj[$ii++] = new TField("questiongroup_questioncategories", $info['mquestiontype'], "string");
-                $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['stf'], "string");
+                $sqlObj[$ii++] = new TField("questiongroup_recspid", $_SESSION['userData']['staffcd'], "string");
+                $sqlObj[$ii++] = new TField("questiongroup_recname", $_SESSION['userData']['userdspms'], "string");
                 $sqlObj[$ii++] = new TField("questiongroup_recdatetime", $datetime, "string");
                 $sqlObj[$ii++] = new TField("questiongroup_active", "1", "string");
 
@@ -623,7 +643,8 @@ class question
 
                     if ($info['questioncopy'] > 0) {
 
-                        $sqlObjdt[$ii++] = new TField("questiondt_recspid", $info['par_userid'], "string");
+                        $sqlObjdt[$ii++] = new TField("questiondt_recspid", $_SESSION['userData']['staffcd'], "string");
+                        $sqlObjdt[$ii++] = new TField("questiondt_recname", $_SESSION['userData']['userdspms'], "string");
                         $sqlObjdt[$ii++] = new TField("questiondt_recdatetime", $datetime, "string");
 
                         $sqlInsertQuestiondt->SetField($sqlObjdt);
@@ -755,10 +776,10 @@ class question
                     $sqlObjdt = null;
 
                     $sqlObjdt[$ii++] = new TField("questiondt_active", 0, "string");
-                    $sqlObjdt[$ii++] = new TField("questiondt_modispid", $_SESSION['userData']['stf'], "string");
+                    $sqlObjdt[$ii++] = new TField("questiondt_modispid", $_SESSION['userData']['staffcd'], "string");
                     $sqlObjdt[$ii++] = new TField("questiondt_modidatetime", $datetime, "string");
                     $sqlObjdt[$ii++] = new TField("questiondt_modispcode", $_SESSION['userData']['staffcd'], "string");
-                    $sqlObjdt[$ii++] = new TField("questiondt_modispcode", $_SESSION['userData']['userdspms'], "string");
+                    $sqlObjdt[$ii++] = new TField("questiondt_modiname", $_SESSION['userData']['userdspms'], "string");
 
                     $sqlInsertQuestiondt->SetField($sqlObjdt);
                     $sqlInsertQuestiondt->SetWhereClause(" questiondt = '" . $value['questiondt'] . "'");
@@ -796,7 +817,7 @@ class question
 
                         if ($info['questioncopy'] > 0) {
 
-                            $sqlObjdt[$ii++] = new TField("questiondt_recspid", $_SESSION['userData']['stf'], "string");
+                            $sqlObjdt[$ii++] = new TField("questiondt_recspid", $_SESSION['userData']['staffcd'], "string");
                             $sqlObjdt[$ii++] = new TField("questiondt_recdatetime", $datetime, "string");
                             $sqlObjdt[$ii++] = new TField("questiondt_recspcode", $_SESSION['userData']['staffcd'], "string");
                             $sqlObjdt[$ii++] = new TField("questiondt_recname", $_SESSION['userData']['userdspms'], "string");
@@ -805,7 +826,7 @@ class question
                             $queryQuestiondt = $sqlInsertQuestiondt->InsertSql();
                         } else {
 
-                            $sqlObjdt[$ii++] = new TField("questiondt_modispid", $_SESSION['userData']['stf'], "string");
+                            $sqlObjdt[$ii++] = new TField("questiondt_modispid", $_SESSION['userData']['staffcd'], "string");
                             $sqlObjdt[$ii++] = new TField("questiondt_modidatetime", $datetime, "string");
                             $sqlObjdt[$ii++] = new TField("questiondt_modispcode", $_SESSION['userData']['staffcd'], "string");
                             $sqlObjdt[$ii++] = new TField("questiondt_modiname", $_SESSION['userData']['userdspms'], "string");
@@ -816,7 +837,7 @@ class question
 
                     } else {
 
-                        $sqlObjdt[$ii++] = new TField("questiondt_recspid", $_SESSION['userData']['stf'], "string");
+                        $sqlObjdt[$ii++] = new TField("questiondt_recspid", $_SESSION['userData']['staffcd'], "string");
                         $sqlObjdt[$ii++] = new TField("questiondt_recdatetime", $datetime, "string");
                         $sqlObjdt[$ii++] = new TField("questiondt_recspcode", $_SESSION['userData']['staffcd'], "string");
                         $sqlObjdt[$ii++] = new TField("questiondt_recname", $_SESSION['userData']['userdspms'], "string");
@@ -857,7 +878,7 @@ class question
         
                                     if ($value['questionoption'][$key2] > 0) {
         
-                                        $sqlObjoption[$ii++] = new TField("questionoption_modispid", $_SESSION['userData']['stf'], "string");
+                                        $sqlObjoption[$ii++] = new TField("questionoption_modispid", $_SESSION['userData']['staffcd'], "string");
                                         $sqlObjoption[$ii++] = new TField("questionoption_modidatetime", $datetime, "string");
                                         $sqlObjoption[$ii++] = new TField("questionoption_modispcode", $_SESSION['userData']['staffcd'], "string");
                                         $sqlObjoption[$ii++] = new TField("questionoption_modiname", $_SESSION['userData']['userdspms'], "string");
@@ -868,11 +889,14 @@ class question
 
                                     } else {
         
-                                        $sqlObjoption[$ii++] = new TField("questionoption_recspid", $_SESSION['userData']['stf'], "string");
+                                        /* $sqlObjoption[$ii++] = new TField("questionoption_recspid", $_SESSION['userData']['staffcd'], "string");
                                         $sqlObjoption[$ii++] = new TField("questionoption_recdatetime", $datetime, "string");
                                         $sqlObjoption[$ii++] = new TField("questionoption_modispcode", $_SESSION['userData']['staffcd'], "string");
-                                        $sqlObjoption[$ii++] = new TField("questionoption_modiname", $_SESSION['userData']['userdspms'], "string");
-        
+                                        $sqlObjoption[$ii++] = new TField("questionoption_modiname", $_SESSION['userData']['userdspms'], "string"); */
+                                        $sqlObjoption[$ii++] = new TField("questionoption_recspid",  $_SESSION['userData']['staffcd'], "string");
+                                        $sqlObjoption[$ii++] = new TField("questionoption_recname",  $_SESSION['userData']['userdspms'], "string");
+                                        $sqlObjoption[$ii++] = new TField("questionoption_recdatetime", $datetime, "string");
+
                                         $sqlInsertQuestionoption->SetField($sqlObjoption);
                                         $queryQuestionoption = $sqlInsertQuestionoption->InsertSql();
                                     }
@@ -912,7 +936,7 @@ class question
                 $ii = 0;
                 $sqlObj = null;
 
-                $sqlObj[$ii++] = new TField("question_modispid", $_SESSION['userData']['stf'], "string");
+                $sqlObj[$ii++] = new TField("question_modispid", $_SESSION['userData']['staffcd'], "string");
                 $sqlObj[$ii++] = new TField("question_modidatetime", $datetime, "string");
                 $sqlObj[$ii++] = new TField("question_modispcode", $_SESSION['userData']['staffcd'], "string");
                 $sqlObj[$ii++] = new TField("question_modiname", $_SESSION['userData']['userdspms'], "string");
@@ -1505,7 +1529,7 @@ class question
                 $sqlObj[$ii++] = new TField("questioncategories_name", $value, "string");
             }
             $sqlObj[$ii++] = new TField("questioncategories_hidden", ($post['mtypename'][$key] > 0 ? "1" : "0"), "string");
-            $sqlObj[$ii++] = new TField("questioncategories_modispid", $_SESSION['userData']['stf'], "string");
+            $sqlObj[$ii++] = new TField("questioncategories_modispid", $_SESSION['userData']['staffcd'], "string");
             $sqlObj[$ii++] = new TField("questioncategories_modidatetime", $datetime, "string");
 
             $sqlInsertMquestiontype->SetField($sqlObj);
@@ -1551,7 +1575,7 @@ class question
 
 
             $sqlObj[$ii++] = new TField("questiongroup_hidden", ($post['groupenamecheck'][$key] > 0 ? "1" : "0"), "string");
-            $sqlObj[$ii++] = new TField("questiongroup_modispid", $_SESSION['userData']['stf'], "string");
+            $sqlObj[$ii++] = new TField("questiongroup_modispid", $_SESSION['userData']['staffcd'], "string");
             $sqlObj[$ii++] = new TField("questiongroup_modidatetime", $datetime, "string");
 
             $sqlInsertMquestiontype->SetField($sqlObj);
@@ -1592,7 +1616,8 @@ class question
 
         $mstaffcompfunc = ($staffcompfunc > 0 ? $staffcompfunc : $_SESSION['userData']['staffcompfunc']);
 
-        $sqlmquestiontype  = "SELECT * FROM tb_questioncategories WHERE questioncategories_compfunc = '".$mstaffcompfunc."' OR questioncategories_default = 1";
+        $sqlmquestiontype  = "SELECT * FROM tb_questioncategories WHERE ( (questioncategories_compfunc = '".$mstaffcompfunc."' AND AND questioncategories_hidden = 0 AND questioncategories_active = 1 )  OR questioncategories_default = 1 )";
+
         $arr_mquestiontype = $go_ncadb->ncaretrieve($sqlmquestiontype, "question");
         $arrmquestiontype  = $arr_mquestiontype;
         $data['array'] = $arrmquestiontype;
@@ -1603,12 +1628,11 @@ class question
         if(count($arrmquestiontype) > 0){
             foreach ($arrmquestiontype as $key => $value) {
                 $selected = "";
-                if($value['questioncategories_active'] == 1 && $value['questioncategories_hidden'] == 0){
-                    if($value['questioncategories'] == $currentid && $value['questioncategories_active'] > 0){
-                        $selected = "selected";
-                    }
-                    $html .= '<option value="'.$value['questioncategories'].'" '.$selected.'> '.$value['questioncategories_name'].' </option>';
+                if($value['questioncategories'] == $currentid && $value['questioncategories_active'] > 0){
+                    $selected = "selected";
                 }
+                $html .= '<option value="'.$value['questioncategories'].'" '.$selected.'> '.$value['questioncategories_name'].' </option>';
+            
             }
         }
 
@@ -1670,7 +1694,7 @@ class question
         $data['html'] = "";
         $data['htmlmodal'] = "";
 
-        $sqlquestiongroup  = "SELECT * FROM tb_questiongroup WHERE questiongroup_questioncategories = '".$cateid."' AND questiongroup_active = 1 ";
+        $sqlquestiongroup  = "SELECT * FROM tb_questiongroup WHERE questiongroup_questioncategories = '".$cateid."' AND questiongroup_active = 1  AND questiongroup_hidden = 0";
         $arr_questiongroup = $go_ncadb->ncaretrieve($sqlquestiongroup, "question");
         $arrquestiongroup = $arr_questiongroup;
 
@@ -1680,12 +1704,11 @@ class question
         if(count($arrquestiongroup) > 0){
             foreach ($arrquestiongroup as $keyy => $valuee) {
                 $selected = "";
-                if($valuee['questiongroup_active'] == 1 && $valuee['questiongroup_hidden'] == 0){
-                    if($valuee['questiongroup'] == $currentid){
-                        $selected = "selected";
-                    }
-                    $html .= '<option value="'.$valuee['questiongroup'].'" '.$selected.'> '.$valuee['questiongroup_name'].' </option>';
+                if($valuee['questiongroup'] == $currentid){
+                    $selected = "selected";
                 }
+                $html .= '<option value="'.$valuee['questiongroup'].'" '.$selected.'> '.$valuee['questiongroup_name'].' </option>';
+                
             }
         }
 
@@ -1701,7 +1724,7 @@ class question
                     if($value['questiongroup_hidden'] == 1){
                         $isChecked = "checked";
                     }
-                    $htmlmodal .= ' <tr>
+                    $htmlmodal .=  '<tr>
                                         <td>
                                         <span id="editmname_'.$value['questiongroup'].'" > '.$value['questiongroup_name'].'
                                         </span>

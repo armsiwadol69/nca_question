@@ -40,13 +40,11 @@ if($ar_prm["method"] == "getlist"){
 
             if($value['activities_modispid']){
                 $rec_id = $value['activities_modispid'];
+                $value['activities_recname'] = $value['activities_modiname'];
             }else{
                 $rec_id = $value['activities_recspid'];
             }
             
-            $sql = "SELECT staff_dspnm FROM staff WHERE staff = '".$rec_id."' ";
-            $res = $go_ncadb->ncaretrieve($sql, "icms");
-            $value['activities_recname'] = $res[0]['staff_dspnm'];
             
             if($value['activities_modispid']){
                 $value['activities_recspid'] = $value['activities_modispid'];
@@ -102,6 +100,7 @@ if($ar_prm["method"] == "editquestionctivities" || $ar_prm["method"] == "addques
     if($ar_prm['activities'] > 0){
 
         $sqlObj[$ii++] = new TField("activities_modispid", $_SESSION['userData']['stf'], "string");
+        $sqlObj[$ii++] = new TField("activities_modiname", $_SESSION['userData']['userdspms'], "string");
         $sqlObj[$ii++] = new TField("activities_modidatetime", $datetime, "string");
 
         $sqlInsertMquestiontype->SetField($sqlObj);
@@ -111,7 +110,7 @@ if($ar_prm["method"] == "editquestionctivities" || $ar_prm["method"] == "addques
     }else{
 
         $sqlObj[$ii++] = new TField("activities_recspid", $_SESSION['userData']['stf'], "string");
-        $sqlObj[$ii++] = new TField("activities_recdatetime", $datetime, "string");
+        $sqlObj[$ii++] = new TField("activities_recdatetime", $_SESSION['userData']['userdspms'], "string");
         $sqlObj[$ii++] = new TField("activities_active", "1", "string");
 
         $sqlInsertMquestiontype->SetField($sqlObj);
