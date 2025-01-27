@@ -138,6 +138,8 @@ class ncaQuestion{
 
         $answer_userId = $ar_prm["formApp_userId"];
 
+        $answer_username = $ar_prm["formApp_username"];
+
         $checkType = $ar_prm["check_type"];
 
         // echo $answer_remark;

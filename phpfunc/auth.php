@@ -17,6 +17,8 @@ if (is_array($_POST)) {
     }
 }
 
+extract($_POST);
+
 $debug = 0;
 
 // $go_ncadb = new ncadb();

@@ -18,7 +18,7 @@
     }
 
     if(isset( $_SESSION["credential"]) && !empty( $_SESSION["credential"]) ){
-        echo "<script>window.location.href = 'v_renderform.php';</script>";
+        echo "<script>window.location.href = 'v_menu.php';</script>";
         exit();
     }
 
@@ -83,7 +83,7 @@
                         <input type="hidden" name="method" value="login">
                         <div class="row g-2">
                             <div class="col-12 text-center">
-                                <h1 class="fw-bold">ระบบบันทึกสถิติ</h1>
+                                <h1 class="fw-bold">ระบบตรวจสอบความผิดและบันทึกสถิติ</h1>
                             </div>
                             <div class="col-12">
                                 <div class="form-floating mb-3">

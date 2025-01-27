@@ -59,6 +59,7 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -76,40 +77,49 @@
     <!-- <script src="../assets/livejs/live.js"></script> -->
     <script src="../assets/axios/axios.min.js"></script>
     <style>
-        body {
-            /* overflow: hidden; */
-            background-color: white !important;
-            background: white !important;
-        }
-        .main-panel-bg-blur {
-            background-color: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-        }
+    body {
+        /* overflow: hidden; */
+        background-color: white !important;
+        background: white !important;
+    }
 
-        .list-group-item:hover{
-            background-color: rgba(0, 0, 0, 0.4) !important;
-            color:white;
-            cursor: pointer;
-        }
-        p {
-            margin-bottom: 0px !important;
-        }
+    .main-panel-bg-blur {
+        background-color: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+    }
+
+    .list-group-item:hover {
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        color: white;
+        cursor: pointer;
+    }
+
+    p {
+        margin-bottom: 0px !important;
+    }
+
+    .nca-g-bg-1 {
+        background: rgb(36, 37, 82);
+        background: linear-gradient(180deg, rgba(36, 37, 82, 1) 0%, rgba(74, 87, 163, 1) 100%);
+        background-size: 100% 100%;
+    }
     </style>
 </head>
+
 <body>
     <div class="row d-flex justify-content-center align-items-center g-0" style="height:100dvh;">
         <div class="col-12 h-100">
-            <div class=" bg-dark w-100 text-center position-absolute" style="z-index:3;">
-                <h1 class="mt-2 text-white">เลือกฟอร์ม</h1>
+            <div class="nca-g-bg-1 w-100 text-center position-absolute" style="z-index:3;">
+                <h1 class="my-3 text-white">เลือกฟอร์ม</h1>
             </div>
             <div class="bg-gradient w-100" style="max-height:100%;overflow-y:auto;">
-                <div class="list-group mt-5">
-                <?  
+                <div class="list-group" style="margin-top: 4rem;">
+                    <?  
                     $no = 1;
                     foreach ($questionList as $key => $formData) {
 
                         if($formData["question_questioncategories"] != "1"){
-                            continue;
+                            // continue;
                         }
 
                         if( ($no % 2) != 0 ) {
@@ -131,20 +141,20 @@
         </div>
     </div>
     <script>
-        function objectToQueryString(obj) {
-            return Object.keys(obj).map(key => key + '=' + encodeURIComponent(obj[key])).join('&');
-        }
+    function objectToQueryString(obj) {
+        return Object.keys(obj).map(key => key + '=' + encodeURIComponent(obj[key])).join('&');
+    }
 
-        function closeWindow(){
-            window.close();
-        }
+    function closeWindow() {
+        window.close();
+    }
 
-        function openFormPage(id){
-            const obj_prm = <? echo json_encode($ar_prm)?>;
-            let get_prm = objectToQueryString(obj_prm);
-            get_prm += `&formId=${id}`;
-            console.log(get_prm);
-            window.location = 'v_answerForm.php?'+get_prm;
-        }
+    function openFormPage(id) {
+        const obj_prm = <? echo json_encode($ar_prm) ?>;
+        let get_prm = objectToQueryString(obj_prm);
+        get_prm += `&formId=${id}`;
+        console.log(get_prm);
+        window.location = 'v_answerForm.php?' + get_prm;
+    }
     </script>
-<?php include_once 'v_footer.php';?>
+    <?php include_once 'v_footer.php';?>

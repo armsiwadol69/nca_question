@@ -67,7 +67,7 @@ class onappauth {
         
         // print_r($_SESSION["credential"]);
 
-        $this->redirect("v_renderform.php");
+        $this->redirect("v_menu.php");
     }
 
     function redirect($url) {
