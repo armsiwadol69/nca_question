@@ -26,6 +26,9 @@
         case 'getReport':
             echo $reportGenerator->getReport($ar_prm["type"],$ar_prm["ref"],$ar_prm["startDate"],$ar_prm["endDate"]);
             break;
+        case 'summaryReport':
+            echo $reportGenerator->summaryReport($ar_prm["type"],$ar_prm["ref"],$ar_prm["startDate"],$ar_prm["endDate"]);
+            break;
         default:
             echo json_encode(array("resCode" => "99", "resMsg" => "No Method was specified"));
             break;
@@ -232,6 +235,148 @@
             }
             
             return json_encode($ar_rtn);
+
+        }
+
+        public function summaryReport($type, $ref, $startDate, $endDate){
+
+            global $go_ncadb;
+
+            $ar_allAnswer = $this->getMainAnswer($type, $ref, $startDate, $endDate);
+
+            $ar_prepare = array();
+
+            $ii = 0;
+
+            foreach ($ar_allAnswer as $key => $value) {
+         
+               $answerDt = $this->getAnswerDt($value["answer"]);
+
+               $answerDtResult = $this->ncaArrayConverter($answerDt);
+
+               $ar_allAnswer[$ii]["answerdt"] = $answerDtResult;
+
+               $ii++;
+
+            }
+
+            echo json_encode($ar_allAnswer);
+
+        }
+
+        public function getMainAnswer($type, $ref, $startDate, $endDate){
+
+            global $go_ncadb;
+
+            if($type == "1"){
+                //Staff
+                $staffInfo = $this->getEmpCode($ref);
+
+                $ar_staff = json_decode($staffInfo, true);
+
+                $refObj = $ar_staff["data"][0];
+
+                $str_search = $ar_staff["data"][0]["empicms_id"];
+
+            }else if($type == "2"){
+                //Outlet
+                $str_search = $ref;
+                
+            }else if($type == "3"){
+
+                $str_search = $ref;
+
+            }
+
+            if(!$str_search){
+
+                $ar_rtn = array(
+                    "resCode" => "0",
+                    "resMsg" => "Staff, Outlet or bus data not found",
+                );
+
+                return json_encode($ar_rtn);
+            }
+
+            $mainSql = "";
+
+            if($type == "1"){
+
+                $mainSql = "SELECT
+                            *
+                            FROM
+                            tb_answer
+                            WHERE
+                            answer_type = '$type' AND
+                            answer_staff = '$str_search' AND
+                            answer_recdate BETWEEN '$startDate' AND '$endDate' AND
+                            answer_active = '1'";
+
+            }else if($type =="2"){
+
+                $mainSql = "SELECT
+                            answer
+                            *
+                            tb_answer
+                            WHERE
+                            answer_type = '$type' AND
+                            answer_outlet = '$str_search' AND
+                            answer_recdate BETWEEN '$startDate' AND '$endDate' AND
+                            answer_active = '1'";
+
+            }else if($type =="3"){
+
+                $mainSql = "SELECT
+                *
+                FROM
+                tb_answer
+                WHERE
+                answer_type = '$type' AND
+                answer_busref = '$str_search' AND
+                answer_recdate BETWEEN '$startDate' AND '$endDate' AND
+                answer_active = '1'";
+
+            }
+
+            $excAnswer = $go_ncadb->ncaretrieve($mainSql, "question");
+
+            $answerWithKey = $this->ncaArrayConverter($excAnswer);
+
+            return $answerWithKey;
+            
+        }
+
+        private function getAnswerDt($answer_id){
+
+            global $go_ncadb;
+
+            $sqlAnswerDt = "SELECT
+                            tb_answerdt.*,
+                            tb_question.question_name,
+                            tb_questiondt.questiondt,
+                            tb_questiondt.questiondt_title,
+                            tb_questionoption.questionoption_name,
+                            tb_questionoption.questionoption_mistakelevel,
+                            tb_mistakelevel.mistakelevel_shortname,
+                            tb_mistakelevel.mistakelevel_name,
+                            tb_mistakelevel.mistakelevel_value AS 'weight'
+                            FROM
+                            tb_answerdt 
+                            LEFT JOIN tb_question ON tb_answerdt.answerdt_question = tb_question.question
+                            LEFT JOIN tb_questiondt ON tb_answerdt.answerdt_questiondt = tb_questiondt.questiondt
+                            LEFT JOIN tb_questionoption ON tb_answerdt.answerdt_optionid = tb_questionoption.questionoption
+                            LEFT JOIN tb_mistakelevel ON tb_questionoption.questionoption_mistakelevel = tb_mistakelevel.mistakelevel                            
+                            WHERE
+                            answerdt_answer = '$answer_id'
+                            -- AND answerdt_value = '0' 
+                            ORDER BY
+                            answerdt ASC";
+
+            $excAnswerDt = $go_ncadb->ncaretrieve($sqlAnswerDt, "question");
+
+            $result = $this->ncaArrayConverter($excAnswerDt);
+
+            return $result;
 
         }
 
